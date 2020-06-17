@@ -1,0 +1,308 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+    <Script file="LootLCNeedFrame.lua"/>
+
+    <GameTooltip name="LCTooltipNeedFrame" inherits="GameTooltipTemplate" parent="UIParent" hidden="true"/>
+
+    <Frame name="NeedFrameItemTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="300" y="50"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOP">
+                <Offset>
+                    <AbsDimension x="0" y="-50"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <!--        Interface\Tooltips\UI-Tooltip-Background-->
+        <!--        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"-->
+        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background"
+                  edgeFile="Interface\Tooltips\UI-Tooltip-Border1"
+                  tile="true">
+            <Color r="1" g="1" b="1" a=".3"/>
+            <EdgeSize>
+                <AbsValue val="16"/>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="16"/>
+            </TileSize>
+            <BackgroundInsets>
+                <AbsInset left="5" right="5" top="0" bottom="0"/>
+            </BackgroundInsets>
+        </Backdrop>
+        <Frames>
+
+            <Button name="$parentItemIcon" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="45" y="45"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="45" y="45"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <DisabledTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <!--                    todo lock this-->
+                    <Size>
+                        <AbsDimension x="45" y="45"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </DisabledTexture>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="50" y="50"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="5" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentBISButton" inherits="UIPanelButtonTemplate" text="BIS">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <DisabledTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                    <Color r="0" g="0.88" b="0.06" a="1"/>
+                </Backdrop>
+                <Size>
+                    <AbsDimension x="40" y="21"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="60" y="5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            PlayerNeedItemButton_OnClick(this:GetID(), 'bis');
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentMSUpgradeButton" inherits="UIPanelButtonTemplate" text="MS Upgrade">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <DisabledTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                    <Color r="0" g="0.88" b="0.06" a="1"/>
+                </Backdrop>
+                <Size>
+                    <AbsDimension x="90" y="21"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="110" y="5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            PlayerNeedItemButton_OnClick(this:GetID(), 'ms');
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentOSButton" inherits="UIPanelButtonTemplate" text="OS">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <DisabledTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                    <Color r="0" g="0.88" b="0.06" a="1"/>
+                </Backdrop>
+                <Size>
+                    <AbsDimension x="30" y="21"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="210" y="5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            PlayerNeedItemButton_OnClick(this:GetID(), 'os');
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentPassButton" inherits="UIPanelButtonTemplate" text="Pass">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <DisabledTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                    <Color r="0" g="0.88" b="0.06" a="1"/>
+                </Backdrop>
+                <Size>
+                    <AbsDimension x="40" y="21"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="250" y="5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            PlayerNeedItemButton_OnClick(this:GetID(), 'pass');
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentItemButton" inherits="UIPanelButtonTemplate" text="[The item]" enableMouse="true">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <DisabledTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="220" y="25"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="55" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+        </Frames>
+
+        <Scripts>
+        </Scripts>
+    </Frame>
+
+
+    <Frame name="LootLCNeedFrameWindow" hidden="false" toplevel="true"
+           parent="UIParent" movable="true" enableMouse="true">
+        <Size>
+            <AbsDimension x="300" y="50"/>
+        </Size>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                  tile="true">
+            <EdgeSize>
+                <AbsValue val="16"/>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="16"/>
+            </TileSize>
+            <BackgroundInsets>
+                <AbsInset left="4" right="4" top="4" bottom="4"/>
+            </BackgroundInsets>
+        </Backdrop>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentTitle" inherits="GameFontNormal" text="Loot dropped, yo">
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-18"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+
+            <Frame name="$parentTimeLeftCountdownFrame">
+                <Size>
+                    <AbsDimension x="0" y="5"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                    <BackgroundInsets>
+                        <AbsInset left="5" right="5" top="0" bottom="0"/>
+                    </BackgroundInsets>
+                </Backdrop>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentTimeLeft" inherits="GameFontNormalSmall" text="" hidden="false">
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="5" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+            <!--            <Frame name="itemText" inherits="NeedFrameItemTemplate">-->
+            <!--            </Frame>-->
+
+        </Frames>
+
+        <Scripts>
+            <OnLoad>
+                    this:RegisterForDrag("LeftButton");
+                    this:SetMovable(1);
+                    this:SetUserPlaced(true);
+            </OnLoad>
+            <OnDragStart>
+                    this:StartMoving();
+                    this.isMoving = true;
+            </OnDragStart>
+            <OnDragStop>
+                    this:StopMovingOrSizing();
+                    this.isMoving = false;
+            </OnDragStop>
+        </Scripts>
+    </Frame>
+
+
+</Ui>

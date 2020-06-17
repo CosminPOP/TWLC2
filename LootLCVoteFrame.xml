@@ -1,0 +1,782 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+    <Script file="LootLCVoteFrame.lua"/>
+
+    <GameTooltip name="LCTooltipVoteFrame" inherits="GameTooltipTemplate" parent="UIParent" hidden="true"/>
+
+    <Frame name="VotedItemsButtonTemplate" virtual="true" enableMouse="true">
+        <Size>
+            <AbsDimension x="35" y="35"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="5" y="5"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                  edgeFile="Interface\Tooltips\UI-Tooltip-Border"
+                  tile="true">
+            <EdgeSize>
+                <AbsValue val="16"/>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="16"/>
+            </TileSize>
+            <BackgroundInsets>
+                <AbsInset left="4" right="4" top="4" bottom="4"/>
+            </BackgroundInsets>
+        </Backdrop>
+        <Frames>
+            <Button name="$parentVotedItemButton" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="35" y="35"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentPushedTexture" file="Interface\Icons\inv_staff_20"
+                               alphaMode="ADD">
+                    <Size>
+                        <AbsDimension x="35" y="35"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <HighlightTexture name="$parentPushedTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="35" y="35"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </HighlightTexture>
+                <Size>
+                    <AbsDimension x="35" y="35"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            VotedItemButton_OnClick(this:GetID())
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+    </Frame>
+
+    <Frame name="ContestantFrame" virtual="true">
+        <Size>
+            <AbsDimension x="500" y="20"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="0" y="-100"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+            <BackgroundInsets>
+                <AbsInset left="5" right="5" top="0" bottom="0"/>
+            </BackgroundInsets>
+        </Backdrop>
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture name="$parentClassIcon" hidden="false">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="7" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentName" inherits="GameFontNormal" text="[name]" hidden="false">
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="30" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentNeed" inherits="GameFontNormal" text="[need]" hidden="false">
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="130" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentRoll" inherits="GameFontNormal" text="[roll]" hidden="false">
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="300" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentVotes" inherits="GameFontNormal" text="[votes]" hidden="false">
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="440" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+
+            <Button name="$parentReplacesItem1" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="220" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentReplacesItem2" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="250" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentVoteButton" inherits="UIPanelButtonTemplate" text="VOTE">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <DisabledTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                    <Color r="0" g="0.88" b="0.06" a="1"/>
+                </Backdrop>
+                <Size>
+                    <AbsDimension x="60" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="RIGHT">
+                        <Offset>
+                            <AbsDimension x="-85" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            VoteButton_OnClick(this:GetID());
+                    </OnClick>
+                    <OnEnter>
+                            Contestant_OnEnter(this:GetID())
+                    </OnEnter>
+                    <OnLeave>
+                            Contestant_OnLeave(this:GetID())
+                    </OnLeave>
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnEnter>
+                    Contestant_OnEnter(this:GetID())
+            </OnEnter>
+            <OnLeave>
+                    Contestant_OnLeave(this:GetID())
+            </OnLeave>
+        </Scripts>
+    </Frame>
+
+    <Frame name="LootLCVoteFrameWindow" hidden="false" toplevel="true"
+           parent="UIParent" movable="true" enableMouse="true">
+        <Size>
+            <AbsDimension x="500" y="435"/>
+        </Size>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                  tile="true">
+            <EdgeSize>
+                <AbsValue val="16"/>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="16"/>
+            </TileSize>
+            <BackgroundInsets>
+                <AbsInset left="4" right="4" top="4" bottom="4"/>
+            </BackgroundInsets>
+        </Backdrop>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentTitle" inherits="GameFontNormal" text="LOOT VOTE FRAME">
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-10"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentNameLabel" inherits="GameFontNormalSmall" text="Name" hidden="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="10" y="-85"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentPickLabel" inherits="GameFontNormalSmall" text="Pick" hidden="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="130" y="-85"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentReplacesLabel" inherits="GameFontNormalSmall" text="Replaces" hidden="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="220" y="-85"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentRollLabel" inherits="GameFontNormalSmall" text="Roll" hidden="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="300" y="-85"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentVotesLabel" inherits="GameFontNormalSmall" text="Votes" hidden="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="440" y="-85"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+
+            <Button name="MLtoME" inherits="UIPanelButtonTemplate" text="ML To me">
+                <Size>
+                    <AbsDimension x="60" y="18"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-35" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            MLTOME();
+                    </OnClick>
+
+                </Scripts>
+            </Button>
+
+            <Button name="BroadcastLoot" inherits="UIPanelButtonTemplate2" hidden="false" text="Broadcast Loot">
+                <Size>
+                    <AbsDimension x="120" y="24"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-150" y="-33"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentNrOfVotes" inherits="GameFontNormal" text="a">
+                            <Anchors>
+                                <Anchor point="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-30"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnClick>
+                            BroadcastLoot_OnClick();
+                    </OnClick>
+
+                </Scripts>
+            </Button>
+
+            <Button name="MLToWinner" inherits="UIPanelButtonTemplate2" hidden="true" text="ML to Winner">
+                <Size>
+                    <AbsDimension x="120" y="24"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-20" y="-33"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentNrOfVotes" inherits="GameFontNormal" text="2/11 Votes">
+                            <Anchors>
+                                <Anchor point="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-30"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnClick>
+                            MLToWinner_OnClick();
+                    </OnClick>
+
+                </Scripts>
+            </Button>
+
+            <Frame name="$parentTitleBar">
+                <Size>
+                    <AbsDimension x="500" y="1"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-25"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                    <BackgroundInsets>
+                        <AbsInset left="5" right="5" top="0" bottom="0"/>
+                    </BackgroundInsets>
+                </Backdrop>
+            </Frame>
+
+            <Frame name="VotedItemsFrame">
+                <Size>
+                    <AbsDimension x="50" y="200"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="-45" y="-5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
+                    <BackgroundInsets>
+                        <AbsInset left="5" right="5" top="0" bottom="0"/>
+                    </BackgroundInsets>
+                </Backdrop>
+                <Frames>
+
+                    <!--                    <Frame name="test12333" inherits="VotedItemsButtonTemplate">-->
+                    <!--                    </Frame>-->
+                    <!--                    <Button name="$parentItem1" inherits="VotedItemsButtonTemplate" text="">-->
+                    <!--                    </Button>-->
+                </Frames>
+            </Frame>
+
+            <Button name="$parentCurrentVotedItemIcon" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="45" y="45"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="45" y="45"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="50" y="50"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="5" y="-30"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="$parentCurrentVotedItemName" inherits="UIPanelButtonTemplate" text="[Great Success]">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="180" y="30"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="55" y="-30"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentItemType" inherits="GameFontNormal" text="[Item type]">
+                            <Anchors>
+                                <Anchor point="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-24"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Frame name="ContestantFrame1" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="LootLCVoteFrameWindow">
+                        <Offset>
+                            <AbsDimension x="0" y="-100"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame2" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame1"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame3" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame2"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame4" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame3"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame5" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame4"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame6" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame5"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame7" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame6"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame8" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame7"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame9" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame8"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame10" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame9"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame11" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame10"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame12" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame11"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame13" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame12"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame14" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame13"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="ContestantFrame15" hidden="true" inherits="ContestantFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="ContestantFrame14"
+                            relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="-2"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+
+            <ScrollFrame name="ContestantScrollListFrame" hidden="false" inherits="FauxScrollFrameTemplate">
+                <Size>
+                    <AbsDimension x="296" y="330"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeTo="LootLCVoteFrameWindow" relativePoint="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-30" y="-98"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnVerticalScroll>
+                        FauxScrollFrame_OnVerticalScroll(20, VoteFrameListScroll_Update);
+                    </OnVerticalScroll>
+                </Scripts>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <!--                        <Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">-->
+                        <!--                            <Size>-->
+                        <!--                                <AbsDimension x="31" y="226"/>-->
+                        <!--                            </Size>-->
+                        <!--                            <Anchors>-->
+                        <!--                                <Anchor point="TOPLEFT" relativePoint="TOPRIGHT">-->
+                        <!--                                    <Offset>-->
+                        <!--                                        <AbsDimension x="-2" y="5"/>-->
+                        <!--                                    </Offset>-->
+                        <!--                                </Anchor>-->
+                        <!--                            </Anchors>-->
+                        <!--                            <TexCoords left="0" right="0.484375" top="0" bottom="0.8828125"/>-->
+                        <!--                        </Texture>-->
+                        <!--                        <Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">-->
+                        <!--                            <Size>-->
+                        <!--                                <AbsDimension x="31" y="106"/>-->
+                        <!--                            </Size>-->
+                        <!--                            <Anchors>-->
+                        <!--                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">-->
+                        <!--                                    <Offset>-->
+                        <!--                                        <AbsDimension x="-2" y="-2"/>-->
+                        <!--                                    </Offset>-->
+                        <!--                                </Anchor>-->
+                        <!--                            </Anchors>-->
+                        <!--                            <TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625"/>-->
+                        <!--                        </Texture>-->
+                    </Layer>
+                </Layers>
+            </ScrollFrame>
+
+        </Frames>
+
+        <Scripts>
+            <OnLoad>
+                    this:RegisterForDrag("LeftButton");
+                    this:SetMovable(1);
+                    this:SetUserPlaced(true);
+            </OnLoad>
+            <OnDragStart>
+                    this:StartMoving();
+                    this.isMoving = true;
+            </OnDragStart>
+            <OnDragStop>
+                    this:StopMovingOrSizing();
+                    this.isMoving = false;
+            </OnDragStop>
+        </Scripts>
+    </Frame>
+
+
+</Ui>
