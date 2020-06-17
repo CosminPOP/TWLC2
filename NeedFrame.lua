@@ -1,9 +1,10 @@
 local LootLCCountdown = CreateFrame("Frame")
+local LootLCNeedFrame = CreateFrame("Frame")
 local NeedFrameComms = CreateFrame("Frame")
 NeedFrameComms:RegisterEvent("CHAT_MSG_ADDON")
 
 LootLCCountdown:Hide()
-LootLCCountdown.timeToNeed = 30
+LootLCCountdown.timeToNeed = 15
 
 LootLCCountdown.T = 1
 LootLCCountdown.C = LootLCCountdown.timeToNeed
@@ -17,9 +18,6 @@ LootLCNeedFrames.itemFrames = {}
 LootLCCountdown:SetScript("OnShow", function()
     this.startTime = math.floor(GetTime());
 end)
-
-
-LootLCCountdown:Show()
 
 LootLCCountdown:SetScript("OnUpdate", function()
     if (math.floor(GetTime()) == math.floor(this.startTime) + 1) then
@@ -44,6 +42,16 @@ LootLCCountdown:SetScript("OnUpdate", function()
 
             --end
             getglobal('LootLCNeedFrameWindowTimeLeftCountdownFrameTimeLeft'):SetText("CLOSED")
+            --            getglobal('LootLCNeedFrameWindow'):Hide()
+
+            -- hide frames and send pass
+            for index, f in next, LootLCNeedFrames.itemFrames do
+                if (LootLCNeedFrames.itemFrames[index]:IsVisible()) then
+                    PlayerNeedItemButton_OnClick(index, 'pass')
+                end
+            end
+            -- end hide frames
+
             LootLCCountdown:Hide()
             LootLCCountdown.T = 1
 
@@ -76,6 +84,8 @@ function LootLCNeedFrames.addItem(data)
     local name = item[4]
     local link = item[5]
 
+    SendAddonMessage("TWLCNF", "wait=" .. index .. "=0=0", "RAID")
+
     GetItemInfo(link) --cache ???
 
     if (not LootLCNeedFrames.itemFrames[index]) then
@@ -87,7 +97,8 @@ function LootLCNeedFrames.addItem(data)
     LootLCNeedFrames.itemFrames[index].link = link
 
     getglobal('LCNeedFrame' .. index .. 'ItemIcon'):SetNormalTexture(texture);
-    getglobal('LCNeedFrame' .. index .. 'ItemButton'):SetText(link);
+    getglobal('LCNeedFrame' .. index .. 'ItemIcon'):SetPushedTexture(texture);
+    getglobal('LCNeedFrame' .. index .. 'ItemName'):SetText(link);
 
     getglobal('LCNeedFrame' .. index .. 'BISButton'):SetID(index);
     getglobal('LCNeedFrame' .. index .. 'MSUpgradeButton'):SetID(index);
@@ -98,7 +109,7 @@ function LootLCNeedFrames.addItem(data)
 
 
     CalcMainWindowHeight()
-    getglobal('LootLCNeedFrameWindow'):Show()
+    --    getglobal('LootLCNeedFrameWindow'):Show()
 end
 
 function PlayerNeedItemButton_OnClick(id, need)
@@ -114,23 +125,25 @@ function PlayerNeedItemButton_OnClick(id, need)
         twdebug(' nu am gasit item slot wtffff : ' .. itemLink)
     end
 
-    for i = 1, 19 do
-        if GetInventoryItemLink('player', i) then
-            local _, _, itemID = string.find(GetInventoryItemLink('player', i), "item:(%d+):%d+:%d+:%d+")
-            local _, _, eqItemLink = string.find(GetInventoryItemLink('player', i), "(item:%d+:%d+:%d+:%d+)");
+    if (need ~= 'pass') then
+        for i = 1, 19 do
+            if GetInventoryItemLink('player', i) then
+                local _, _, itemID = string.find(GetInventoryItemLink('player', i), "item:(%d+):%d+:%d+:%d+")
+                local _, _, eqItemLink = string.find(GetInventoryItemLink('player', i), "(item:%d+:%d+:%d+:%d+)");
 
-            local _, _, itemRarity, _, _, _, _, itemSlot, _ = GetItemInfo(eqItemLink)
+                local _, _, itemRarity, _, _, _, _, itemSlot, _ = GetItemInfo(eqItemLink)
 
-            if (itemSlot) then
-                if (equip_slot == itemSlot) then
-                    if (myItem1 == "0") then
-                        myItem1 = eqItemLink
-                    else
-                        myItem2 = eqItemLink
+                if (itemSlot) then
+                    if (equip_slot == itemSlot) then
+                        if (myItem1 == "0") then
+                            myItem1 = eqItemLink
+                        else
+                            myItem2 = eqItemLink
+                        end
                     end
+                else
+                    twdebug(' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! itemslot ')
                 end
-            else
-                twdebug(' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! itemslot ')
             end
         end
     end
@@ -148,7 +161,7 @@ function groupNeedFrames()
         if (LootLCNeedFrames.itemFrames[i]) then
             if LootLCNeedFrames.itemFrames[i]:IsVisible() then
                 visibleFrames = visibleFrames + 1
---                LootLCNeedFrames.itemFrames[i]:SetPoint("TOP", getglobal("LootLCNeedFrameWindow"), "TOP", 0, 0 - (55 * visibleFrames))
+                LootLCNeedFrames.itemFrames[i]:SetPoint("TOP", getglobal("LootLCNeedFrameWindow"), "TOP", 0, 0 - (55 * visibleFrames))
             end
         end
     end
@@ -170,12 +183,15 @@ function CalcMainWindowHeight()
     end
 end
 
-function ResetVars()
+function LootLCNeedFrame.ResetVars()
     twdebug('Need reset')
     for index, frame in next, LootLCNeedFrames.itemFrames do
         LootLCNeedFrames.itemFrames[index]:Hide()
     end
     CalcMainWindowHeight()
+    getglobal('LootLCNeedFrameWindow'):Hide()
+    LootLCCountdown.T = 1
+    LootLCCountdown.width = 300
 end
 
 -- comms
@@ -183,17 +199,22 @@ end
 NeedFrameComms:SetScript("OnEvent", function()
     --TWLCNF
     if (event) then
-        if (event == 'CHAT_MSG_ADDON') then
-            if (arg1 == 'TWLCNF') then
-                --                twdebug(arg1 .. ": " .. arg2)
+        if (event == 'CHAT_MSG_ADDON' and arg1 == 'TWLCNF') then
+
+            if (twlc2isRLorAssist(arg4)) then
+
                 if (string.find(arg2, 'loot=', 1, true)) then
                     LootLCNeedFrames.addItem(arg2)
+                    if (not getglobal('LootLCNeedFrameWindow'):IsVisible()) then
+                        getglobal('LootLCNeedFrameWindow'):Show()
+                        LootLCCountdown:Show()
+                    end
                 end
 
                 if (string.find(arg2, 'needframe=', 1, true)) then
                     local command = string.split(arg2, '=')
                     if (command[2] == "reset") then
-                        ResetVars()
+                        LootLCNeedFrame.ResetVars()
                     end
                 end
             end
