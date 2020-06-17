@@ -97,7 +97,8 @@
                 </Offset>
             </Anchor>
         </Anchors>
-        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background"
+                  tile="true" edgeSize="1">
             <BackgroundInsets>
                 <AbsInset left="5" right="5" top="0" bottom="0"/>
             </BackgroundInsets>
@@ -289,12 +290,13 @@
             <Anchor point="CENTER"/>
         </Anchors>
         <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-                  tile="true">
+                  edgeFile="I1nterface\ChatFrame\ChatFrameBackground"
+                  tile="false">
             <EdgeSize>
-                <AbsValue val="16"/>
+                <AbsValue val="1"/>
             </EdgeSize>
             <TileSize>
-                <AbsValue val="16"/>
+                <AbsValue val="0"/>
             </TileSize>
             <BackgroundInsets>
                 <AbsInset left="4" right="4" top="4" bottom="4"/>
@@ -561,6 +563,26 @@
                 </Scripts>
             </Button>
 
+            <Frame name="ContestantScrollListBackground">
+                <Size>
+                    <AbsDimension x="498" y="331"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="top">
+                        <Offset>
+                            <AbsDimension x="0" y="-99"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
+                    <BackgroundInsets>
+                        <AbsInset left="5" right="5" top="0" bottom="0"/>
+                    </BackgroundInsets>
+                </Backdrop>
+                <Frames>
+                </Frames>
+            </Frame>
+
             <Frame name="ContestantFrame1" hidden="true" inherits="ContestantFrame">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="LootLCVoteFrameWindow">
@@ -711,9 +733,9 @@
                 </Anchors>
             </Frame>
 
-            <ScrollFrame name="ContestantScrollListFrame" hidden="false" inherits="FauxScrollFrameTemplate">
+            <ScrollFrame name="ContestantScrollListFrame" hidden="true" inherits="FauxScrollFrameTemplate">
                 <Size>
-                    <AbsDimension x="296" y="330"/>
+                    <AbsDimension x="460" y="330"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeTo="LootLCVoteFrameWindow" relativePoint="TOPRIGHT">
@@ -758,6 +780,8 @@
                     </Layer>
                 </Layers>
             </ScrollFrame>
+
+
 
         </Frames>
 
