@@ -2,16 +2,6 @@ local LootLCCountdown = CreateFrame("Frame")
 local NeedFrameComms = CreateFrame("Frame")
 NeedFrameComms:RegisterEvent("CHAT_MSG_ADDON")
 
-local itemQuery = CreateFrame("Frame")
-itemQuery:RegisterEvent("GET_ITEM_INFO_RECEIVED")
-itemQuery:SetScript("OnEvent", function()
-    if (event) then
-        if (event == "GET_ITEM_INFO_RECEIVED") then
-            LCDebug('GET_ITEM_INFO_RECEIVED !!!')
-        end
-    end
-end)
-
 LootLCCountdown:Hide()
 LootLCCountdown.timeToNeed = 30
 
@@ -119,9 +109,9 @@ function PlayerNeedItemButton_OnClick(id, need)
     local _, _, itemLink = string.find(LootLCNeedFrames.itemFrames[id].link, "(item:%d+:%d+:%d+:%d+)");
     local name, link, quality, reqlvl, t1, t2, a7, equip_slot, tex = GetItemInfo(itemLink)
     if equip_slot then
-        --        LCDebug('player need equip_slot frame : ' .. equip_slot)
+        -- twdebug('player need equip_slot frame : ' .. equip_slot)
     else
-        LCDebug(' nu am gasit item slot wtffff : ' .. itemLink)
+        twdebug(' nu am gasit item slot wtffff : ' .. itemLink)
     end
 
     for i = 1, 19 do
@@ -140,7 +130,7 @@ function PlayerNeedItemButton_OnClick(id, need)
                     end
                 end
             else
-                LCDebug(' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! itemslot ')
+                twdebug(' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! itemslot ')
             end
         end
     end
@@ -181,7 +171,7 @@ function CalcMainWindowHeight()
 end
 
 function ResetVars()
-    LCDebug('Need reset')
+    twdebug('Need reset')
     for index, frame in next, LootLCNeedFrames.itemFrames do
         LootLCNeedFrames.itemFrames[index]:Hide()
     end
@@ -195,7 +185,7 @@ NeedFrameComms:SetScript("OnEvent", function()
     if (event) then
         if (event == 'CHAT_MSG_ADDON') then
             if (arg1 == 'TWLCNF') then
-                --                LCDebug(arg1 .. ": " .. arg2)
+                --                twdebug(arg1 .. ": " .. arg2)
                 if (string.find(arg2, 'loot=', 1, true)) then
                     LootLCNeedFrames.addItem(arg2)
                 end

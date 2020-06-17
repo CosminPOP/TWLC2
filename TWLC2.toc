@@ -4,5 +4,5 @@
 ## Version: 1.0.0
 ## Notes: Addon to help with BWL loot council system
 ## SavedVariables: TWLC_ROSTER, TWLC_LOOT_HISTORY
-LootLCVoteFrame.xml
-LootLCNeedFrame.xml
+VoteFrame.xml
+NeedFrame.xml

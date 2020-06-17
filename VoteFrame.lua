@@ -15,9 +15,23 @@ LCVoteFrameComms:RegisterEvent("CHAT_MSG_ADDON")
 
 local me = UnitName('player')
 
-local playersWhoWantItems = {}
+LCVoteFrame.playersWhoWantItems = {}
 
-local OFFICERS = {
+function twprint(a)
+    DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0[TWLC2] |cffffffff" .. a)
+end
+
+function twdebug(a)
+    if (me == 'Er2' or
+            me == 'Xerrbear' or
+            me == 'Testwarr' or
+            me == 'Kzktst' or
+            me == 'Tabc') then
+        twprint('|cff0070de[TWLC2Debug :' .. time() .. '] |cffffffff[' .. a .. ']')
+    end
+end
+
+TWLC_ROSTER = {
     ["Smultron"] = false, --voted
     ["Ilmane"] = false, --voted
     ["Tyrelys"] = false, --voted
@@ -118,12 +132,12 @@ function getEquipSlot(j)
 end
 
 function GetPlayer(index)
-    return playersWhoWantItems[index]
+    return LCVoteFrame.playersWhoWantItems[index]
 end
 
 LCVoteFrame:SetScript("OnEvent", function()
     if (event) then
-        --        LCDebug(event)
+        --        twdebug(event)
         if (event == "ADDON_LOADED") then
             getglobal('BroadcastLoot'):Disable()
         end
@@ -187,19 +201,19 @@ function addVotedItem(index, texture, name, link)
     end
 
     --    local _, _, itemLink = string.find(link, "(item:%d+:%d+:%d+:%d+)");
-    --    LCDebug('itemLink in addVotedItem: ' .. itemLink)
+    --    twdebug('itemLink in addVotedItem: ' .. itemLink)
     --    local name, link, quality, reqlvl, t1, t2, a7, equip_slot, tex = GetItemInfo(itemLink)
-    --    LCDebug('a1 : ' .. name)
-    --    LCDebug('a2 : ' .. link)
-    --    LCDebug('a3 : ' .. quality)
-    --    LCDebug('reqlvl : ' .. reqlvl)
-    --    LCDebug('t1 : ' .. t1)
-    --    LCDebug('t2 : ' .. t2)
-    --    LCDebug('a7 : ' .. a7)
-    --    LCDebug('equip_slot : ' .. equip_slot)
-    --    LCDebug('tex : ' .. tex)
-    --            LCDebug(itemSubType)
-    --            LCDebug(itemEquipLoc)
+    --    twdebug('a1 : ' .. name)
+    --    twdebug('a2 : ' .. link)
+    --    twdebug('a3 : ' .. quality)
+    --    twdebug('reqlvl : ' .. reqlvl)
+    --    twdebug('t1 : ' .. t1)
+    --    twdebug('t2 : ' .. t2)
+    --    twdebug('a7 : ' .. a7)
+    --    twdebug('equip_slot : ' .. equip_slot)
+    --    twdebug('tex : ' .. tex)
+    --           twdebug(itemSubType)
+    --           twdebug(itemEquipLoc)
 end
 
 function VotedItemButton_OnClick(id)
@@ -216,9 +230,9 @@ function VotedItemButton_OnClick(id)
 end
 
 function setCurrentVotedItem(id)
-    --    LCDebug('set cvi to ' .. id)
+    --    twdebug('set cvi to ' .. id)
     LCVoteFrame.CurrentVotedItem = id
-    LCDebug('LCVoteFrame.CurrentVotedItem = ' .. LCVoteFrame.CurrentVotedItem)
+    twdebug('LCVoteFrame.CurrentVotedItem = ' .. LCVoteFrame.CurrentVotedItem)
     getglobal('LootLCVoteFrameWindowCurrentVotedItemIcon'):SetNormalTexture(LCVoteFrame.VotedItemsFrames[id].texture)
     getglobal('LootLCVoteFrameWindowCurrentVotedItemIcon'):SetPushedTexture(LCVoteFrame.VotedItemsFrames[id].texture)
     local link = LCVoteFrame.VotedItemsFrames[id].link
@@ -266,7 +280,7 @@ end
 
 function VoteFrameListScroll_Update()
 
-    LCDebug('VoteFrameListScroll_Update()');
+    twdebug('VoteFrameListScroll_Update()');
 
     refreshList()
     calculateVotes()
@@ -296,7 +310,7 @@ function VoteFrameListScroll_Update()
             button.playerIndex = playerIndex;
             itemIndex, name, need, votes, ci1, ci2, roll = getPlayerInfo(playerIndex);
 
-            LCDebug('votes[' .. name .. '] = ' .. votes)
+            twdebug('votes[' .. name .. '] = ' .. votes)
 
             local class = getPlayerClass(name)
             local color = classColors[class]
@@ -309,6 +323,7 @@ function VoteFrameListScroll_Update()
             else
                 getglobal("ContestantFrame" .. i .. "Roll"):SetText();
             end
+
             getglobal("ContestantFrame" .. i .. "Votes"):SetText(votes);
             getglobal("ContestantFrame" .. i .. "VoteButton"):SetID(playerIndex);
 
@@ -383,7 +398,7 @@ function addButtonOnEnterTooltip(frame, itemLink)
 end
 
 function ResetVars()
-    --    LCDebug('reset')
+    --    twdebug('reset')
 
     LCVoteFrame.myVotes = {}
     LCVoteFrame.LCVoters = 0
@@ -419,13 +434,13 @@ end)
 
 
 function LCVoteFrameComms:handleSync(pre, t, ch, sender)
-    --    LCDebug(sender .. ' says: ' .. t)
+    --    twdebug(sender .. ' says: ' .. t)
     if (string.find(t, 'itemVote:', 1, true) and sender ~= me) then
         local itemVoteEx = string.split(t, ':')
         local votedItem = tonumber(itemVoteEx[2])
         local votedPlayer = itemVoteEx[3]
         local vote = itemVoteEx[4]
-        --        LCDebug('voteditem ' .. votedItem .. ' votedplayuer ' .. votedPlayer .. ' ' .. vote)
+        --        twdebug('voteditem ' .. votedItem .. ' votedplayuer ' .. votedPlayer .. ' ' .. vote)
         if (not LCVoteFrame.itemVotes[votedItem][votedPlayer]) then
             LCVoteFrame.itemVotes[votedItem][votedPlayer] = {}
         end
@@ -450,7 +465,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     --ms=1=item:123=item:323
     if (string.find(t, 'bis=', 1, true) or string.find(t, 'ms=', 1, true)
             or string.find(t, 'os=', 1, true) or string.find(t, 'pass=', 1, true)) then
-        --        LCDebug("recv : " .. t)
+        --        twdebug("recv : " .. t)
         --add to talbeformat ?
         local needEx = string.split(t, '=')
 
@@ -458,7 +473,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         local charSet = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890"
         --endDev
 
-        playersWhoWantItems[table.getn(playersWhoWantItems) + 1] = {
+        LCVoteFrame.playersWhoWantItems[table.getn(LCVoteFrame.playersWhoWantItems) + 1] = {
             ['itemIndex'] = tonumber(needEx[2]),
             ['name'] = sender,
             ['need'] = needEx[1],
@@ -475,33 +490,33 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 end
 
 function refreshList()
-    LCDebug('refreshList')
+    twdebug('refreshList')
     -- sort list ?
-    --    local tempTable = playersWhoWantItems
-    --    playersWhoWantItems = {}
+    --    local tempTable = LCVoteFrame.playersWhoWantItems
+    --    LCVoteFrame.playersWhoWantItems = {}
     --    local j = 0
     --    for index, d in next, tempTable do
     --        if d['need'] == 'bis' then
     --            j = j + 1
-    --            playersWhoWantItems[j] = d
+    --            LCVoteFrame.playersWhoWantItems[j] = d
     --        end
     --    end
     --    for index, d in next, tempTable do
     --        if d['need'] == 'ms' then
     --            j = j + 1
-    --            playersWhoWantItems[j] = d
+    --            LCVoteFrame.playersWhoWantItems[j] = d
     --        end
     --    end
     --    for index, d in next, tempTable do
     --        if d['need'] == 'os' then
     --            j = j + 1
-    --            playersWhoWantItems[j] = d
+    --            LCVoteFrame.playersWhoWantItems[j] = d
     --        end
     --    end
     --    for index, d in next, tempTable do
     --        if d['need'] == 'pass' then
     --            j = j + 1
-    --            playersWhoWantItems[j] = d
+    --            LCVoteFrame.playersWhoWantItems[j] = d
     --        end
     --    end
     -- sort
@@ -509,12 +524,12 @@ function refreshList()
     for i = 1, LCVoteFrame.playersPerPage, 1 do
         getglobal('ContestantFrame' .. i):Hide();
     end
-    for pIndex, data in next, playersWhoWantItems do
+    for pIndex, data in next, LCVoteFrame.playersWhoWantItems do
         if (data['itemIndex'] == LCVoteFrame.CurrentVotedItem) then
-            LCDebug('printing playersWhoWantItems[' .. pIndex .. ']')
-            LCDebug('name ' .. playersWhoWantItems[pIndex]['name'])
-            LCDebug('votes ' .. playersWhoWantItems[pIndex]['votes'])
-            LCVoteFrame.currentPlayersList[table.getn(LCVoteFrame.currentPlayersList) + 1] = playersWhoWantItems[pIndex]
+            twdebug('printing LCVoteFrame.playersWhoWantItems[' .. pIndex .. ']')
+            twdebug('name ' .. LCVoteFrame.playersWhoWantItems[pIndex]['name'])
+            twdebug('votes ' .. LCVoteFrame.playersWhoWantItems[pIndex]['votes'])
+            LCVoteFrame.currentPlayersList[table.getn(LCVoteFrame.currentPlayersList) + 1] = LCVoteFrame.playersWhoWantItems[pIndex]
         end
     end
 end
@@ -542,18 +557,18 @@ end
 
 function calculateVotes()
 
-    LCDebug('calculateVotes()')
-    --    LCDebug('listing playerslist')
+    twdebug('calculateVotes()')
+    --    twdebug('listing playerslist')
     --    local i = 0
     --    for k, player in next, LCVoteFrame.currentPlayersList do
     --        i = i + 1
-    --        LCDebug(player['itemIndex'] .. " pindex:" .. i .. "? " .. player['name'] .. " " .. player['need'] .. " " .. player['votes'] .. " " .. player['ci1'] .. " " .. player['ci2'] .. " " .. player['random'])
+    --        twdebug(player['itemIndex'] .. " pindex:" .. i .. "? " .. player['name'] .. " " .. player['need'] .. " " .. player['votes'] .. " " .. player['ci1'] .. " " .. player['ci2'] .. " " .. player['random'])
     --    end
 
-    --    LCDebug('-------------- listing itemVotes, CI : ' .. LCVoteFrame.CurrentVotedItem)
+    --    twdebug('-------------- listing itemVotes, CI : ' .. LCVoteFrame.CurrentVotedItem)
     --    for k, players in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem] do
     --        for kp, voters in next, players do
-    --            LCDebug(k .. ' vote from ' .. kp .. ' ' .. voters)
+    --            twdebug(k .. ' vote from ' .. kp .. ' ' .. voters)
     --        end
     --    end
 
@@ -566,26 +581,26 @@ function calculateVotes()
 
         local _, _, _, _, _, _, _, pIndex = getPlayerInfo(n)
 
-        LCDebug('setting LCVoteFrame.currentPlayersList[' .. pIndex .. '].votes = 0')
+        twdebug('setting LCVoteFrame.currentPlayersList[' .. pIndex .. '].votes = 0')
 
         --LCVoteFrame.currentPlayersList[pIndex].votes = 0
 
-        LCDebug('LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][' .. n .. '] size = '
+        twdebug('LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][' .. n .. '] size = '
                 .. table.getn(LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][n]))
 
         for voter, vote in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][n] do
-            LCDebug('voter : ' .. voter .. ' vote:' .. vote .. ' for ' .. n .. ' id ' .. pIndex)
+            twdebug('voter : ' .. voter .. ' vote:' .. vote .. ' for ' .. n .. ' id ' .. pIndex)
             if vote == '+' then
                 LCVoteFrame.currentPlayersList[pIndex].votes = LCVoteFrame.currentPlayersList[pIndex].votes + 1
-                LCDebug('LCVoteFrame.currentPlayersList[pIndex].votes = ' .. LCVoteFrame.currentPlayersList[pIndex].votes)
+                twdebug('LCVoteFrame.currentPlayersList[pIndex].votes = ' .. LCVoteFrame.currentPlayersList[pIndex].votes)
             else
-                LCDebug('LCVoteFrame.currentPlayersList[pIndex].votes = ' .. LCVoteFrame.currentPlayersList[pIndex].votes)
+                twdebug('LCVoteFrame.currentPlayersList[pIndex].votes = ' .. LCVoteFrame.currentPlayersList[pIndex].votes)
                 --                LCVoteFrame.currentPlayersList[pIndex].votes = LCVoteFrame.currentPlayersList[pIndex].votes - 1
             end
         end
 
         --        local _, _, _, votes = getPlayerInfo(n)
-        --        LCDebug('votes in CV : ' .. votes)
+        --        twdebug('votes in CV : ' .. votes)
         --        getglobal("ContestantFrame" .. pIndex .. "Votes"):SetText(votes);
     end
 end
@@ -604,7 +619,7 @@ function calculateWinner()
         end
     end
 
-    LCDebug('maxVotes = ' .. maxVotes)
+    twdebug('maxVotes = ' .. maxVotes)
     --tie check
     local ties = 0
     for i, d in next, LCVoteFrame.currentPlayersList do
@@ -632,22 +647,22 @@ function calculateWinner()
 end
 
 function updateLCVoters()
-    LCDebug('updateLCVoters()')
+    twdebug('updateLCVoters()')
     local nr = 0
     -- reset OV
-    for officer, voted in next, OFFICERS do
-        OFFICERS[officer] = false
+    for officer, voted in next, TWLC_ROSTER do
+        TWLC_ROSTER[officer] = false
     end
     for n, d in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem] do
         for voter, vote in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][n] do
-            for officer, voted in next, OFFICERS do
+            for officer, voted in next, TWLC_ROSTER do
                 if (voter == officer and vote == '+') then
-                    OFFICERS[officer] = true
+                    TWLC_ROSTER[officer] = true
                 end
             end
         end
     end
-    for o, v in next, OFFICERS do
+    for o, v in next, TWLC_ROSTER do
         if (v) then nr = nr + 1 end
     end
     getglobal('MLToWinnerNrOfVotes'):SetText(nr .. ' votes ')
@@ -714,4 +729,39 @@ end
 
 function isAssistOrRL(name)
     return isRealRaidAssist(name) or isRealRaidLeader(name)
+end
+
+
+
+
+function trim(s)
+    return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
+end
+
+function string:split(delimiter)
+    local result = {}
+    local from = 1
+    local delim_from, delim_to = string.find(self, delimiter, from)
+    while delim_from do
+        table.insert(result, string.sub(self, from, delim_from - 1))
+        from = delim_to + 1
+        delim_from, delim_to = string.find(self, delimiter, from)
+    end
+    table.insert(result, string.sub(self, from))
+    return result
+end
+
+
+function pairsByKeys(t, f)
+    local a = {}
+    for n in pairs(t) do table.insert(a, n) end
+    table.sort(a, function(a, b) return a > b end)
+    local i = 0 -- iterator variable
+    local iter = function() -- iterator function
+        i = i + 1
+        if a[i] == nil then return nil
+        else return a[i], t[a[i]]
+        end
+    end
+    return iter
 end
