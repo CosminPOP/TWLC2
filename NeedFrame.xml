@@ -31,6 +31,19 @@
                 <AbsInset left="5" right="5" top="0" bottom="0"/>
             </BackgroundInsets>
         </Backdrop>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentItemName" inherits="GameFontNormal" text="[name]" hidden="false">
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="60" y="15"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
         <Frames>
 
             <Button name="$parentItemIcon" inherits="UIPanelButtonTemplate" text="">
@@ -188,26 +201,26 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentItemButton" inherits="UIPanelButtonTemplate" text="[The item]" enableMouse="true">
-                <NormalTexture inherits=""/>
-                <PushedTexture inherits=""/>
-                <DisabledTexture inherits=""/>
-                <HighlightTexture inherits=""/>
-                <Size>
-                    <AbsDimension x="220" y="25"/>
-                </Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT">
-                        <Offset>
-                            <AbsDimension x="55" y="0"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                    </OnClick>
-                </Scripts>
-            </Button>
+<!--            <Button name="$parentItemButton" inherits="UIPanelButtonTemplate" text="[The item]" enableMouse="true">-->
+<!--                <NormalTexture inherits=""/>-->
+<!--                <PushedTexture inherits=""/>-->
+<!--                <DisabledTexture inherits=""/>-->
+<!--                <HighlightTexture inherits=""/>-->
+<!--                <Size>-->
+<!--                    <AbsDimension x="220" y="25"/>-->
+<!--                </Size>-->
+<!--                <Anchors>-->
+<!--                    <Anchor point="TOPLEFT">-->
+<!--                        <Offset>-->
+<!--                            <AbsDimension x="55" y="0"/>-->
+<!--                        </Offset>-->
+<!--                    </Anchor>-->
+<!--                </Anchors>-->
+<!--                <Scripts>-->
+<!--                    <OnClick>-->
+<!--                    </OnClick>-->
+<!--                </Scripts>-->
+<!--            </Button>-->
 
         </Frames>
 
@@ -216,7 +229,7 @@
     </Frame>
 
 
-    <Frame name="LootLCNeedFrameWindow" hidden="false" toplevel="true"
+    <Frame name="LootLCNeedFrameWindow" hidden="true" toplevel="true"
            parent="UIParent" movable="true" enableMouse="true">
         <Size>
             <AbsDimension x="300" y="50"/>
