@@ -44,10 +44,10 @@ LootLCCountdown:SetScript("OnUpdate", function()
             getglobal('LootLCNeedFrameWindowTimeLeftCountdownFrameTimeLeft'):SetText("CLOSED")
             --            getglobal('LootLCNeedFrameWindow'):Hide()
 
-            -- hide frames and send pass
+            -- hide frames and send auto pass
             for index, f in next, LootLCNeedFrames.itemFrames do
                 if (LootLCNeedFrames.itemFrames[index]:IsVisible()) then
-                    PlayerNeedItemButton_OnClick(index, 'pass')
+                    PlayerNeedItemButton_OnClick(index, 'autopass')
                 end
             end
             -- end hide frames
