@@ -6,3 +6,4 @@
 ## SavedVariables: TWLC_ROSTER, TWLC_LOOT_HISTORY
 VoteFrame.xml
 NeedFrame.xml
+WinFrame.xml
