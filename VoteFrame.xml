@@ -4,7 +4,7 @@
 
     <GameTooltip name="LCTooltipVoteFrame" inherits="GameTooltipTemplate" parent="UIParent" hidden="true"/>
 
-    <Frame name="VotedItemsButtonTemplate" virtual="true" enableMouse="true">
+    <Frame name="VotedItemsFrameTemplate" virtual="true" enableMouse="true">
         <Size>
             <AbsDimension x="35" y="35"/>
         </Size>
@@ -24,9 +24,9 @@
             <TileSize>
                 <AbsValue val="16"/>
             </TileSize>
-            <BackgroundInsets>
-                <AbsInset left="4" right="4" top="4" bottom="4"/>
-            </BackgroundInsets>
+<!--            <BackgroundInsets>-->
+<!--                <AbsInset left="4" right="4" top="4" bottom="4"/>-->
+<!--            </BackgroundInsets>-->
         </Backdrop>
         <Frames>
             <Button name="$parentVotedItemButton" inherits="UIPanelButtonTemplate" text="">
@@ -86,6 +86,95 @@
         </Frames>
     </Frame>
 
+    <Frame name="CLListFrameTemplate" virtual="true" enableMouse="true">
+        <Size>
+            <AbsDimension x="300" y="24"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="0" y="0"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentAName" inherits="GameFontNormal" text="[Assist Name]">
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="5" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                  tile="true">
+        </Backdrop>
+        <Frames>
+            <Button name="$parentSomeCloseButton" inherits="UIPanelCloseButton" text="">
+                <Anchors>
+                    <Anchor point="RIGHT">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <CheckButton name="$parentCLCheck">
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="CENTER">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <FontString name="$parentCheckText" inherits="GameFontHighlightSmall" text="in LC">
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="LEFT">
+                                    <Offset>
+                                        <AbsDimension x="-10" y="1"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad>
+--                            RegisterForSave("SHOW_OFFLINE_GUILD_MEMBERS");
+--                            this:RegisterEvent("VARIABLES_LOADED");
+                    </OnLoad>
+                    <OnEvent>
+--                            if ( event == "VARIABLES_LOADED" ) then
+--                                SetGuildRosterShowOffline(SHOW_OFFLINE_GUILD_MEMBERS);
+--                                this:SetChecked(GetGuildRosterShowOffline());
+--                            end
+                    </OnEvent>
+                    <OnClick>
+                            setCLFromUI(this:GetID(), this:GetChecked())
+                    </OnClick>
+                </Scripts>
+                <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+                <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+                <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+                <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+                <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+            </CheckButton>
+        </Frames>
+    </Frame>
+
     <Frame name="ContestantFrame" virtual="true">
         <Size>
             <AbsDimension x="500" y="20"/>
@@ -99,9 +188,9 @@
         </Anchors>
         <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background"
                   tile="true" edgeSize="1">
-            <BackgroundInsets>
-                <AbsInset left="5" right="5" top="0" bottom="0"/>
-            </BackgroundInsets>
+<!--            <BackgroundInsets>-->
+<!--                <AbsInset left="5" right="5" top="0" bottom="0"/>-->
+<!--            </BackgroundInsets>-->
         </Backdrop>
         <Layers>
             <Layer level="OVERLAY">
@@ -298,13 +387,13 @@
             <TileSize>
                 <AbsValue val="0"/>
             </TileSize>
-            <BackgroundInsets>
-                <AbsInset left="4" right="4" top="4" bottom="4"/>
-            </BackgroundInsets>
+<!--            <BackgroundInsets>-->
+<!--                <AbsInset left="4" right="4" top="4" bottom="4"/>-->
+<!--            </BackgroundInsets>-->
         </Backdrop>
         <Layers>
             <Layer level="OVERLAY">
-                <FontString name="$parentTitle" inherits="GameFontNormal" text="LOOT VOTE FRAME">
+                <FontString name="$parentTitle" inherits="GameFontNormal" text="[mwtitle]">
                     <Anchors>
                         <Anchor point="TOP">
                             <Offset>
@@ -358,28 +447,28 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
+
+                <FontString name="$parentVotedItemName" inherits="GameFontNormalLarge" text="[voted item name]" hidden="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="60" y="-35"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentVotedItemType" inherits="GameFontNormal" text="[voted item type]" hidden="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="60" y="-55"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
             </Layer>
         </Layers>
         <Frames>
-
-            <Button name="MLtoME" inherits="UIPanelButtonTemplate" text="ML To me">
-                <Size>
-                    <AbsDimension x="60" y="18"/>
-                </Size>
-                <Anchors>
-                    <Anchor point="TOPRIGHT">
-                        <Offset>
-                            <AbsDimension x="-35" y="0"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                            MLTOME();
-                    </OnClick>
-
-                </Scripts>
-            </Button>
 
             <Button name="BroadcastLoot" inherits="UIPanelButtonTemplate2" hidden="false" text="Broadcast Loot">
                 <Size>
@@ -457,9 +546,9 @@
                     </Anchor>
                 </Anchors>
                 <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-                    <BackgroundInsets>
-                        <AbsInset left="5" right="5" top="0" bottom="0"/>
-                    </BackgroundInsets>
+<!--                    <BackgroundInsets>-->
+<!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
+<!--                    </BackgroundInsets>-->
                 </Backdrop>
             </Frame>
 
@@ -470,15 +559,15 @@
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="-45" y="-5"/>
+                            <AbsDimension x="-50" y="-25"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
-                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
-                    <BackgroundInsets>
-                        <AbsInset left="5" right="5" top="0" bottom="0"/>
-                    </BackgroundInsets>
-                </Backdrop>
+<!--                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">-->
+<!--                    <BackgroundInsets>-->
+<!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
+<!--                    </BackgroundInsets>-->
+<!--                </Backdrop>-->
                 <Frames>
 
                     <!--                    <Frame name="test12333" inherits="VotedItemsButtonTemplate">-->
@@ -529,38 +618,41 @@
                     </OnClick>
                 </Scripts>
             </Button>
-            <Button name="$parentCurrentVotedItemName" inherits="UIPanelButtonTemplate" text="[Great Success]">
-                <NormalTexture inherits=""/>
-                <PushedTexture inherits=""/>
-                <HighlightTexture inherits=""/>
+
+            <Button name="RLOptionsButton">
                 <Size>
-                    <AbsDimension x="180" y="30"/>
+                    <AbsDimension x="32" y="32"/>
                 </Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT">
+                    <Anchor point="TOPRIGHT">
                         <Offset>
-                            <AbsDimension x="55" y="-30"/>
+                            <AbsDimension x="0" y="3"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString name="$parentItemType" inherits="GameFontNormal" text="[Item type]">
-                            <Anchors>
-                                <Anchor point="TOP">
-                                    <Offset>
-                                        <AbsDimension x="0" y="-24"/>
-                                    </Offset>
-                                </Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-
                 <Scripts>
                     <OnClick>
+                            toggleRLOptionsFrame()
+                            PlaySound("igMainMenuOptionCheckBoxOn");
                     </OnClick>
                 </Scripts>
+                <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
+                <PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
+                <DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+                <ButtonText>
+                    <Anchors>
+                        <Anchor point="RIGHT">
+                            <Offset>
+                                <AbsDimension x="-32" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </ButtonText>
+                <NormalFont inherits="GameFontNormalSmall"/>
+                <PushedTextOffset>
+                    <AbsDimension x="0" y="0"/>
+                </PushedTextOffset>
             </Button>
 
             <Frame name="ContestantScrollListBackground">
@@ -568,16 +660,16 @@
                     <AbsDimension x="498" y="331"/>
                 </Size>
                 <Anchors>
-                    <Anchor point="top">
+                    <Anchor point="TOP">
                         <Offset>
                             <AbsDimension x="0" y="-99"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
                 <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
-                    <BackgroundInsets>
-                        <AbsInset left="5" right="5" top="0" bottom="0"/>
-                    </BackgroundInsets>
+<!--                    <BackgroundInsets>-->
+<!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
+<!--                    </BackgroundInsets>-->
                 </Backdrop>
                 <Frames>
                 </Frames>
@@ -781,6 +873,92 @@
                 </Layers>
             </ScrollFrame>
 
+
+            <Frame name="RLWindowFrame">
+                <Size>
+                    <AbsDimension x="300" y="150"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" >
+                        <Offset>
+                            <AbsDimension x="305" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
+                </Backdrop>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentTitle" inherits="GameFontNormal" text="RL Options">
+                            <Anchors>
+                                <Anchor point="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-10"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Frame name="$parentTitleBar">
+                        <Size>
+                            <AbsDimension x="300" y="1"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="-25"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                            <!--                    <BackgroundInsets>-->
+                            <!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
+                            <!--                    </BackgroundInsets>-->
+                        </Backdrop>
+                    </Frame>
+
+                    <Button name="Populate" inherits="UIPanelButtonTemplate2" text="Populate CL from Assists">
+                        <Size>
+                            <AbsDimension x="150" y="24"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="10" y="-30"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    PopulateCLFromAssists();
+                            </OnClick>
+
+                        </Scripts>
+                    </Button>
+
+                    <Button name="MLtoME" inherits="UIPanelButtonTemplate2" text="ML to me">
+                        <Size>
+                            <AbsDimension x="120" y="24"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-10" y="-30"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    MLTOME();
+                            </OnClick>
+
+                        </Scripts>
+                    </Button>
+
+                </Frames>
+            </Frame>
 
 
         </Frames>
