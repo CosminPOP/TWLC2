@@ -131,54 +131,48 @@
                   tile="true">
         </Backdrop>
         <Frames>
-            <Button name="$parentSomeCloseButton" inherits="UIPanelCloseButton" text="">
-                <Anchors>
-                    <Anchor point="RIGHT">
-                        <Offset>
-                            <AbsDimension x="0" y="0"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                    </OnClick>
-                </Scripts>
-            </Button>
-            <CheckButton name="$parentCLCheck">
+            <CheckButton name="$parentAssistCheck">
                 <Size>
                     <AbsDimension x="20" y="20"/>
                 </Size>
                 <Anchors>
-                    <Anchor point="CENTER">
+                    <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="0" y="0"/>
+                            <AbsDimension x="140" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <FontString name="$parentCheckText" inherits="GameFontHighlightSmall" text="in LC">
-                            <Anchors>
-                                <Anchor point="RIGHT" relativePoint="LEFT">
-                                    <Offset>
-                                        <AbsDimension x="-10" y="1"/>
-                                    </Offset>
-                                </Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
                 <Scripts>
                     <OnLoad>
 --                            RegisterForSave("SHOW_OFFLINE_GUILD_MEMBERS");
 --                            this:RegisterEvent("VARIABLES_LOADED");
                     </OnLoad>
-                    <OnEvent>
---                            if ( event == "VARIABLES_LOADED" ) then
---                                SetGuildRosterShowOffline(SHOW_OFFLINE_GUILD_MEMBERS);
---                                this:SetChecked(GetGuildRosterShowOffline());
---                            end
-                    </OnEvent>
+                    <OnClick>
+                            setAssistFromUI(this:GetID(), this:GetChecked())
+                    </OnClick>
+                </Scripts>
+                <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+                <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+                <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+                <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+                <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+            </CheckButton>
+            <CheckButton name="$parentCLCheck">
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="240" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                            --                            RegisterForSave("SHOW_OFFLINE_GUILD_MEMBERS");
+                            --                            this:RegisterEvent("VARIABLES_LOADED");
+                    </OnLoad>
                     <OnClick>
                             setCLFromUI(this:GetID(), this:GetChecked())
                     </OnClick>
@@ -1002,7 +996,7 @@
 
             <Frame name="RLWindowFrame" hidden="true">
                 <Size>
-                    <AbsDimension x="300" y="150"/>
+                    <AbsDimension x="300" y="350"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" >
@@ -1020,6 +1014,33 @@
                                 <Anchor point="TOP">
                                     <Offset>
                                         <AbsDimension x="0" y="-10"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentNameTitle" inherits="GameFontNormal" text="Name">
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="2" y="-70"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentAssist" inherits="GameFontNormal" text="Assist">
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="140" y="-70"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentOfficer" inherits="GameFontNormal" text="Officer">
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="240" y="-70"/>
                                     </Offset>
                                 </Anchor>
                             </Anchors>
@@ -1044,25 +1065,6 @@
                             <!--                    </BackgroundInsets>-->
                         </Backdrop>
                     </Frame>
-
-                    <Button name="Populate" inherits="UIPanelButtonTemplate2" text="Populate CL from Assists">
-                        <Size>
-                            <AbsDimension x="150" y="24"/>
-                        </Size>
-                        <Anchors>
-                            <Anchor point="TOPLEFT">
-                                <Offset>
-                                    <AbsDimension x="10" y="-30"/>
-                                </Offset>
-                            </Anchor>
-                        </Anchors>
-                        <Scripts>
-                            <OnClick>
-                                    PopulateCLFromAssists();
-                            </OnClick>
-
-                        </Scripts>
-                    </Button>
 
                     <Button name="MLtoME" inherits="UIPanelButtonTemplate2" text="ML to me">
                         <Size>
