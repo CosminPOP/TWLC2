@@ -28,6 +28,7 @@
 <!--                <AbsInset left="4" right="4" top="4" bottom="4"/>-->
 <!--            </BackgroundInsets>-->
         </Backdrop>
+
         <Frames>
             <Button name="$parentVotedItemButton" inherits="UIPanelButtonTemplate" text="">
                 <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
@@ -77,6 +78,22 @@
                         </Offset>
                     </Anchor>
                 </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentCheck" file="Interface\addons\TWLC2\images\green-check" hidden="true">
+                            <Size>
+                                <AbsDimension x="32" y="32"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="CENTER">
+                                    <Offset>
+                                        <AbsDimension x="0" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
                 <Scripts>
                     <OnClick>
                             VotedItemButton_OnClick(this:GetID())
@@ -177,7 +194,7 @@
 
     <Frame name="ContestantFrame" virtual="true">
         <Size>
-            <AbsDimension x="500" y="20"/>
+            <AbsDimension x="498" y="20"/>
         </Size>
         <Anchors>
             <Anchor point="TOPLEFT">
@@ -186,8 +203,7 @@
                 </Offset>
             </Anchor>
         </Anchors>
-        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background"
-                  tile="true" edgeSize="1">
+        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true" edgeSize="1">
 <!--            <BackgroundInsets>-->
 <!--                <AbsInset left="5" right="5" top="0" bottom="0"/>-->
 <!--            </BackgroundInsets>-->
@@ -215,15 +231,41 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
+
+                <Texture name="$parentWinnerIcon" hidden="true" file="Interface\GroupFrame\UI-Group-MasterLooter">
+                    <Size>
+                        <AbsDimension x="16" y="16"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="RIGHT">
+                            <Offset>
+                                <AbsDimension x="-15" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+
                 <FontString name="$parentNeed" inherits="GameFontNormal" text="[need]" hidden="false">
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="130" y="0"/>
+                                <AbsDimension x="125" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
                 </FontString>
+                <Texture name="$parentRollWinner" hidden="true" file="Interface\Buttons\UI-GroupLoot-Dice-Up">
+                    <Size>
+                        <AbsDimension x="16" y="16"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="284" y="-2"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
                 <FontString name="$parentRoll" inherits="GameFontNormal" text="[roll]" hidden="false">
                     <Anchors>
                         <Anchor point="LEFT">
@@ -245,6 +287,86 @@
             </Layer>
         </Layers>
         <Frames>
+
+            <Button name="$parentRightClickMenuButton1" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="220" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        ShowContenstantDropdownMenu(this:GetID())
+                    </OnClick>
+                    <OnEnter>
+                            Contestant_OnEnter(this:GetID())
+                    </OnEnter>
+                    <OnLeave>
+                            Contestant_OnLeave(this:GetID())
+                    </OnLeave>
+                </Scripts>
+            </Button>
+            <Button name="$parentRightClickMenuButton2" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="80" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="270" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            ShowContenstantDropdownMenu(this:GetID())
+                    </OnClick>
+                    <OnEnter>
+                            Contestant_OnEnter(this:GetID())
+                    </OnEnter>
+                    <OnLeave>
+                            Contestant_OnLeave(this:GetID())
+                    </OnLeave>
+                </Scripts>
+            </Button>
+            <Button name="$parentRightClickMenuButton3" inherits="UIPanelButtonTemplate" text="">
+                                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="80" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="415" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            ShowContenstantDropdownMenu(this:GetID())
+                    </OnClick>
+                    <OnEnter>
+                            Contestant_OnEnter(this:GetID())
+                    </OnEnter>
+                    <OnLeave>
+                            Contestant_OnLeave(this:GetID())
+                    </OnLeave>
+                </Scripts>
+            </Button>
+
 
             <Button name="$parentReplacesItem1" inherits="UIPanelButtonTemplate" text="">
                 <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
@@ -373,23 +495,23 @@
     <Frame name="LootLCVoteFrameWindow" hidden="false" toplevel="true"
            parent="UIParent" movable="true" enableMouse="true">
         <Size>
-            <AbsDimension x="500" y="435"/>
+            <AbsDimension x="516" y="475"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
         </Anchors>
         <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-                  edgeFile="I1nterface\ChatFrame\ChatFrameBackground"
+                  edgeFile="Interface\addons\TWLC2\images\border work\border-azer"
                   tile="false">
             <EdgeSize>
-                <AbsValue val="1"/>
+                <AbsValue val="32"/>
             </EdgeSize>
             <TileSize>
-                <AbsValue val="0"/>
+                <AbsValue val="1"/>
             </TileSize>
-<!--            <BackgroundInsets>-->
-<!--                <AbsInset left="4" right="4" top="4" bottom="4"/>-->
-<!--            </BackgroundInsets>-->
+            <BackgroundInsets>
+                <AbsInset left="5" right="5" top="5" bottom="5"/>
+            </BackgroundInsets>
         </Backdrop>
         <Layers>
             <Layer level="OVERLAY">
@@ -406,7 +528,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="10" y="-85"/>
+                                <AbsDimension x="15" y="-105"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -415,7 +537,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="130" y="-85"/>
+                                <AbsDimension x="135" y="-105"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -424,7 +546,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="220" y="-85"/>
+                                <AbsDimension x="227" y="-105"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -433,7 +555,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="300" y="-85"/>
+                                <AbsDimension x="305" y="-105"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -442,7 +564,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="440" y="-85"/>
+                                <AbsDimension x="445" y="-105"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -452,7 +574,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="60" y="-35"/>
+                                <AbsDimension x="65" y="-35"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -461,7 +583,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="60" y="-55"/>
+                                <AbsDimension x="65" y="-55"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -470,30 +592,17 @@
         </Layers>
         <Frames>
 
-            <Button name="BroadcastLoot" inherits="UIPanelButtonTemplate2" hidden="false" text="Broadcast Loot">
+            <Button name="BroadcastLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false" text="Broadcast Loot">
                 <Size>
-                    <AbsDimension x="120" y="24"/>
+                    <AbsDimension x="120" y="20"/>
                 </Size>
                 <Anchors>
-                    <Anchor point="TOPRIGHT">
+                    <Anchor point="BOTTOM">
                         <Offset>
-                            <AbsDimension x="-150" y="-33"/>
+                            <AbsDimension x="0" y="7"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString name="$parentNrOfVotes" inherits="GameFontNormal" text="a">
-                            <Anchors>
-                                <Anchor point="TOP">
-                                    <Offset>
-                                        <AbsDimension x="0" y="-30"/>
-                                    </Offset>
-                                </Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
                 <Scripts>
                     <OnClick>
                             BroadcastLoot_OnClick();
@@ -534,14 +643,32 @@
                 </Scripts>
             </Button>
 
+            <Button name="$parentMinimizeButton" inherits="UIPanelCloseButton">
+                <Size>
+                    <AbsDimension x="22" y="22"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-10" y="-4"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            toggleMainWindow()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
             <Frame name="$parentTitleBar">
                 <Size>
-                    <AbsDimension x="500" y="1"/>
+                    <AbsDimension x="505" y="1"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="0" y="-25"/>
+                            <AbsDimension x="5" y="-25"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -609,7 +736,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="5" y="-30"/>
+                            <AbsDimension x="10" y="-30"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -624,7 +751,7 @@
                     <AbsDimension x="32" y="32"/>
                 </Size>
                 <Anchors>
-                    <Anchor point="TOPRIGHT">
+                    <Anchor point="BOTTOMRIGHT">
                         <Offset>
                             <AbsDimension x="0" y="3"/>
                         </Offset>
@@ -657,12 +784,12 @@
 
             <Frame name="ContestantScrollListBackground">
                 <Size>
-                    <AbsDimension x="498" y="331"/>
+                    <AbsDimension x="496" y="329"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOP">
                         <Offset>
-                            <AbsDimension x="0" y="-99"/>
+                            <AbsDimension x="0" y="-119"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -679,7 +806,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="LootLCVoteFrameWindow">
                         <Offset>
-                            <AbsDimension x="0" y="-100"/>
+                            <AbsDimension x="9" y="-120"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -873,8 +1000,7 @@
                 </Layers>
             </ScrollFrame>
 
-
-            <Frame name="RLWindowFrame">
+            <Frame name="RLWindowFrame" hidden="true">
                 <Size>
                     <AbsDimension x="300" y="150"/>
                 </Size>
