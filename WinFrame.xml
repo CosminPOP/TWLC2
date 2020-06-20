@@ -2,10 +2,9 @@
     xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
     <Script file="WinFrame.lua"/>
 
-    <Frame name="WinFrame" hidden="true" toplevel="true"
-           parent="UIParent" movable="true" enableMouse="true">
+    <Frame name="WinFrame" hidden="true" toplevel="true" parent="UIParent">
         <Size>
-            <AbsDimension x="384" y="96"/>
+            <AbsDimension x="512" y="128"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER">
@@ -14,7 +13,7 @@
                 </Offset>
             </Anchor>
         </Anchors>
-        <Backdrop bgFile="Interface\Addons\TWLC2\images\loot\lewt_00020.blp" tile="false">
+        <Backdrop bgFile="Interface\Addons\TWLC2\images\loot\loot_frame_5_105.blp" tile="false">
         </Backdrop>
         <Layers>
             <Layer level="OVERLAY">
@@ -22,7 +21,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="145" y="-22"/>
+                                <AbsDimension x="208" y="-38"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -34,7 +33,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="145" y="-38"/>
+                                <AbsDimension x="208" y="-55"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -49,7 +48,7 @@
             <Button name="$parentIcon" inherits="UIPanelButtonTemplate">
                 <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_sword_51">
                     <Size>
-                        <AbsDimension x="44" y="44"/>
+                        <AbsDimension x="46" y="46"/>
                     </Size>
                     <Anchors>
                         <Anchor point="CENTER">
@@ -66,12 +65,12 @@
 <!--                    <Color r="0" g="0.88" b="0.06" a="1"/>-->
                 </Backdrop>
                 <Size>
-                    <AbsDimension x="44" y="44"/>
+                    <AbsDimension x="46" y="46"/>
                 </Size>
                 <Anchors>
                     <Anchor point="LEFT">
                         <Offset>
-                            <AbsDimension x="88" y="-1"/>
+                            <AbsDimension x="148" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
