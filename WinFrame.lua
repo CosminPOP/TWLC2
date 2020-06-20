@@ -32,23 +32,27 @@ function start_anim()
     getglobal('WinFrame'):Show()
     WinAnimFrame.doAnim = true
     WinAnimFrame.showLootWindow = true
+--    WinAnimFrame.quality = 4 --test
 end
 
 WinAnimFrame.doAnim = false
 WinAnimFrame.showLootWindow = false
 
 WinAnimFrame:SetScript("OnShow", function()
-    this.startTime = (GetTime());
-    this.frameIndex = 0;
+    this.startTime = GetTime()
+    this.frameIndex = 0
 end)
 WinAnimFrame:SetScript("OnUpdate", function()
     if (WinAnimFrame.showLootWindow) then
-        if ((GetTime()) >= (this.startTime) + 0.05) then
+        if ((GetTime()) >= (this.startTime) + 0.03) then
 
-            this.startTime = (GetTime());
-
+            this.startTime = GetTime()
 
             local frame = getglobal('WinFrame')
+
+            if (WinAnimFrame.quality < 3) then --dev
+                WinAnimFrame.quality = 3
+            end
 
             local image = 'loot_frame_' .. WinAnimFrame.quality .. '_';
             if this.frameIndex < 10 then
@@ -63,17 +67,19 @@ WinAnimFrame:SetScript("OnUpdate", function()
                 local backdrop = {
                     bgFile = 'Interface\\AddOns\\TWLC2\\images\\loot\\' .. image
                 };
-                frame:SetBackdrop(backdrop)
-                frame:SetAlpha(frame:GetAlpha() + 0.05)
+                if (this.frameIndex <= 30) then
+                    frame:SetBackdrop(backdrop)
+                end
+                frame:SetAlpha(frame:GetAlpha() + 0.03)
             end
-            if (this.frameIndex == 21) then
+            if (this.frameIndex == 35) then --stop and hold last frame
                 WinAnimFrame.doAnim = false
             end
 
-            if (this.frameIndex > 60) then
-                frame:SetAlpha(frame:GetAlpha() - 0.05)
+            if (this.frameIndex > 119) then
+                frame:SetAlpha(frame:GetAlpha() - 0.03)
             end
-            if (this.frameIndex == 80) then
+            if (this.frameIndex == 150) then
                 WinAnimFrame.showLootWindow = false
                 this.frameIndex = 0;
                 frame:Hide()
