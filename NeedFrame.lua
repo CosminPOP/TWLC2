@@ -4,11 +4,10 @@ local NeedFrameComms = CreateFrame("Frame")
 NeedFrameComms:RegisterEvent("CHAT_MSG_ADDON")
 
 LootLCCountdown:Hide()
-LootLCCountdown.timeToNeed = 30
+LootLCCountdown.timeToNeed = 30 --default, will be gotted via addonMessage
 
 LootLCCountdown.T = 1
 LootLCCountdown.C = LootLCCountdown.timeToNeed
-LootLCCountdown.width = 300 --countdown line width
 
 
 local LootLCNeedFrames = CreateFrame("Frame")
@@ -53,6 +52,7 @@ delayAddItem:SetScript("OnUpdate", function()
 end)
 
 LootLCCountdown:SetScript("OnShow", function()
+--    twdebug('NEEDFRAME LootLCCountdown.timeToNeed = ' .. LootLCCountdown.timeToNeed)
     this.startTime = GetTime();
 end)
 
@@ -100,8 +100,11 @@ LootLCCountdown:SetScript("OnUpdate", function()
 end)
 
 function LootLCNeedFrames.addItem(data)
-    twdebug('data : ' .. data)
+--    twdebug('data : ' .. data)
     local item = string.split(data, "=")
+
+    LootLCCountdown.timeToNeed = tonumber(item[6])
+    LootLCCountdown.C = LootLCCountdown.timeToNeed
 
     LootLCNeedFrames.execs = LootLCNeedFrames.execs + 1
     twprint('additem exec : ' .. LootLCNeedFrames.execs)
@@ -315,7 +318,6 @@ function LootLCNeedFrame.ResetVars()
     --    CalcMainWindowHeight()
     getglobal('LootLCNeedFrameWindow'):Hide()
     LootLCCountdown.T = 1
-    LootLCCountdown.width = 300
 end
 
 -- comms
@@ -325,7 +327,7 @@ NeedFrameComms:SetScript("OnEvent", function()
     if (event) then
         if (event == 'CHAT_MSG_ADDON' and arg1 == 'TWLCNF') then
 
-            if (twlc2isRLorAssist(arg4)) then
+            if (twlc2isRL(arg4)) then
 
                 if (string.find(arg2, 'loot=', 1, true)) then
                     LootLCNeedFrames.addItem(arg2)
