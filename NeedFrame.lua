@@ -366,7 +366,7 @@ function addOnEnterTooltipNeedFrame(frame, itemLink)
     if (not ex[3]) then return end
 
     frame:SetScript("OnEnter", function(self)
-        LCTooltipNeedFrame:SetOwner(this, "ANCHOR_RIGHT", -(this:GetWidth() / 2), -(this:GetHeight() / 2));
+        LCTooltipNeedFrame:SetOwner(this, "ANCHOR_RIGHT", 0, 0);
         LCTooltipNeedFrame:SetHyperlink(string.sub(ex[3], 2, string.len(ex[3])));
         LCTooltipNeedFrame:Show();
     end)
