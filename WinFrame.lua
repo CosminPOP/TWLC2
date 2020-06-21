@@ -16,7 +16,24 @@ WinAnimFrame:SetScript("OnEvent", function()
                             WinAnimFrame.quality = quality
                             DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0[TWLC2] |cffffffff" .. arg2)
                             getglobal('WinFrameIcon'):SetNormalTexture(tex)
+                            getglobal('WinFrameIcon'):SetPushedTexture(tex)
                             getglobal('WinFrameItemName'):SetText(color .. name)
+
+                            local ex = string.split(winEx[3], "|")
+
+                            if ex[3] then
+                                getglobal('WinFrameIcon'):SetScript("OnEnter", function(self)
+                                    LCTooltipWinFrame:SetOwner(this, "ANCHOR_RIGHT", 0, 0);
+                                    LCTooltipWinFrame:SetHyperlink(string.sub(ex[3], 2, string.len(ex[3])));
+                                    LCTooltipWinFrame:Show();
+                                end)
+                                getglobal('WinFrameIcon'):SetScript("OnLeave", function(self)
+                                    LCTooltipWinFrame:Hide();
+                                end)
+                            else
+                                twdebug('wrong itemlink ?')
+                            end
+
                             start_anim()
                         end
                     end
@@ -32,7 +49,7 @@ function start_anim()
     getglobal('WinFrame'):Show()
     WinAnimFrame.doAnim = true
     WinAnimFrame.showLootWindow = true
---    WinAnimFrame.quality = 4 --test
+    --    WinAnimFrame.quality = 4 --test
 end
 
 WinAnimFrame.doAnim = false
@@ -50,11 +67,12 @@ WinAnimFrame:SetScript("OnUpdate", function()
 
             local frame = getglobal('WinFrame')
 
+            local image = 'loot_frame_' .. WinAnimFrame.quality .. '_';
+
             if (WinAnimFrame.quality < 3) then --dev
-                WinAnimFrame.quality = 3
+                image = 'loot_frame_012_';
             end
 
-            local image = 'loot_frame_' .. WinAnimFrame.quality .. '_';
             if this.frameIndex < 10 then
                 image = image .. '0' .. this.frameIndex;
             else
