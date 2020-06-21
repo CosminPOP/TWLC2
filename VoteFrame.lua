@@ -1,4 +1,21 @@
 local addonVer = "1.0.0" --don't use letters!
+local me = UnitName('player')
+
+TWLC_ROSTER = {}
+
+function twprint(a)
+    DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0[TWLC2] |cffffffff" .. a)
+end
+
+function twdebug(a)
+    if (me == 'Er2' or
+            me == 'Xerrbear' or
+            me == 'Testwarr' or
+            me == 'Kzktst' or
+            me == 'Tabc') then
+        twprint('|cff0070de[TWLC2Debug :' .. time() .. '] |cffffffff[' .. a .. ']')
+    end
+end
 
 local LCVoteFrame = CreateFrame("Frame", "LCVoteFrame")
 
@@ -18,7 +35,10 @@ LCVoteFrame.voteTiePlayers = ''
 LCVoteFrame.currentItemWinner = ''
 LCVoteFrame.currentItemMaxVotes = 0
 LCVoteFrame.currentRollWinner = ''
-LCVoteFrame.currentMaxRoll = 0
+LCVoteFrame.currentMaxRoll = {}
+
+LCVoteFrame.waitResponses = {}
+LCVoteFrame.pickResponses = {}
 
 local LCVoteFrameComms = CreateFrame("Frame")
 LCVoteFrameComms:RegisterEvent("CHAT_MSG_ADDON")
@@ -65,23 +85,55 @@ RLWindowFrame.assistFrames = {}
 
 local ContestantDropdownMenu = CreateFrame('Frame', 'ContestantDropdownMenu', UIParent, 'UIDropDownMenuTemplate')
 ContestantDropdownMenu.currentContestantId = 0
-local me = UnitName('player')
 
---local ContestantDropdownMenu = CreateFrame('Frame', 'ContestantDropdownMenu', UIParent, 'UIDropDownMenuTemplate')
 
-function twprint(a)
-    DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0[TWLC2] |cffffffff" .. a)
-end
+local TWLCCountDownFRAME = CreateFrame("Frame")
+TWLCCountDownFRAME:Hide()
+TWLCCountDownFRAME.countDownFrom = 30
+TWLCCountDownFRAME.currentTime = 1
+TWLCCountDownFRAME:SetScript("OnShow", function()
+    this.startTime = GetTime();
+    --    twdebug('VOTEFRAME TWLCCountDownFRAME tick @ '..TWLCCountDownFRAME.currentTime .. '/' .. TWLCCountDownFRAME.countDownFrom)
+end)
 
-function twdebug(a)
-    if (me == 'Er2' or
-            me == 'Xerrbear' or
-            me == 'Testwarr' or
-            me == 'Kzktst' or
-            me == 'Tabc') then
-        twprint('|cff0070de[TWLC2Debug :' .. time() .. '] |cffffffff[' .. a .. ']')
+TWLCCountDownFRAME:SetScript("OnUpdate", function()
+    local plus = 0.03
+    local gt = GetTime() * 1000
+    local st = (this.startTime + plus) * 1000
+    if gt >= st then
+        if (TWLCCountDownFRAME.currentTime ~= TWLCCountDownFRAME.countDownFrom + plus) then
+            --            twdebug('TWLCCountDownFRAME tick @ '..TWLCCountDownFRAME.currentTime .. '/' .. TWLCCountDownFRAME.countDownFrom)
+            --tick
+            getglobal('LootLCVoteFrameWindowTimeLeftBar'):SetWidth((TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime + plus) * 500 / TWLCCountDownFRAME.countDownFrom)
+
+            --            if (LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] and LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem]) then
+            --                if (TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime > 0) then
+            --                    getglobal('LootLCVoteFrameWindowContestantCount'):SetText('(' .. math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) .. 's) Waiting picks ' ..
+            --                            LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] .. '/' .. LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem])
+            --                end
+            --            end
+        end
+        TWLCCountDownFRAME:Hide()
+        if (TWLCCountDownFRAME.currentTime < TWLCCountDownFRAME.countDownFrom + plus) then
+            --still tick
+            TWLCCountDownFRAME.currentTime = TWLCCountDownFRAME.currentTime + plus
+            TWLCCountDownFRAME:Show()
+        elseif (TWLCCountDownFRAME.currentTime > TWLCCountDownFRAME.countDownFrom + plus) then
+
+            --end
+
+            TWLCCountDownFRAME:Hide()
+            TWLCCountDownFRAME.currentTime = 1
+
+        else
+            --
+        end
+    else
+        --
     end
-end
+end)
+
+
 
 
 
@@ -331,8 +383,11 @@ LCVoteFrame:SetScript("OnEvent", function()
         if (event == "RAID_ROSTER_UPDATE") then
             if (twlc2isRL(me)) then
                 getglobal('RLOptionsButton'):Show()
+                getglobal('MLToWinner'):Show()
+            else
+                getglobal('MLToWinner'):Hide()
             end
-            checkAssists() --temp dev
+--            checkAssists() --temp dev --todo asta poate trebuie on ?
         end
         if (event == "ADDON_LOADED") then
 
@@ -341,7 +396,7 @@ LCVoteFrame:SetScript("OnEvent", function()
             getglobal('BroadcastLoot'):Disable()
 
             if (twlc2isRL(me)) then
-                getglobal('RLOptionsButton'):Show()
+                                getglobal('RLOptionsButton'):Show()
             else
                 getglobal('RLOptionsButton'):Hide()
             end
@@ -425,8 +480,10 @@ function checkAssists()
         end
     end
     --getcls
-    for clName in next, TWLC_ROSTER do
-        assistsAndCL[clName] = false
+    if (TWLC_ROSTER) then
+        for clName in next, TWLC_ROSTER do
+            assistsAndCL[clName] = false
+        end
     end
 
     for i = 1, table.getn(RLWindowFrame.assistFrames), 1 do
@@ -462,6 +519,8 @@ function checkAssists()
         getglobal('AssistFrame' .. i .. 'CLCheck'):Enable()
         getglobal('AssistFrame' .. i .. 'AssistCheck'):Enable()
 
+        --todo add offline/notinraid bubble
+
         if (d.name == me) then getglobal('AssistFrame' .. i .. 'CLCheck'):Disable() end
         if (d.name == me) then getglobal('AssistFrame' .. i .. 'AssistCheck'):Disable() end
 
@@ -477,6 +536,11 @@ function BroadcastLoot_OnClick()
     SendAddonMessage("TWLCNF", "needframe=reset", "RAID")
     SendAddonMessage("TWLCNF", "voteframe=reset", "RAID")
 
+    twdebug('broadcast start')
+
+    TWLCCountDownFRAME:Show()
+
+
     for id = 0, GetNumLootItems() do
         if GetLootSlotInfo(id) and GetLootSlotLink(id) then
             local lootIcon, lootName, _, _, q = GetLootSlotInfo(id)
@@ -484,7 +548,7 @@ function BroadcastLoot_OnClick()
             local _, _, itemLink = string.find(GetLootSlotLink(id), "(item:%d+:%d+:%d+:%d+)");
             local _, _, quality = GetItemInfo(itemLink)
             if (quality >= 0) then
-                SendAddonMessage("TWLCNF", "loot=" .. id .. "=" .. lootIcon .. "=" .. lootName .. "=" .. GetLootSlotLink(id), "RAID")
+                SendAddonMessage("TWLCNF", "loot=" .. id .. "=" .. lootIcon .. "=" .. lootName .. "=" .. GetLootSlotLink(id) .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
             end
         end
     end
@@ -521,7 +585,7 @@ function addVotedItem(index, texture, name, link)
     getglobal('VotedItem' .. index .. 'VotedItemButtonCheck'):Hide()
     getglobal('VotedItem' .. index .. 'VotedItemButton'):SetHighlightTexture(texture)
 
-    twdebug('show : ' .. index)
+    --    twdebug('show : ' .. index)
 
     if (index ~= 1) then
         SetDesaturation(getglobal('VotedItem' .. index .. 'VotedItemButton'):GetNormalTexture(), 1)
@@ -549,7 +613,10 @@ end
 
 function VotedItemButton_OnClick(id)
 
-    getglobal("MLToWinner"):Show();
+    getglobal('MLToWinner'):Hide()
+    if (twlc2isRL(me)) then
+        getglobal('MLToWinner'):Show()
+    end
 
     SetDesaturation(getglobal('VotedItem' .. id .. 'VotedItemButton'):GetNormalTexture(), 0)
     for index, v in next, LCVoteFrame.VotedItemsFrames do
@@ -667,6 +734,19 @@ function VoteFrameListScroll_Update()
     updateLCVoters()
     calculateWinner()
 
+    if (not LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem]) then
+        LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] = 0
+    end
+    if (not LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem]) then
+        LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem] = 0
+    end
+    if (LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem]) then
+        getglobal('LootLCVoteFrameWindowContestantCount'):SetText('|cff1fba1fEveryone(' .. LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] .. ') has picked.')
+    else
+        getglobal('LootLCVoteFrameWindowContestantCount'):SetText('Waiting picks ' ..
+                LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] .. '/' .. LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem])
+    end
+
 
     local itemIndex, name, need, votes, ci1, ci2, roll
     local playerIndex
@@ -693,7 +773,7 @@ function VoteFrameListScroll_Update()
 
             local class = getPlayerClass(name)
             local color = classColors[class]
-            --            getglobal("ContestantFrame" .. i .. "Name"):SetText(color.c .. name .. " " .. playerIndex);
+
             getglobal("ContestantFrame" .. i .. "Name"):SetText(color.c .. name);
             getglobal("ContestantFrame" .. i .. "Need"):SetText(needs[need].c .. needs[need].text);
             if (roll > 0) then
@@ -717,7 +797,7 @@ function VoteFrameListScroll_Update()
             end
 
             getglobal("ContestantFrame" .. i .. "RollWinner"):Hide();
-            if (LCVoteFrame.currentMaxRoll == roll and roll > 0) then
+            if (LCVoteFrame.currentMaxRoll[LCVoteFrame.CurrentVotedItem] == roll and roll > 0) then
                 getglobal("ContestantFrame" .. i .. "RollWinner"):Show();
             end
             getglobal("ContestantFrame" .. i .. "WinnerIcon"):Hide();
@@ -809,22 +889,27 @@ function LCVoteFrame.updateVotedItemsFrames()
 end
 
 function LCVoteFrame.ResetVars()
-    twdebug('VoteFrame ResetVars')
+    --    twdebug('VoteFrame ResetVars')
 
     LCVoteFrame.CurrentVotedItem = nil
     LCVoteFrame.currentPlayersList = {}
     LCVoteFrame.playersWhoWantItems = {}
+
+    LCVoteFrame.waitResponses = {}
+    LCVoteFrame.pickResponses = {}
 
     LCVoteFrame.itemVotes = {}
 
     LCVoteFrame.myVotes = {}
     LCVoteFrame.LCVoters = 0
 
+    getglobal('LootLCVoteFrameWindowContestantCount'):SetText()
+
     getglobal('BroadcastLoot'):Disable()
-    getglobal("MLToWinner"):Hide();
+    getglobal("MLToWinner"):Hide()
 
     for index, frame in next, LCVoteFrame.VotedItemsFrames do
-        twdebug('hide index: ' .. index)
+        --        twdebug('hide index: ' .. index)
         getglobal('VotedItem' .. index):Hide()
         --        getglobal('VotedItem' .. index .. 'VotedItemButton'):Hide()
     end
@@ -848,7 +933,18 @@ end)
 
 
 function LCVoteFrameComms:handleSync(pre, t, ch, sender)
-    twdebug(sender .. ' says: ' .. t)
+    --    twdebug(sender .. ' says: ' .. t)
+    if (string.find(t, 'playerRoll:', 1, true)) then
+        if not twlc2isRL(sender) then return end
+        if not twlc2isCL(sender) then return end
+        local indexEx = string.split(t, ':')
+        if (indexEx[2] and indexEx[3]) then
+            LCVoteFrame.playersWhoWantItems[tonumber(indexEx[2])]['roll'] = tonumber(indexEx[3])
+            VoteFrameListScroll_Update()
+        else
+            --todo
+        end
+    end
     if (string.find(t, 'itemVote:', 1, true)) then
 
         if (sender == me) then return end
@@ -875,7 +971,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     end
     if (string.find(t, 'voteframe=', 1, true)) then
 
-        if (not canVote(sender)) then return end
+        if not twlc2isRL(sender) then return end
 
         local command = string.split(t, '=')
         if (command[2]) then
@@ -888,7 +984,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     end
     if (string.find(t, 'loot=', 1, true)) then
 
-        if (not canVote(sender)) then return end
+        if not twlc2isRL(sender) then return end
 
         local item = string.split(t, "=")
         if (item[2] and item[3] and item[4] and item[5]) then
@@ -908,6 +1004,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         if (needEx[2] and needEx[3] and needEx[4]) then
 
             --todo : check daca exista deja, limit once
+            if (LCVoteFrame.waitResponses[tonumber(needEx[2])]) then
+                LCVoteFrame.waitResponses[tonumber(needEx[2])] = LCVoteFrame.waitResponses[tonumber(needEx[2])] + 1
+            else
+                LCVoteFrame.waitResponses[tonumber(needEx[2])] = 1
+            end
 
             LCVoteFrame.playersWhoWantItems[table.getn(LCVoteFrame.playersWhoWantItems) + 1] = {
                 ['itemIndex'] = tonumber(needEx[2]),
@@ -940,6 +1041,12 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         --todo : check daca exista deja, limit once
 
         if (needEx[2] and needEx[3] and needEx[4]) then
+
+            if (LCVoteFrame.pickResponses[tonumber(needEx[2])]) then
+                LCVoteFrame.pickResponses[tonumber(needEx[2])] = LCVoteFrame.pickResponses[tonumber(needEx[2])] + 1
+            else
+                LCVoteFrame.pickResponses[tonumber(needEx[2])] = 1
+            end
 
             for index, player in next, LCVoteFrame.playersWhoWantItems do
                 if (player['name'] == sender and player['itemIndex'] == tonumber(needEx[2])) then
@@ -1072,7 +1179,7 @@ end
 
 function calculateVotes()
 
-    twdebug('calculateVotes()')
+    --    twdebug('calculateVotes()')
     --    twdebug('listing playerslist')
     --    local i = 0
     --    for k, player in next, LCVoteFrame.currentPlayersList do
@@ -1106,26 +1213,29 @@ end
 
 function calculateWinner()
 
+
+    -- calc roll winner(s)
+    LCVoteFrame.currentRollWinner = ''
+    LCVoteFrame.currentMaxRoll[LCVoteFrame.CurrentVotedItem] = 0
+    twdebug('calculare maxroll')
+    for i, d in next, LCVoteFrame.currentPlayersList do
+        if d['itemIndex'] == LCVoteFrame.CurrentVotedItem and d['roll'] > 0 and d['roll'] > LCVoteFrame.currentMaxRoll[LCVoteFrame.CurrentVotedItem] then
+            LCVoteFrame.currentMaxRoll[LCVoteFrame.CurrentVotedItem] = d['roll']
+            LCVoteFrame.currentRollWinner = d['name']
+        end
+    end
+    twdebug('maxroll = ' .. LCVoteFrame.currentMaxRoll[LCVoteFrame.CurrentVotedItem])
+
     if (LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo ~= '') then
         getglobal("MLToWinner"):Disable();
         getglobal("MLToWinner"):SetText('Awarded to ' .. LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo);
         return
     end
 
-    -- calc roll winner(s)
-    LCVoteFrame.currentRollWinner = ''
-    LCVoteFrame.currentMaxRoll = 0
-    for i, d in next, LCVoteFrame.currentPlayersList do
-        if d['itemIndex'] == LCVoteFrame.CurrentVotedItem and d['roll'] > 0 and d['roll'] > LCVoteFrame.currentMaxRoll then
-            LCVoteFrame.currentMaxRoll = d['roll']
-            LCVoteFrame.currentRollWinner = d['name']
-        end
-    end
-
     -- roll tie detection
     local rollTie = 0
     for i, d in next, LCVoteFrame.currentPlayersList do
-        if d['itemIndex'] == LCVoteFrame.CurrentVotedItem and d['roll'] > 0 and d['roll'] == LCVoteFrame.currentMaxRoll then
+        if d['itemIndex'] == LCVoteFrame.CurrentVotedItem and d['roll'] > 0 and d['roll'] == LCVoteFrame.currentMaxRoll[LCVoteFrame.CurrentVotedItem] then
             rollTie = rollTie + 1
         end
     end
@@ -1148,13 +1258,29 @@ function calculateWinner()
         LCVoteFrame.currentItemWinner = ''
         LCVoteFrame.currentItemMaxVotes = 0
         LCVoteFrame.voteTiePlayers = '';
+        local numPlayersThatWant = 0
+        local namePlayersThatWants = ''
         for i, d in next, LCVoteFrame.currentPlayersList do
             if d['itemIndex'] == LCVoteFrame.CurrentVotedItem then
+
+                -- calc winner if only one exists with bis, ms, os
+                if d['need'] == 'bis' or d['need'] == 'ms' or d['need'] == 'os' then
+                    numPlayersThatWant = numPlayersThatWant + 1
+                    namePlayersThatWants = d['name']
+                end
+
                 if (d['votes'] > 0 and d['votes'] > LCVoteFrame.currentItemMaxVotes) then
                     LCVoteFrame.currentItemMaxVotes = d['votes']
                     LCVoteFrame.currentItemWinner = d['name']
                 end
             end
+        end
+
+        if (numPlayersThatWant == 1) then
+            LCVoteFrame.currentItemWinner = namePlayersThatWants
+            getglobal("MLToWinner"):Enable();
+            getglobal("MLToWinner"):SetText('Award single needer ' .. LCVoteFrame.currentItemWinner);
+            return
         end
 
         --    twdebug('maxVotes = ' .. maxVotes)
@@ -1169,12 +1295,13 @@ function calculateWinner()
             end
         end
         LCVoteFrame.voteTiePlayers = trim(LCVoteFrame.voteTiePlayers)
-        -- TODO lead check
 
         if (ties > 1) then
             getglobal("MLToWinner"):Enable();
             getglobal("MLToWinner"):SetText('ROLL VOTE TIE'); -- .. voteTies
         else
+            --no tie
+            LCVoteFrame.voteTiePlayers = ''
             if (LCVoteFrame.currentItemWinner ~= '') then
                 getglobal("MLToWinner"):Enable();
                 getglobal("MLToWinner"):SetText('Award ' .. LCVoteFrame.currentItemWinner);
@@ -1230,6 +1357,7 @@ function MLToWinner_OnClick()
                         if (pwPlayer['name'] == tieName and pwPlayer['itemIndex'] == LCVoteFrame.CurrentVotedItem) then
                             -- found the wait=
                             LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
+                            SendAddonMessage("TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll, "RAID")
                             break
                         end
                     end
@@ -1258,6 +1386,11 @@ end
 function Contestant_OnLeave(id)
     local r, g, b, a = getglobal('ContestantFrame' .. id):GetBackdropColor()
     getglobal('ContestantFrame' .. id):SetBackdropColor(r, g, b, 0.5)
+end
+
+function twlc2isCL(name)
+
+    return TWLC_ROSTER[name] ~= nil
 end
 
 function twlc2isRL(name)
