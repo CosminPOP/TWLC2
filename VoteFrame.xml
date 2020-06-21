@@ -563,6 +563,15 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
+                <FontString name="$parentContestantCount" inherits="GameFontNormal" text="" hidden="false">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT">
+                            <Offset>
+                                <AbsDimension x="14" y="11"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
 
                 <FontString name="$parentVotedItemName" inherits="GameFontNormalLarge" text="[voted item name]" hidden="false">
                     <Anchors>
@@ -740,7 +749,7 @@
                 </Scripts>
             </Button>
 
-            <Button name="RLOptionsButton">
+            <Button name="RLOptionsButton" hidden="true">
                 <Size>
                     <AbsDimension x="32" y="32"/>
                 </Size>
@@ -946,14 +955,14 @@
                 </Anchors>
             </Frame>
 
-            <ScrollFrame name="ContestantScrollListFrame" hidden="true" inherits="FauxScrollFrameTemplate">
+            <ScrollFrame name="ContestantScrollListFrame" hidden="false" inherits="FauxScrollFrameTemplate">
                 <Size>
-                    <AbsDimension x="460" y="330"/>
+                    <AbsDimension x="460" y="325"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeTo="LootLCVoteFrameWindow" relativePoint="TOPRIGHT">
                         <Offset>
-                            <AbsDimension x="-30" y="-98"/>
+                            <AbsDimension x="-30" y="-118"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -993,6 +1002,23 @@
                     </Layer>
                 </Layers>
             </ScrollFrame>
+
+
+            <Frame name="$parentTimeLeftBar" framestrata="BACKGROUND">
+                <Size>
+                    <AbsDimension x="500" y="22"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="10" y="5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                    <Color r="0" g="0.88" b="0.06" a=".5"/>
+                </Backdrop>
+            </Frame>
 
             <Frame name="RLWindowFrame" hidden="true">
                 <Size>
