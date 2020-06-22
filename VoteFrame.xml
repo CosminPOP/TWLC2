@@ -24,9 +24,9 @@
             <TileSize>
                 <AbsValue val="16"/>
             </TileSize>
-<!--            <BackgroundInsets>-->
-<!--                <AbsInset left="4" right="4" top="4" bottom="4"/>-->
-<!--            </BackgroundInsets>-->
+            <!--            <BackgroundInsets>-->
+            <!--                <AbsInset left="4" right="4" top="4" bottom="4"/>-->
+            <!--            </BackgroundInsets>-->
         </Backdrop>
 
         <Frames>
@@ -120,11 +120,35 @@
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="5" y="0"/>
+                                <AbsDimension x="15" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
                 </FontString>
+                <Texture name="$parentStatusIconOnline" file="Interface\addons\TWLC2\images\statusicon-online">
+                    <Size>
+                        <AbsDimension x="16" y="16"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="-4"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentStatusIconOffline" file="Interface\addons\TWLC2\images\statusicon-offline">
+                    <Size>
+                        <AbsDimension x="16" y="16"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="-4"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
             </Layer>
         </Layers>
         <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
@@ -144,8 +168,8 @@
                 </Anchors>
                 <Scripts>
                     <OnLoad>
---                            RegisterForSave("SHOW_OFFLINE_GUILD_MEMBERS");
---                            this:RegisterEvent("VARIABLES_LOADED");
+                            --                            RegisterForSave("SHOW_OFFLINE_GUILD_MEMBERS");
+                            --                            this:RegisterEvent("VARIABLES_LOADED");
                     </OnLoad>
                     <OnClick>
                             setAssistFromUI(this:GetID(), this:GetChecked())
@@ -198,9 +222,9 @@
             </Anchor>
         </Anchors>
         <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true" edgeSize="1">
-<!--            <BackgroundInsets>-->
-<!--                <AbsInset left="5" right="5" top="0" bottom="0"/>-->
-<!--            </BackgroundInsets>-->
+            <!--            <BackgroundInsets>-->
+            <!--                <AbsInset left="5" right="5" top="0" bottom="0"/>-->
+            <!--            </BackgroundInsets>-->
         </Backdrop>
         <Layers>
             <Layer level="OVERLAY">
@@ -298,7 +322,7 @@
                 </Anchors>
                 <Scripts>
                     <OnClick>
-                        ShowContenstantDropdownMenu(this:GetID())
+                            ShowContenstantDropdownMenu(this:GetID())
                     </OnClick>
                     <OnEnter>
                             Contestant_OnEnter(this:GetID())
@@ -335,7 +359,7 @@
                 </Scripts>
             </Button>
             <Button name="$parentRightClickMenuButton3" inherits="UIPanelButtonTemplate" text="">
-                                <NormalTexture inherits=""/>
+                <NormalTexture inherits=""/>
                 <PushedTexture inherits=""/>
                 <HighlightTexture inherits=""/>
                 <Size>
@@ -573,7 +597,8 @@
                     </Anchors>
                 </FontString>
 
-                <FontString name="$parentVotedItemName" inherits="GameFontNormalLarge" text="[voted item name]" hidden="false">
+                <FontString name="$parentVotedItemName" inherits="GameFontNormalLarge" text="[voted item name]"
+                            hidden="false">
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
@@ -582,7 +607,8 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentVotedItemType" inherits="GameFontNormal" text="[voted item type]" hidden="false">
+                <FontString name="$parentVotedItemType" inherits="GameFontNormal" text="[voted item type]"
+                            hidden="false">
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
@@ -595,7 +621,70 @@
         </Layers>
         <Frames>
 
-            <Button name="BroadcastLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false" text="Broadcast Loot">
+            <Button name="TWLC2_Minimap" movable="true" parent="UIParent" enableMouse="true" toplevel="true"
+                    frameStrata="LOW">
+                <Size x="33" y="33"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="Minimap" relativePoint="LEFT"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface\Addons\TWLC2\images\minimap_icon">
+                            <Size x="21" y="21"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset x="7" y="-6"/>
+                                </Anchor>
+                            </Anchors>
+                            <TexCoords left="0.075" right="0.925" top="0.075" bottom="0.925"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <Texture file="Interface\Minimap\MiniMap-TrackingBorder">
+                            <Size x="56" y="56"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
+                <Scripts>
+                    <OnLoad>
+                            this:RegisterForClicks("RightButtonUp")
+                            this:RegisterForDrag("LeftButton")
+                            this:SetClampedToScreen(true)
+                    </OnLoad>
+                    <OnDragStart>
+                            this:LockHighlight()
+                            this:StartMoving()
+                    </OnDragStart>
+                    <OnDragStop>
+                            this:UnlockHighlight()
+                            this:StopMovingOrSizing()
+                    </OnDragStop>
+                    <OnEnter>
+                            GameTooltip:SetOwner(this, "ANCHOR_LEFT")
+                            GameTooltip:AddLine('TWLC2')
+                            --                            GameTooltip:AddLine(DPSMate.L["minimapleft"], 0.5, 0.5, 0.5)
+                            --                            GameTooltip:AddLine(DPSMate.L["minimapright"], 0.5, 0.5, 0.5)
+                            GameTooltip:Show()
+                    </OnEnter>
+                    <OnLeave>
+                            GameTooltip:Hide()
+                    </OnLeave>
+                    <OnMouseUp>
+                            if arg1 == "LeftButton" then
+                                toggleMainWindow()
+                            else
+                                ShowTWLCMinimapDropdown()
+                            end
+                    </OnMouseUp>
+                </Scripts>
+            </Button>
+
+            <Button name="BroadcastLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
+                    text="Broadcast Loot">
                 <Size>
                     <AbsDimension x="120" y="20"/>
                 </Size>
@@ -676,9 +765,9 @@
                     </Anchor>
                 </Anchors>
                 <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-<!--                    <BackgroundInsets>-->
-<!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
-<!--                    </BackgroundInsets>-->
+                    <!--                    <BackgroundInsets>-->
+                    <!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
+                    <!--                    </BackgroundInsets>-->
                 </Backdrop>
             </Frame>
 
@@ -693,11 +782,11 @@
                         </Offset>
                     </Anchor>
                 </Anchors>
-<!--                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">-->
-<!--                    <BackgroundInsets>-->
-<!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
-<!--                    </BackgroundInsets>-->
-<!--                </Backdrop>-->
+                <!--                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">-->
+                <!--                    <BackgroundInsets>-->
+                <!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
+                <!--                    </BackgroundInsets>-->
+                <!--                </Backdrop>-->
                 <Frames>
 
                     <!--                    <Frame name="test12333" inherits="VotedItemsButtonTemplate">-->
@@ -797,9 +886,9 @@
                     </Anchor>
                 </Anchors>
                 <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
-<!--                    <BackgroundInsets>-->
-<!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
-<!--                    </BackgroundInsets>-->
+                    <!--                    <BackgroundInsets>-->
+                    <!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
+                    <!--                    </BackgroundInsets>-->
                 </Backdrop>
                 <Frames>
                 </Frames>
@@ -1003,7 +1092,6 @@
                 </Layers>
             </ScrollFrame>
 
-
             <Frame name="$parentTimeLeftBar" framestrata="BACKGROUND">
                 <Size>
                     <AbsDimension x="500" y="22"/>
@@ -1025,7 +1113,7 @@
                     <AbsDimension x="300" y="350"/>
                 </Size>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" >
+                    <Anchor point="TOPRIGHT">
                         <Offset>
                             <AbsDimension x="305" y="0"/>
                         </Offset>
