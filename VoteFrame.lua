@@ -148,7 +148,6 @@ end)
 
 VoteCountdown:Hide()
 VoteCountdown.currentTime = 1
-VoteCountdown.countDownFrom = 5
 VoteCountdown:SetScript("OnShow", function()
     this.startTime = GetTime();
 end)
@@ -230,9 +229,16 @@ SlashCmdList["TWLC"] = function(cmd)
                     twprint('TIME_TO_NEED - set to ' .. TIME_TO_NEED .. 's')
                     SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
                 end
+                if (setEx[2] == 'ttv') then
+                    TIME_TO_VOTE = tonumber(setEx[3])
+                    VoteCountdown.countDownFrom = TIME_TO_VOTE
+                    twprint('TIME_TO_VOTE - set to ' .. TIME_TO_VOTE .. 's')
+                    SendAddonMessage("TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+                end
             else
                 twprint('SET Options')
-                twprint('sintax: /twlc set ttn <time> - sets TIME_TO_NEED (current value: ' .. TIME_TO_NEED .. 's)')
+                twprint('/twlc set ttn <time> - sets TIME_TO_NEED (current value: ' .. TIME_TO_NEED .. 's)')
+                twprint('/twlc set ttv <time> - sets TIME_TO_VOTE (current value: ' .. TIME_TO_VOTE .. 's)')
             end
         end
         if (string.find(cmd, 'list', 1, true)) then
@@ -432,8 +438,10 @@ LCVoteFrame:SetScript("OnEvent", function()
         if (event == "ADDON_LOADED" and arg1 == 'TWLC2') then
 
             if (not TIME_TO_NEED) then TIME_TO_NEED = 30 end
+            if (not TIME_TO_VOTE) then TIME_TO_VOTE = 30 end
 
             TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
+            VoteCountdown.countDownFrom = TIME_TO_VOTE
 
             getglobal('LootLCVoteFrameWindowTitle'):SetText('Turtle WoW Loot Council2 v' .. addonVer)
 
@@ -631,6 +639,7 @@ end
 function BroadcastLoot_OnClick()
 
     SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
+    SendAddonMessage("TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
 
     sendReset()
 
@@ -1296,6 +1305,14 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         if ttn[2] then
             TIME_TO_NEED = tonumber(ttn[2])
             TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
+        end
+    end
+    if (string.find(t, 'ttv=', 1, true)) then
+        if (not twlc2isRL(sender)) then return end
+        local ttv = string.split(t, "=")
+        if ttv[2] then
+            TIME_TO_VOTE = tonumber(ttv[2])
+            VoteCountdown.countDownFrom = TIME_TO_VOTE
         end
     end
     if (string.find(t, 'withAddonNF=', 1, true)) then
