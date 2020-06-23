@@ -162,7 +162,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="140" y="0"/>
+                            <AbsDimension x="140" y="-3"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -188,7 +188,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="240" y="0"/>
+                            <AbsDimension x="240" y="-3"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -337,7 +337,7 @@
                 <PushedTexture inherits=""/>
                 <HighlightTexture inherits=""/>
                 <Size>
-                    <AbsDimension x="80" y="20"/>
+                    <AbsDimension x="50" y="20"/>
                 </Size>
                 <Anchors>
                     <Anchor point="LEFT">
@@ -474,12 +474,35 @@
                 <PushedTexture inherits=""/>
                 <DisabledTexture inherits=""/>
                 <HighlightTexture inherits=""/>
-                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-                    <Color r="0" g="0.88" b="0.06" a="1"/>
-                </Backdrop>
+                <!--                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">-->
+                <!--                    <Color r="0" g="0.88" b="0.06" a="1"/>-->
+                <!--                </Backdrop>-->
                 <Size>
-                    <AbsDimension x="60" y="20"/>
+                    <AbsDimension x="90" y="20"/>
                 </Size>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <!--                        file="I1nterface\Tooltips\UI-Tooltip-Background"-->
+                        <Texture name="$parentMainBackground">
+                            <Size x="90" y="20"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset x="0" y="0"/>
+                                </Anchor>
+                            </Anchors>
+                            <Color r="0" g="0.88" b="0.06" a="1"/>
+                        </Texture>
+                        <Texture name="$parentTimeLeftBackground">
+                            <Size x="90" y="20"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset x="0" y="0"/>
+                                </Anchor>
+                            </Anchors>
+                            <Color r="0" g="0.88" b="0.06" a="1"/>
+                        </Texture>
+                    </Layer>
+                </Layers>
                 <Anchors>
                     <Anchor point="RIGHT">
                         <Offset>
@@ -510,7 +533,7 @@
         </Scripts>
     </Frame>
 
-    <Frame name="LootLCVoteFrameWindow" hidden="false" toplevel="true"
+    <Frame name="LootLCVoteFrameWindow" hidden="true" toplevel="true"
            parent="UIParent" movable="true" enableMouse="true">
         <Size>
             <AbsDimension x="516" y="475"/>
@@ -597,8 +620,8 @@
                     </Anchors>
                 </FontString>
 
-                <FontString name="$parentVotedItemName" inherits="GameFontNormalLarge" text="[voted item name]"
-                            hidden="false">
+                <FontString name="$parentVotedItemName" hidden="true" inherits="GameFontNormalLarge"
+                            text="[voted item name]">
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
@@ -607,8 +630,8 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentVotedItemType" inherits="GameFontNormal" text="[voted item type]"
-                            hidden="false">
+                <FontString name="$parentVotedItemType" hidden="true" inherits="GameFontNormal"
+                            text="[vo2ted item type]">
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
@@ -664,7 +687,7 @@
                             this:StopMovingOrSizing()
                     </OnDragStop>
                     <OnEnter>
-                            GameTooltip:SetOwner(this, "ANCHOR_LEFT")
+                            GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
                             GameTooltip:AddLine('TWLC2')
                             --                            GameTooltip:AddLine(DPSMate.L["minimapleft"], 0.5, 0.5, 0.5)
                             --                            GameTooltip:AddLine(DPSMate.L["minimapright"], 0.5, 0.5, 0.5)
@@ -683,7 +706,7 @@
                 </Scripts>
             </Button>
 
-            <Button name="BroadcastLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
+            <Button name="BroadcastLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
                     text="Broadcast Loot">
                 <Size>
                     <AbsDimension x="120" y="20"/>
@@ -698,6 +721,26 @@
                 <Scripts>
                     <OnClick>
                             BroadcastLoot_OnClick();
+                    </OnClick>
+
+                </Scripts>
+            </Button>
+
+            <Button name="ResetClose" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
+                    text="Reset and close">
+                <Size>
+                    <AbsDimension x="120" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset>
+                            <AbsDimension x="-30" y="7"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            ResetClose_OnClick();
                     </OnClick>
 
                 </Scripts>
@@ -796,7 +839,7 @@
                 </Frames>
             </Frame>
 
-            <Button name="$parentCurrentVotedItemIcon" inherits="UIPanelButtonTemplate" text="">
+            <Button name="$parentCurrentVotedItemIcon" inherits="UIPanelButtonTemplate" hidden="true" text="">
                 <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
                     <Size>
                         <AbsDimension x="45" y="45"/>
@@ -1110,7 +1153,7 @@
 
             <Frame name="RLWindowFrame" hidden="true">
                 <Size>
-                    <AbsDimension x="300" y="350"/>
+                    <AbsDimension x="300" y="450"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT">
