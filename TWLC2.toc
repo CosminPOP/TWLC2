@@ -3,7 +3,5 @@
 ## Author: Xerron/Er
 ## Version: 1.0.0
 ## Notes: Addon to help with BWL loot council system
-## SavedVariables: TWLC_ROSTER, TWLC_LOOT_HISTORY
+## SavedVariables: TWLC_ROSTER, TWLC_LOOT_HISTORY, TIME_TO_NEED
 VoteFrame.xml
-NeedFrame.xml
-WinFrame.xml
