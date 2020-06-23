@@ -85,9 +85,7 @@ LCVoteSyncFrame:SetScript("OnUpdate", function()
             twdebug('[LCVoteSyncFrame] Sync finished.');
             SendAddonMessage("TWLCNF", "syncRoster=end", "RAID")
 
-            if (twlc2isRL(me)) then
-                checkAssists()
-            end
+            if (twlc2isRL(me)) then checkAssists() end
         end
 
         this.startTime = (GetTime());
@@ -135,7 +133,6 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
         elseif (TWLCCountDownFRAME.currentTime > TWLCCountDownFRAME.countDownFrom + plus) then
 
             --end
-
             TWLCCountDownFRAME:Hide()
             TWLCCountDownFRAME.currentTime = 1
 
@@ -165,7 +162,6 @@ VoteCountdown:SetScript("OnUpdate", function()
             --tick
 
             for i = 1, LCVoteFrame.playersPerPage, 1 do
-
                 if getglobal('ContestantFrame' .. i .. 'VoteButton'):IsEnabled() == 1 then
                     local w = math.floor(((VoteCountdown.countDownFrom - VoteCountdown.currentTime) / VoteCountdown.countDownFrom) * 1000)
                     w = w / 1000
@@ -184,7 +180,6 @@ VoteCountdown:SetScript("OnUpdate", function()
             elseif (VoteCountdown.currentTime > VoteCountdown.countDownFrom + plus) then
 
                 --end
-
                 VoteCountdown:Hide()
                 VoteCountdown.currentTime = 1
                 for i = 1, LCVoteFrame.playersPerPage, 1 do
@@ -194,10 +189,8 @@ VoteCountdown:SetScript("OnUpdate", function()
                         getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
                     end
                 end
-
                 twdebug('vote countdown finished')
             end
-
         else
             --
         end
@@ -376,13 +369,39 @@ local itemTypes = {
 }
 
 local equipSlots = {
-    ["INVTYPE_AMMO"] = 'Ammo', --	0',["INVTYPE_HEAD"] = 'Head', --	1',["INVTYPE_NECK"] = 'Neck', --	2',["INVTYPE_SHOULDER"] = 'Shoulder', --	3',["INVTYPE_BODY"] = 'Shirt', --	4',["INVTYPE_CHEST"] = 'Chest', --	5',["INVTYPE_ROBE"] = 'Chest', --	5',["INVTYPE_WAIST"] = 'Waist', --	6',["INVTYPE_LEGS"] = 'Legs', --	7',["INVTYPE_FEET"] = 'Feet', --	8',["INVTYPE_WRIST"] = 'Wrist', --	9',["INVTYPE_HAND"] = 'Hands', --	10',["INVTYPE_FINGER"] = 'Ring', --	11,12',["INVTYPE_TRINKET"] = 'Trinket', --	13,14',["INVTYPE_CLOAK"] = 'Cloak', --	15',["INVTYPE_WEAPON"] = 'One-Hand', --	16,17',["INVTYPE_SHIELD"] = 'Shield', --	17',["INVTYPE_2HWEAPON"] = 'Two-Handed', --	16',["INVTYPE_WEAPONMAINHAND"] = 'Main-Hand Weapon', --	16',["INVTYPE_WEAPONOFFHAND"] = 'Off-Hand Weapon', --	17',["INVTYPE_HOLDABLE"] = 'Held In Off-Hand', --	17',["INVTYPE_RANGED"] = 'Bow', --	18',["INVTYPE_THROWN"] = 'Ranged', --	18',["INVTYPE_RANGEDRIGHT"] = 'Wands, Guns, and Crossbows', --	18',["INVTYPE_RELIC"] = 'Relic', --	18',["INVTYPE_TABARD"] = 'Tabard', --	19',["INVTYPE_BAG"] = 'Container', --	20,21,22,23',["INVTYPE_QUIVER"] = 'Quiver', --	20,21,22,23',
+    ["INVTYPE_AMMO"] = 'Ammo', --	0', --
+    ["INVTYPE_HEAD"] = 'Head', --	1',
+    ["INVTYPE_NECK"] = 'Neck', --	2',
+    ["INVTYPE_SHOULDER"] = 'Shoulder', --	3',
+    ["INVTYPE_BODY"] = 'Shirt', --	4',
+    ["INVTYPE_CHEST"] = 'Chest', --	5',
+    ["INVTYPE_ROBE"] = 'Chest', --	5',
+    ["INVTYPE_WAIST"] = 'Waist', --	6',
+    ["INVTYPE_LEGS"] = 'Legs', --	7',
+    ["INVTYPE_FEET"] = 'Feet', --	8',
+    ["INVTYPE_WRIST"] = 'Wrist', --	9',
+    ["INVTYPE_HAND"] = 'Hands', --	10',
+    ["INVTYPE_FINGER"] = 'Ring', --	11,12',
+    ["INVTYPE_TRINKET"] = 'Trinket', --	13,14',
+    ["INVTYPE_CLOAK"] = 'Cloak', --	15',
+    ["INVTYPE_WEAPON"] = 'One-Hand', --	16,17',
+    ["INVTYPE_SHIELD"] = 'Shield', --	17',
+    ["INVTYPE_2HWEAPON"] = 'Two-Handed', --	16',
+    ["INVTYPE_WEAPONMAINHAND"] = 'Main-Hand Weapon', --	16',
+    ["INVTYPE_WEAPONOFFHAND"] = 'Off-Hand Weapon', --	17',
+    ["INVTYPE_HOLDABLE"] = 'Held In Off-Hand', --	17',
+    ["INVTYPE_RANGED"] = 'Bow', --	18',
+    ["INVTYPE_THROWN"] = 'Ranged', --	18',
+    ["INVTYPE_RANGEDRIGHT"] = 'Wands, Guns, and Crossbows', --	18',
+    ["INVTYPE_RELIC"] = 'Relic', --	18',
+    ["INVTYPE_TABARD"] = 'Tabard', --	19',
+    ["INVTYPE_BAG"] = 'Container', --	20,21,22,23',
+    ["INVTYPE_QUIVER"] = 'Quiver', --	20,21,22,23',
 }
 
 function getEquipSlot(j)
     for k, v in next, equipSlots do
-        if (k == tostring(j)) then return v
-        end
+        if (k == tostring(j)) then return v end
     end
     return ''
 end
@@ -412,9 +431,7 @@ LCVoteFrame:SetScript("OnEvent", function()
         end
         if (event == "ADDON_LOADED" and arg1 == 'TWLC2') then
 
-            if (not TIME_TO_NEED) then
-                TIME_TO_NEED = 30
-            end
+            if (not TIME_TO_NEED) then TIME_TO_NEED = 30 end
 
             TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
 
@@ -1083,11 +1100,8 @@ end
 -- comms
 LCVoteFrameComms:SetScript("OnEvent", function()
     if (event) then
-        if (event == 'CHAT_MSG_ADDON') then
-
-            if (arg1 == "TWLCNF") then
-                LCVoteFrameComms:handleSync(arg1, arg2, arg3, arg4)
-            end
+        if event == 'CHAT_MSG_ADDON' and arg1 == "TWLCNF" then
+            LCVoteFrameComms:handleSync(arg1, arg2, arg3, arg4)
         end
     end
 end)
@@ -1097,10 +1111,8 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     twdebug(sender .. ' says: ' .. t)
     if (string.find(t, 'playerRoll:', 1, true)) then
 
-        if not twlc2isRL(sender) or sender == me then return
-        end
-        if not canVote(me) then return
-        end
+        if not twlc2isRL(sender) or sender == me then return end
+        if not canVote(me) then return end
 
         local indexEx = string.split(t, ':')
         if (indexEx[2] and indexEx[3]) then
@@ -1112,10 +1124,8 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     end
     if (string.find(t, 'itemVote:', 1, true)) then
 
-        if not canVote(sender) or sender == me then return
-        end
-        if not canVote(me) then return
-        end
+        if not canVote(sender) or sender == me then return end
+        if not canVote(me) then return end
 
         local itemVoteEx = string.split(t, ':')
         if (itemVoteEx[2] and itemVoteEx[3] and itemVoteEx[4]) then
@@ -1138,10 +1148,8 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     end
     if (string.find(t, 'voteframe=', 1, true)) then
 
-        if not twlc2isRL(sender) then return
-        end
-        if not canVote(me) then return
-        end
+        if not twlc2isRL(sender) then return end
+        if not canVote(me) then return end
 
         local command = string.split(t, '=')
         if (command[2]) then
@@ -1160,8 +1168,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     end
     if (string.find(t, 'loot=', 1, true)) then
 
-        if not twlc2isRL(sender) then return
-        end
+        if not twlc2isRL(sender) then return end
 
         local item = string.split(t, "=")
         if (item[2] and item[3] and item[4] and item[5]) then
@@ -1176,10 +1183,8 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     end
     if (string.find(t, 'countdownframe=', 1, true)) then
 
-        if not twlc2isRL(sender) then return
-        end
-        if not canVote(me) then return
-        end
+        if not twlc2isRL(sender) then return end
+        if not canVote(me) then return end
 
         local action = string.split(t, "=")
         if (action[2]) then
@@ -1189,8 +1194,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     end
     if (string.find(t, 'wait=', 1, true)) then
 
-        if not canVote(me) then return
-        end
+        if not canVote(me) then return end
 
         local needEx = string.split(t, '=')
 
@@ -1262,10 +1266,8 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     end
     -- roster sync
     if (string.find(t, 'syncRoster=', 1, true)) then
-        if not twlc2isRL(sender) then return
-        end
-        if sender == me then return
-        end
+        if not twlc2isRL(sender) then return end
+        if sender == me then return end
 
         local command = string.split(t, '=')
         if (command[2]) then
@@ -1280,8 +1282,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         end
     end
     if (string.find(t, 'youWon=', 1, true)) then
-        if (not twlc2isRL(sender)) then return
-        end
+        if (not twlc2isRL(sender)) then return end
         local wonData = string.split(t, "=")
         if wonData[4] then
             LCVoteFrame.VotedItemsFrames[tonumber(wonData[4])].awardedTo = wonData[2]
@@ -1290,8 +1291,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         end
     end
     if (string.find(t, 'ttn=', 1, true)) then
-        if (not twlc2isRL(sender)) then return
-        end
+        if (not twlc2isRL(sender)) then return end
         local ttn = string.split(t, "=")
         if ttn[2] then
             TIME_TO_NEED = tonumber(ttn[2])
