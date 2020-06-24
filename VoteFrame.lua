@@ -52,49 +52,7 @@ LCVoteFrameComms:RegisterEvent("CHAT_MSG_ADDON")
 
 
 local LCVoteSyncFrame = CreateFrame("Frame")
-
-LCVoteSyncFrame.dataToSend = {}
 LCVoteSyncFrame.NEW_ROSTER = {}
-LCVoteSyncFrame:Hide()
-LCVoteSyncFrame:SetScript("OnShow", function()
-    if (LCVoteSyncFrame.dataToSend) then
---        twdebug('[LCVoteSyncFrame] Starting...');
-        this.startTime = (GetTime());
-        this.dataIndex = 0
-        for i = 1, table.getn(RLWindowFrame.assistFrames) do
-            getglobal('AssistFrame' .. i .. 'AssistCheck'):Disable()
-            getglobal('AssistFrame' .. i .. 'CLCheck'):Disable()
-        end
-    else
---        twdebug('[LCVoteSyncFrame] no data to send');
-        this.dataIndex = 0
-    end
-end)
-LCVoteSyncFrame:SetScript("OnUpdate", function()
-    if ((GetTime()) >= (this.startTime) + 0.1) then
-
-        this.dataIndex = this.dataIndex + 1
-
-        if (LCVoteSyncFrame.dataToSend[this.dataIndex]) then
---            twdebug('sending... ' .. this.dataToSend[this.dataIndex])
-            ChatThrottleLib:SendAddonMessage("BULK","TWLCNF", this.dataToSend[this.dataIndex], "RAID")
-        else
-            this:Hide()
-            this.dataIndex = 0
-            LCVoteSyncFrame.dataToSend = {}
-            twdebug('[LCVoteSyncFrame] Sync finished.');
-            ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "syncRoster=end", "RAID")
-
-            if (twlc2isRL(me)) then checkAssists() end
-        end
-
-        this.startTime = (GetTime());
-    else
-    end
-end)
-
-
-
 
 local ContestantDropdownMenu = CreateFrame('Frame', 'ContestantDropdownMenu', UIParent, 'UIDropDownMenuTemplate')
 ContestantDropdownMenu.currentContestantId = 0
@@ -188,7 +146,7 @@ VoteCountdown:SetScript("OnUpdate", function()
                         getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
                     end
                 end
---                twdebug('vote countdown finished')
+                --                twdebug('vote countdown finished')
             end
         else
             --
@@ -227,13 +185,13 @@ SlashCmdList["TWLC"] = function(cmd)
                     TIME_TO_NEED = tonumber(setEx[3])
                     TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
                     twprint('TIME_TO_NEED - set to ' .. TIME_TO_NEED .. 's')
-                    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
+                    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
                 end
                 if (setEx[2] == 'ttv') then
                     TIME_TO_VOTE = tonumber(setEx[3])
                     VoteCountdown.countDownFrom = TIME_TO_VOTE
                     twprint('TIME_TO_VOTE - set to ' .. TIME_TO_VOTE .. 's')
-                    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+                    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
                 end
             else
                 twprint('SET Options')
@@ -316,12 +274,17 @@ end
 
 function syncRoster()
     local index = 0
+    for i = 1, table.getn(RLWindowFrame.assistFrames) do
+        getglobal('AssistFrame' .. i .. 'AssistCheck'):Disable()
+        getglobal('AssistFrame' .. i .. 'CLCheck'):Disable()
+    end
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "syncRoster=start", "RAID")
     for name, v in next, TWLC_ROSTER do
         index = index + 1
-        LCVoteSyncFrame.dataToSend[index] = "syncRoster=" .. name
+        ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "syncRoster=" .. name, "RAID")
     end
-    ChatThrottleLib:SendAddonMessage("BULK","TWLCNF", "syncRoster=start", "RAID")
-    LCVoteSyncFrame:Show()
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "syncRoster=end", "RAID")
+    if (twlc2isRL(me)) then checkAssists() end
 end
 
 --RAID_CLASS_COLORS
@@ -432,7 +395,7 @@ LCVoteFrame:SetScript("OnEvent", function()
         if (event == "CHAT_MSG_SYSTEM") then
             if (string.find(arg1, "rolls", 1, true) and not string.find(arg1, "(1-100)", 1, true)) then --vote tie rolls
                 local r = string.split(arg1, " ")
---                twdebug(' ' .. r[1] .. ' rolls ' .. r[3])
+                --                twdebug(' ' .. r[1] .. ' rolls ' .. r[3])
             end
         end
         if (event == "ADDON_LOADED" and arg1 == 'TWLC2') then
@@ -499,10 +462,10 @@ function setAssistFromUI(id, to)
             local n, r = GetRaidRosterInfo(i);
             if (n == RLWindowFrame.assistFrames[id].name) then
                 if (to) then
---                    twdebug('promote ')
+                    --                    twdebug('promote ')
                     PromoteToAssistant(n)
                 else
---                    twdebug('demote ')
+                    --                    twdebug('demote ')
                     DemoteAssistant(n)
                 end
                 return true
@@ -599,12 +562,12 @@ function checkAssists()
 end
 
 function sendReset()
-    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "needframe=reset", "RAID")
-    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "voteframe=reset", "RAID")
+    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "needframe=reset", "RAID")
+    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "voteframe=reset", "RAID")
 end
 
 function sendCloseWindow()
-    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "voteframe=close", "RAID")
+    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "voteframe=close", "RAID")
 end
 
 function LCVoteFrame.closeWindow()
@@ -638,17 +601,17 @@ end
 
 function BroadcastLoot_OnClick()
 
-    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
-    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
+    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
 
     sendReset()
 
-    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "voteframe=show", "RAID")
+    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "voteframe=show", "RAID")
 
---    twdebug('broadcast start')
+    --    twdebug('broadcast start')
 
     TWLCCountDownFRAME:Show()
-    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", 'countdownframe=show', "RAID")
+    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'countdownframe=show', "RAID")
 
 
     for id = 0, GetNumLootItems() do
@@ -658,7 +621,7 @@ function BroadcastLoot_OnClick()
             local _, _, itemLink = string.find(GetLootSlotLink(id), "(item:%d+:%d+:%d+:%d+)");
             local _, _, quality = GetItemInfo(itemLink)
             if (quality >= 0) then
-                ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "loot=" .. id .. "=" .. lootIcon .. "=" .. lootName .. "=" .. GetLootSlotLink(id) .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
+                ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "loot=" .. id .. "=" .. lootIcon .. "=" .. lootName .. "=" .. GetLootSlotLink(id) .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
             end
         end
     end
@@ -817,8 +780,8 @@ function buildContestantMenu()
     award.tooltipText = 'Give him them loots'
     award.justifyH = 'LEFT'
     award.func = function()
---        awardWithConfirmation(getglobal("ContestantFrame" .. id).name)
-                awardPlayer(getglobal("ContestantFrame" .. id).name)
+        --        awardWithConfirmation(getglobal("ContestantFrame" .. id).name)
+        awardPlayer(getglobal("ContestantFrame" .. id).name)
     end
     UIDropDownMenu_AddButton(award);
 
@@ -834,6 +797,8 @@ function buildContestantMenu()
 end
 
 function ShowContenstantDropdownMenu(id)
+    local playerOffset = FauxScrollFrame_GetOffset(getglobal("ContestantScrollListFrame"));
+    id = id - playerOffset
     ContestantDropdownMenu.currentContestantId = id
 
     UIDropDownMenu_Initialize(ContestantDropdownMenu, buildContestantMenu, "MENU");
@@ -928,6 +893,7 @@ function VoteFrameListScroll_Update()
 
             getglobal("ContestantFrame" .. i):SetID(playerIndex)
             getglobal("ContestantFrame" .. i).playerIndex = playerIndex;
+            getglobal("ContestantFrame" .. i).cfID = i;
             itemIndex, name, need, votes, ci1, ci2, roll = getPlayerInfo(playerIndex);
             getglobal("ContestantFrame" .. i).name = name;
 
@@ -1116,7 +1082,7 @@ end)
 
 
 function LCVoteFrameComms:handleSync(pre, t, ch, sender)
-    twdebug(sender .. ' says: ' .. t)
+    --    twdebug(sender .. ' says: ' .. t)
     if (string.find(t, 'playerRoll:', 1, true)) then
 
         if not twlc2isRL(sender) or sender == me then return end
@@ -1204,6 +1170,8 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         if not canVote(me) then return end
 
+        twdebug('wait from ' .. sender .. ': ' .. t)
+        local startWork = GetTime()
         local needEx = string.split(t, '=')
 
         if (needEx[2] and needEx[3] and needEx[4]) then
@@ -1232,6 +1200,8 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         else
             twdebug('needEx = string.split(t, =) error')
         end
+
+        twdebug('wait process took : ' .. (GetTime() - startWork))
     end
     --ms=1=item:123=item:323
     if (string.find(t, 'bis=', 1, true) or string.find(t, 'ms=', 1, true)
@@ -1283,7 +1253,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
                 LCVoteSyncFrame.NEW_ROSTER = {}
             elseif (command[2] == "end") then
                 TWLC_ROSTER = LCVoteSyncFrame.NEW_ROSTER
---                twdebug('Roster updated.')
+                twdebug('Roster updated.')
             else
                 LCVoteSyncFrame.NEW_ROSTER[command[2]] = false
             end
@@ -1323,7 +1293,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
                 if (twlc_ver(i[4]) == twlc_ver(addonVer)) then verColor = classColors['hunter'].c end
                 if (twlc_ver(i[4]) < twlc_ver(addonVer)) then verColor = '|cffff222a' end
                 local color = classColors[getPlayerClass(i[3])]
---                twdebug(color.c .. i[3] .. " v" .. verColor .. i[4])
+                twdebug(color.c .. i[3] .. " v" .. verColor .. i[4])
             end
         end
     end
@@ -1393,14 +1363,14 @@ function VoteButton_OnClick(id)
         LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name] = {
             [me] = '+'
         }
-        ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":+", "RAID")
+        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":+", "RAID")
     else
         if LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name][me] == '+' then
             LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name][me] = '-'
-            ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":-", "RAID")
+            ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":-", "RAID")
         else
             LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name][me] = '+'
-            ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":+", "RAID")
+            ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":+", "RAID")
         end
     end
 
@@ -1474,7 +1444,7 @@ function calculateWinner()
         if (rollTie == 1) then
             getglobal("MLToWinner"):Enable();
             getglobal("MLToWinner"):SetText('Award ' .. LCVoteFrame.currentRollWinner);
---            twdebug('set text to award x')
+            --            twdebug('set text to award x')
             LCVoteFrame.currentItemWinner = LCVoteFrame.currentRollWinner
             LCVoteFrame.voteTiePlayers = ''
         else
@@ -1577,7 +1547,7 @@ function updateLCVoters()
 end
 
 function MLToWinner_OnClick()
---    twdebug(LCVoteFrame.voteTiePlayers)
+    --    twdebug(LCVoteFrame.voteTiePlayers)
     if (LCVoteFrame.voteTiePlayers ~= '') then
         local players = string.split(LCVoteFrame.voteTiePlayers, ' ')
         for i, d in next, LCVoteFrame.currentPlayersList do
@@ -1588,7 +1558,7 @@ function MLToWinner_OnClick()
                         if (pwPlayer['name'] == tieName and pwPlayer['itemIndex'] == LCVoteFrame.CurrentVotedItem) then
                             -- found the wait=
                             LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
-                            ChatThrottleLib:SendAddonMessage("BULK","TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll, "RAID")
+                            ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll, "RAID")
                             break
                         end
                     end
@@ -1605,26 +1575,26 @@ function MLToWinner_OnClick()
 end
 
 function MLTOME()
---    awardWithConfirmation(UnitName('player'))
+    --    awardWithConfirmation(UnitName('player'))
     awardPlayer(me)
 end
 
 function whoNF()
-    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "needframe=whoNF=" .. addonVer, "RAID")
+    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "needframe=whoNF=" .. addonVer, "RAID")
 end
 
-
-
-
-
 function Contestant_OnEnter(id)
+    local playerOffset = FauxScrollFrame_GetOffset(getglobal("ContestantScrollListFrame"));
+    id = id - playerOffset
     local r, g, b, a = getglobal('ContestantFrame' .. id):GetBackdropColor()
     getglobal('ContestantFrame' .. id):SetBackdropColor(r, g, b, 1)
 end
 
-function Contestant_OnLeave(id)
-    local r, g, b, a = getglobal('ContestantFrame' .. id):GetBackdropColor()
-    getglobal('ContestantFrame' .. id):SetBackdropColor(r, g, b, 0.5)
+function Contestant_OnLeave()
+    for i = 1, LCVoteFrame.playersPerPage do
+        local r, g, b, a = getglobal('ContestantFrame' .. i):GetBackdropColor()
+        getglobal('ContestantFrame' .. i):SetBackdropColor(r, g, b, 0.5)
+    end
 end
 
 function twlc2isCL(name)
@@ -1729,8 +1699,8 @@ end
 function awardPlayer(playerName)
 
     --debug
-    local link = LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].link
-    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "youWon=" .. playerName .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
+    --    local link = LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].link
+    --    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "youWon=" .. playerName .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
     --enddebug
 
     local unitIndex = 0
@@ -1747,8 +1717,8 @@ function awardPlayer(playerName)
         twprint("Something went wrong, winner name is not on loot list.")
     else
         local link = LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].link
-        ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "youWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
-        --GiveMasterLoot(itemIndex, unitIndex);
+        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "youWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
+        GiveMasterLoot(LCVoteFrame.CurrentVotedItem, unitIndex);
         LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo = playerName
         LCVoteFrame.updateVotedItemsFrames()
         twdebug('GiveMasterLoot(' .. LCVoteFrame.CurrentVotedItem .. ', ' .. unitIndex .. ');')
@@ -1771,11 +1741,11 @@ StaticPopupDialogs["TWLC_CONFIRM_LOOT_DISTRIBUTION"] = {
 };
 
 StaticPopupDialogs["TWLC_CONFIRM_LOOT_DISTRIBUTION"].OnAccept = function(data)
---    twdebug('popul confirm loot data : ' .. data)
+    --    twdebug('popul confirm loot data : ' .. data)
     if not LCVoteFrame.CurrentVotedItem then
---        twdebug('popul confirm loot LCVoteFrame.CurrentVotedItem : nil ')
+        --        twdebug('popul confirm loot LCVoteFrame.CurrentVotedItem : nil ')
     else
---        twdebug('popul confirm loot LCVoteFrame.CurrentVotedItem : ' .. LCVoteFrame.CurrentVotedItem)
+        --        twdebug('popul confirm loot LCVoteFrame.CurrentVotedItem : ' .. LCVoteFrame.CurrentVotedItem)
     end
     --    awardPlayer(data)
     --    twdebug('GiveMasterLoot(' .. LCVoteFrame.CurrentVotedItem .. ', ' .. data .. ');')
