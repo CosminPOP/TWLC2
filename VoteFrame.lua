@@ -1,4 +1,4 @@
-local addonVer = "1.0.0" --don't use letters!
+local addonVer = "1.0.2" --don't use letters!
 local me = UnitName('player')
 
 TWLC_ROSTER = {}
@@ -74,14 +74,33 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
     if gt >= st then
         if (TWLCCountDownFRAME.currentTime ~= TWLCCountDownFRAME.countDownFrom + plus) then
             --tick
-            getglobal('LootLCVoteFrameWindowTimeLeftBar'):SetWidth((TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime + plus) * 500 / TWLCCountDownFRAME.countDownFrom)
 
-            --            if (LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] and LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem]) then
-            --                if (TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime > 0) then
-            --                    getglobal('LootLCVoteFrameWindowContestantCount'):SetText('(' .. math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) .. 's) Waiting picks ' ..
-            --                            LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] .. '/' .. LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem])
-            --                end
-            --            end
+            if (LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem]) then
+                if LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone then
+                    getglobal('LootLCVoteFrameWindowTimeLeftBar'):Hide()
+                else
+                    getglobal('LootLCVoteFrameWindowTimeLeftBar'):Show()
+                end
+            end
+
+            local tlx = 15 + ((TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime + plus) * 500 / TWLCCountDownFRAME.countDownFrom)
+            if (tlx <= 250) then
+                tlx = 250
+            end
+            if math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) > 55 then
+                getglobal('LootLCVoteFrameWindowTimeLeft'):Hide()
+            end
+            if math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) <= 55 then
+                getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
+            end
+            if math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) < 1 then
+                getglobal('LootLCVoteFrameWindowTimeLeft'):Hide()
+            end
+
+            getglobal('LootLCVoteFrameWindowTimeLeft'):SetText(math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) .. 's')
+            getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", tlx, 12)
+
+            getglobal('LootLCVoteFrameWindowTimeLeftBar'):SetWidth((TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime + plus) * 500 / TWLCCountDownFRAME.countDownFrom)
         end
         TWLCCountDownFRAME:Hide()
         if (TWLCCountDownFRAME.currentTime < TWLCCountDownFRAME.countDownFrom + plus) then
@@ -94,7 +113,14 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
             TWLCCountDownFRAME:Hide()
             TWLCCountDownFRAME.currentTime = 1
 
+            getglobal('MLToWinner'):Enable()
+
+            VoteCountdown.votingOpen = true
+            VoteFrameListScroll_Update()
+
             VoteCountdown:Show()
+
+
 
         else
             --
@@ -106,9 +132,11 @@ end)
 
 VoteCountdown:Hide()
 VoteCountdown.currentTime = 1
+VoteCountdown.votingOpen = true
 VoteCountdown:SetScript("OnShow", function()
     this.startTime = GetTime();
 end)
+
 
 VoteCountdown:SetScript("OnUpdate", function()
     local plus = 0.03
@@ -117,6 +145,10 @@ VoteCountdown:SetScript("OnUpdate", function()
     if gt >= st then
         if (VoteCountdown.currentTime ~= VoteCountdown.countDownFrom + plus) then
             --tick
+            if (VoteCountdown.countDownFrom - VoteCountdown.currentTime) >= 0 then
+                getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
+                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Please VOTE ! ' .. math.floor((VoteCountdown.countDownFrom - VoteCountdown.currentTime)) .. 's left ! ')
+            end
 
             for i = 1, LCVoteFrame.playersPerPage, 1 do
                 if getglobal('ContestantFrame' .. i .. 'VoteButton'):IsEnabled() == 1 then
@@ -124,8 +156,12 @@ VoteCountdown:SetScript("OnUpdate", function()
                     w = w / 1000
 
                     if (w >= 0 and w <= 1) then
-                        getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetWidth(w * 90)
+                        --                        if (w == 0) then
+                        --                            getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, 0)
+                        --                        else
                         getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, w)
+                        --                        end
+                        getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetWidth(math.floor(w * 90))
                     end
                 end
             end
@@ -139,14 +175,20 @@ VoteCountdown:SetScript("OnUpdate", function()
                 --end
                 VoteCountdown:Hide()
                 VoteCountdown.currentTime = 1
+                VoteCountdown.votingOpen = false
                 for i = 1, LCVoteFrame.playersPerPage, 1 do
                     if getglobal('ContestantFrame' .. i .. 'VoteButton'):IsEnabled() == 1 then
                         getglobal('ContestantFrame' .. i .. 'VoteButton'):Disable()
                         getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetTexture(0.4, 0.4, 0.4, 0)
                         getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
+                        getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetWidth(90)
                     end
                 end
+
+                getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
+                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Time\'s up ! Voting closed !')
                 --                twdebug('vote countdown finished')
+                getglobal("MLToWinner"):Enable()
             end
         else
             --
@@ -205,19 +247,6 @@ SlashCmdList["TWLC"] = function(cmd)
         if (cmd == 'show') then
             getglobal("LootLCVoteFrameWindow"):Show()
         end
-        --        if (cmd == 'who') then
-        --            lcprint("Listing people with the addon (* = can vote):")
-        --            resetRoster()
-        --            if isAssistOrRL(me) then
-        --                lcprint("*" .. colorPlayer(me) .. " version " .. addonVer .. ")")
-        --            else
-        --                lcprint("" .. colorPlayer(me) .. " version " .. addonVer .. ")")
-        --            end
-        --            if (LCRoster[me] ~= nil) then
-        --                LCRoster[me] = true
-        --            end
-        --            lcWho()
-        --        end
     end
 end
 
@@ -385,17 +414,21 @@ LCVoteFrame:SetScript("OnEvent", function()
         if (event == "RAID_ROSTER_UPDATE") then
             if (twlc2isRL(me)) then
                 getglobal('RLOptionsButton'):Show()
+                getglobal('RLExtraFrame'):Show()
                 getglobal('MLToWinner'):Show()
                 getglobal('MLToWinner'):Disable()
                 checkAssists() --todo asta poate trebuie on ?
             else
                 getglobal('MLToWinner'):Hide()
+                getglobal('RLExtraFrame'):Hide()
+            end
+            if not canVote(me) then
+                getglobal('LootLCVoteFrameWindow'):Hide()
             end
         end
         if (event == "CHAT_MSG_SYSTEM") then
             if (string.find(arg1, "rolls", 1, true) and not string.find(arg1, "(1-100)", 1, true)) then --vote tie rolls
                 local r = string.split(arg1, " ")
-                --                twdebug(' ' .. r[1] .. ' rolls ' .. r[3])
             end
         end
         if (event == "ADDON_LOADED" and arg1 == 'TWLC2') then
@@ -413,9 +446,11 @@ LCVoteFrame:SetScript("OnEvent", function()
             if (twlc2isRL(me)) then
                 getglobal('RLOptionsButton'):Show()
                 getglobal('ResetClose'):Show()
+                getglobal('RLExtraFrame'):Show()
             else
                 getglobal('RLOptionsButton'):Hide()
                 getglobal('ResetClose'):Hide()
+                getglobal('RLExtraFrame'):Hide()
             end
 
 
@@ -526,12 +561,14 @@ function checkAssists()
         }
     end
 
+    getglobal('RLWindowFrame'):SetHeight(100 + table.getn(people) * 25)
+
     for i, d in next, people do
         if (not RLWindowFrame.assistFrames[i]) then
             RLWindowFrame.assistFrames[i] = CreateFrame('Frame', 'AssistFrame' .. i, getglobal("RLWindowFrame"), 'CLListFrameTemplate')
         end
 
-        RLWindowFrame.assistFrames[i]:SetPoint("TOPLEFT", getglobal("RLWindowFrame"), "TOPLEFT", 0, d.y)
+        RLWindowFrame.assistFrames[i]:SetPoint("TOPLEFT", getglobal("RLWindowFrame"), "TOPLEFT", 10, d.y)
         RLWindowFrame.assistFrames[i]:Show()
         RLWindowFrame.assistFrames[i].name = d.name
 
@@ -562,12 +599,12 @@ function checkAssists()
 end
 
 function sendReset()
-    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "needframe=reset", "RAID")
-    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "voteframe=reset", "RAID")
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "needframe=reset", "RAID")
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "voteframe=reset", "RAID")
 end
 
 function sendCloseWindow()
-    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "voteframe=close", "RAID")
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "voteframe=close", "RAID")
 end
 
 function LCVoteFrame.closeWindow()
@@ -601,17 +638,22 @@ end
 
 function BroadcastLoot_OnClick()
 
-    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
-    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+    if (GetNumLootItems() == 0) then
+        twprint('There are no items in the loot frame.')
+        return
+    end
+
+    getglobal('BroadcastLoot'):Disable()
+
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
 
     sendReset()
 
-    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "voteframe=show", "RAID")
-
-    --    twdebug('broadcast start')
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "voteframe=show", "RAID")
 
     TWLCCountDownFRAME:Show()
-    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'countdownframe=show', "RAID")
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'countdownframe=show', "RAID")
 
 
     for id = 0, GetNumLootItems() do
@@ -646,6 +688,8 @@ function addVotedItem(index, texture, name, link)
     LCVoteFrame.VotedItemsFrames[index].link = link
     LCVoteFrame.VotedItemsFrames[index].texture = texture
     LCVoteFrame.VotedItemsFrames[index].awardedTo = ''
+    LCVoteFrame.VotedItemsFrames[index].rolled = false
+    LCVoteFrame.VotedItemsFrames[index].pickedByEveryone = false
 
     addButtonOnEnterTooltip(getglobal('VotedItem' .. index .. 'VotedItemButton'), link)
 
@@ -689,6 +733,9 @@ function VotedItemButton_OnClick(id)
     getglobal('MLToWinner'):Hide()
     if (twlc2isRL(me)) then
         getglobal('MLToWinner'):Show()
+    end
+    if (canVote(me) and not twlc2isRL(me)) then
+        getglobal('WinnerStatus'):Show()
     end
 
     SetDesaturation(getglobal('VotedItem' .. id .. 'VotedItemButton'):GetNormalTexture(), 0)
@@ -797,6 +844,9 @@ function buildContestantMenu()
 end
 
 function ShowContenstantDropdownMenu(id)
+
+    if not twlc2isRL(me) then return end
+
     local playerOffset = FauxScrollFrame_GetOffset(getglobal("ContestantScrollListFrame"));
     id = id - playerOffset
     ContestantDropdownMenu.currentContestantId = id
@@ -868,9 +918,13 @@ function VoteFrameListScroll_Update()
     end
     if (LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem]) then
         getglobal('LootLCVoteFrameWindowContestantCount'):SetText('|cff1fba1fEveryone(' .. LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] .. ') has picked.')
+        LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone = true
+        getglobal('LootLCVoteFrameWindowTimeLeftBar'):Hide()
     else
         getglobal('LootLCVoteFrameWindowContestantCount'):SetText('Waiting picks ' ..
                 LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] .. '/' .. LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem])
+        LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone = false
+        getglobal('LootLCVoteFrameWindowTimeLeftBar'):Show()
     end
 
 
@@ -927,12 +981,16 @@ function VoteFrameListScroll_Update()
             end
 
             getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetTexture(0.05, 0.56, 0.23, 1)
-            getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, 1)
-            if (LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo ~= '' or
-                    LCVoteFrame.numPlayersThatWant == 1) then
+            --            getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, 1)
+            if LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo ~= '' or
+                    LCVoteFrame.numPlayersThatWant == 1 or
+                    LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].rolled or
+                    not LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone or
+                    not VoteCountdown.votingOpen then
                 getglobal("ContestantFrame" .. i .. "VoteButton"):Disable();
                 getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetTexture(0.4, 0.4, 0.4, .4)
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
+                getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetWidth(90)
             end
 
             getglobal("ContestantFrame" .. i .. "RollWinner"):Hide();
@@ -1029,6 +1087,9 @@ end
 
 function LCVoteFrame.ResetVars(show)
 
+    TWLCCountDownFRAME:Hide()
+    VoteCountdown:Hide()
+
     LCVoteFrame.CurrentVotedItem = nil
     LCVoteFrame.currentPlayersList = {}
     LCVoteFrame.playersWhoWantItems = {}
@@ -1044,9 +1105,11 @@ function LCVoteFrame.ResetVars(show)
     getglobal('LootLCVoteFrameWindowContestantCount'):SetText()
 
     getglobal('BroadcastLoot'):Disable()
+    getglobal("WinnerStatus"):Hide()
     getglobal("MLToWinner"):Hide()
     getglobal("MLToWinner"):Disable()
     getglobal("MLToWinnerNrOfVotes"):SetText()
+    getglobal("WinnerStatusNrOfVotes"):SetText()
 
     for index, frame in next, LCVoteFrame.VotedItemsFrames do
         getglobal('VotedItem' .. index):Hide()
@@ -1057,6 +1120,8 @@ function LCVoteFrame.ResetVars(show)
     end
 
     TWLCCountDownFRAME.currentTime = 1
+    VoteCountdown.currentTime = 1
+    VoteCountdown.votingOpen = false
 
     getglobal('LootLCVoteFrameWindowTimeLeftBar'):SetWidth(500)
 
@@ -1079,7 +1144,7 @@ end)
 
 
 function LCVoteFrameComms:handleSync(pre, t, ch, sender)
-    --    twdebug(sender .. ' says: ' .. t)
+    twdebug(sender .. ' says: ' .. t)
     if (string.find(t, 'playerRoll:', 1, true)) then
 
         if not twlc2isRL(sender) or sender == me then return end
@@ -1088,6 +1153,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         local indexEx = string.split(t, ':')
         if (indexEx[2] and indexEx[3]) then
             LCVoteFrame.playersWhoWantItems[tonumber(indexEx[2])]['roll'] = tonumber(indexEx[3])
+            LCVoteFrame.VotedItemsFrames[tonumber(indexEx[4])].rolled = true
             VoteFrameListScroll_Update()
         else
             --todo
@@ -1166,7 +1232,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         if not canVote(me) then return end
 
-        twdebug('wait from ' .. sender .. ': ' .. t)
+        --        twdebug('wait from ' .. sender .. ': ' .. t)
         local startWork = GetTime()
         local needEx = string.split(t, '=')
 
@@ -1212,7 +1278,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             twdebug('needEx = string.split(t, =) error')
         end
 
-        twdebug('wait process took : ' .. (GetTime() - startWork))
+        --        twdebug('wait process took : ' .. (GetTime() - startWork))
     end
     --ms=1=item:123=item:323
     if (string.find(t, 'bis=', 1, true) or string.find(t, 'ms=', 1, true)
@@ -1439,7 +1505,9 @@ function calculateWinner()
 
     if (LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo ~= '') then
         getglobal("MLToWinner"):Disable();
-        getglobal("MLToWinner"):SetText('Awarded to ' .. LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo);
+        local color = classColors[getPlayerClass(LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo)]
+        getglobal("MLToWinner"):SetText('Awarded to ' .. color.c .. LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo);
+        getglobal("WinnerStatus"):SetText('Awarded to ' .. color.c .. LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo);
         return
     end
 
@@ -1454,13 +1522,16 @@ function calculateWinner()
     if (rollTie ~= 0) then
         if (rollTie == 1) then
             getglobal("MLToWinner"):Enable();
-            getglobal("MLToWinner"):SetText('Award ' .. LCVoteFrame.currentRollWinner);
+            local color = classColors[getPlayerClass(LCVoteFrame.currentRollWinner)]
+            getglobal("MLToWinner"):SetText('Award ' .. color.c .. LCVoteFrame.currentRollWinner);
+            getglobal("WinnerStatus"):SetText('Winner: ' .. color.c .. LCVoteFrame.currentRollWinner);
             --            twdebug('set text to award x')
             LCVoteFrame.currentItemWinner = LCVoteFrame.currentRollWinner
             LCVoteFrame.voteTiePlayers = ''
         else
             getglobal("MLToWinner"):Enable();
             getglobal("MLToWinner"):SetText('ROLL VOTE TIE'); -- .. voteTies
+            getglobal("WinnerStatus"):SetText('VOTE TIE'); -- .. voteTies
         end
         return
     else
@@ -1490,7 +1561,9 @@ function calculateWinner()
         if (LCVoteFrame.numPlayersThatWant == 1) then
             LCVoteFrame.currentItemWinner = LCVoteFrame.namePlayersThatWants
             getglobal("MLToWinner"):Enable();
-            getglobal("MLToWinner"):SetText('Award single needer ' .. LCVoteFrame.currentItemWinner);
+            local color = classColors[getPlayerClass(LCVoteFrame.currentItemWinner)]
+            getglobal("MLToWinner"):SetText('Award single picker ' .. color.c .. LCVoteFrame.currentItemWinner);
+            getglobal("WinnerStatus"):SetText('Single picker ' .. color.c .. LCVoteFrame.currentItemWinner);
             return
         end
 
@@ -1510,15 +1583,21 @@ function calculateWinner()
         if (ties > 1) then
             getglobal("MLToWinner"):Enable();
             getglobal("MLToWinner"):SetText('ROLL VOTE TIE'); -- .. voteTies
+            getglobal("WinnerStatus"):SetText('VOTE TIE'); -- .. voteTies
         else
             --no tie
             LCVoteFrame.voteTiePlayers = ''
             if (LCVoteFrame.currentItemWinner ~= '') then
-                getglobal("MLToWinner"):Enable();
-                getglobal("MLToWinner"):SetText('Award ' .. LCVoteFrame.currentItemWinner);
+                if not VoteCountdown.votingOpen then
+                    getglobal("MLToWinner"):Enable();
+                end
+                local color = classColors[getPlayerClass(LCVoteFrame.currentItemWinner)]
+                getglobal("MLToWinner"):SetText('Award ' .. color.c .. LCVoteFrame.currentItemWinner);
+                getglobal("WinnerStatus"):SetText('Winner: ' .. color.c .. LCVoteFrame.currentItemWinner);
             else
                 getglobal("MLToWinner"):Disable()
                 getglobal("MLToWinner"):SetText('Waiting votes...')
+                getglobal("WinnerStatus"):SetText('Waiting votes...')
             end
         end
     end
@@ -1552,14 +1631,19 @@ function updateLCVoters()
     end
     if (nr == numOfficersInRaid) then
         getglobal('MLToWinnerNrOfVotes'):SetText('|cff1fba1fEveryone voted!')
+        getglobal('WinnerStatusNrOfVotes'):SetText('|cff1fba1fEveryone voted!')
+        getglobal('MLToWinner'):Enable()
     else
         getglobal('MLToWinnerNrOfVotes'):SetText('|cffa53737' .. nr .. '/' .. numOfficersInRaid .. ' votes')
+        getglobal('WinnerStatusNrOfVotes'):SetText('|cffa53737' .. nr .. '/' .. numOfficersInRaid .. ' votes')
+        getglobal('MLToWinner'):Disable()
     end
 end
 
 function MLToWinner_OnClick()
     --    twdebug(LCVoteFrame.voteTiePlayers)
     if (LCVoteFrame.voteTiePlayers ~= '') then
+        LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].rolled = true
         local players = string.split(LCVoteFrame.voteTiePlayers, ' ')
         for i, d in next, LCVoteFrame.currentPlayersList do
             for pIndex, tieName in next, players do
@@ -1569,7 +1653,7 @@ function MLToWinner_OnClick()
                         if (pwPlayer['name'] == tieName and pwPlayer['itemIndex'] == LCVoteFrame.CurrentVotedItem) then
                             -- found the wait=
                             LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
-                            ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll, "RAID")
+                            ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll .. ":" .. LCVoteFrame.CurrentVotedItem, "RAID")
                             break
                         end
                     end
@@ -1583,11 +1667,6 @@ function MLToWinner_OnClick()
         awardPlayer(LCVoteFrame.currentItemWinner)
         --awardWithConfirmation(LCVoteFrame.currentItemWinner)
     end
-end
-
-function MLTOME()
-    --    awardWithConfirmation(UnitName('player'))
-    awardPlayer(me)
 end
 
 function whoNF()
