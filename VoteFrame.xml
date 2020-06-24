@@ -328,7 +328,7 @@
                             Contestant_OnEnter(this:GetID())
                     </OnEnter>
                     <OnLeave>
-                            Contestant_OnLeave(this:GetID())
+                            Contestant_OnLeave()
                     </OnLeave>
                 </Scripts>
             </Button>
@@ -337,12 +337,12 @@
                 <PushedTexture inherits=""/>
                 <HighlightTexture inherits=""/>
                 <Size>
-                    <AbsDimension x="50" y="20"/>
+                    <AbsDimension x="55" y="20"/>
                 </Size>
                 <Anchors>
                     <Anchor point="LEFT">
                         <Offset>
-                            <AbsDimension x="270" y="0"/>
+                            <AbsDimension x="265" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -459,7 +459,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="250" y="0"/>
+                            <AbsDimension x="241" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
