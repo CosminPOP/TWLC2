@@ -105,7 +105,7 @@
 
     <Frame name="CLListFrameTemplate" virtual="true" enableMouse="true">
         <Size>
-            <AbsDimension x="300" y="24"/>
+            <AbsDimension x="280" y="24"/>
         </Size>
         <Anchors>
             <Anchor point="TOPLEFT">
@@ -614,7 +614,17 @@
                     <Anchors>
                         <Anchor point="BOTTOMLEFT">
                             <Offset>
-                                <AbsDimension x="14" y="11"/>
+                                <AbsDimension x="14" y="12"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+
+                <FontString name="$parentTimeLeft" inherits="GameFontNormal" text="25s" hidden="true">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT">
+                            <Offset>
+                                <AbsDimension x="500" y="12"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -706,49 +716,99 @@
                 </Scripts>
             </Button>
 
-            <Button name="BroadcastLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
-                    text="Broadcast Loot">
+            <Frame name="RLExtraFrame" hidden="true" toplevel="true"
+                   parent="LootLCVoteFrameWindow" movable="false" enableMouse="true">
                 <Size>
-                    <AbsDimension x="120" y="20"/>
+                    <AbsDimension x="516" y="55"/>
                 </Size>
                 <Anchors>
                     <Anchor point="BOTTOM">
                         <Offset>
-                            <AbsDimension x="0" y="7"/>
+                            <AbsDimension x="0" y="-50"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
-                <Scripts>
-                    <OnClick>
-                            BroadcastLoot_OnClick();
-                    </OnClick>
+                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                          edgeFile="Interface\addons\TWLC2\images\border work\border-azer"
+                          tile="false">
+                    <EdgeSize>
+                        <AbsValue val="32"/>
+                    </EdgeSize>
+                    <TileSize>
+                        <AbsValue val="1"/>
+                    </TileSize>
+                    <BackgroundInsets>
+                        <AbsInset left="5" right="5" top="5" bottom="5"/>
+                    </BackgroundInsets>
+                </Backdrop>
+                <Frames>
 
-                </Scripts>
-            </Button>
+                    <Button name="BroadcastLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+                            text="Broadcast Loot">
+                        <Size>
+                            <AbsDimension x="120" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="LEFT">
+                                <Offset>
+                                    <AbsDimension x="20" y="0"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    BroadcastLoot_OnClick();
+                            </OnClick>
 
-            <Button name="ResetClose" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
-                    text="Reset and close">
-                <Size>
-                    <AbsDimension x="120" y="20"/>
-                </Size>
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT">
-                        <Offset>
-                            <AbsDimension x="-30" y="7"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                            ResetClose_OnClick();
-                    </OnClick>
+                        </Scripts>
+                    </Button>
 
-                </Scripts>
-            </Button>
+                    <Button name="ResetClose" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
+                            text="Reset and close">
+                        <Size>
+                            <AbsDimension x="120" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="CENTER">
+                                <Offset>
+                                    <AbsDimension x="0" y="0"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    ResetClose_OnClick();
+                            </OnClick>
+
+                        </Scripts>
+                    </Button>
+
+                    <Button name="RLOptionsButton" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
+                            text="RL Options">
+                        <Size>
+                            <AbsDimension x="120" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="RIGHT">
+                                <Offset>
+                                    <AbsDimension x="-20" y="0"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    toggleRLOptionsFrame()
+                                    PlaySound("igMainMenuOptionCheckBoxOn");
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                </Frames>
+            </Frame>
 
             <Button name="MLToWinner" inherits="UIPanelButtonTemplate2" hidden="true" text="ML to Winner">
                 <Size>
-                    <AbsDimension x="120" y="24"/>
+                    <AbsDimension x="200" y="24"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT">
@@ -776,6 +836,36 @@
                     </OnClick>
 
                 </Scripts>
+            </Button>
+
+            <Button name="WinnerStatus" inherits="UIPanelButtonTemplate" hidden="true" text="winner status">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <DisabledTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="200" y="24"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-20" y="-33"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentNrOfVotes" inherits="GameFontNormal" text="non ML vote status">
+                            <Anchors>
+                                <Anchor point="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-30"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
             </Button>
 
             <Button name="$parentMinimizeButton" inherits="UIPanelCloseButton">
@@ -879,42 +969,6 @@
                     <OnClick>
                     </OnClick>
                 </Scripts>
-            </Button>
-
-            <Button name="RLOptionsButton" hidden="true">
-                <Size>
-                    <AbsDimension x="32" y="32"/>
-                </Size>
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT">
-                        <Offset>
-                            <AbsDimension x="0" y="3"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                            toggleRLOptionsFrame()
-                            PlaySound("igMainMenuOptionCheckBoxOn");
-                    </OnClick>
-                </Scripts>
-                <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
-                <PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
-                <DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
-                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
-                <ButtonText>
-                    <Anchors>
-                        <Anchor point="RIGHT">
-                            <Offset>
-                                <AbsDimension x="-32" y="0"/>
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </ButtonText>
-                <NormalFont inherits="GameFontNormalSmall"/>
-                <PushedTextOffset>
-                    <AbsDimension x="0" y="0"/>
-                </PushedTextOffset>
             </Button>
 
             <Frame name="ContestantScrollListBackground">
@@ -1147,7 +1201,7 @@
                     </Anchor>
                 </Anchors>
                 <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-                    <Color r="0" g="0.88" b="0.06" a=".5"/>
+                    <Color r="0" g="0.88" b="0.06" a="1"/>
                 </Backdrop>
             </Frame>
 
@@ -1158,11 +1212,22 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT">
                         <Offset>
-                            <AbsDimension x="305" y="0"/>
+                            <AbsDimension x="295" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
-                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
+                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                          edgeFile="Interface\addons\TWLC2\images\border work\border-azer"
+                          tile="false">
+                    <EdgeSize>
+                        <AbsValue val="32"/>
+                    </EdgeSize>
+                    <TileSize>
+                        <AbsValue val="1"/>
+                    </TileSize>
+                    <BackgroundInsets>
+                        <AbsInset left="5" right="5" top="5" bottom="5"/>
+                    </BackgroundInsets>
                 </Backdrop>
                 <Layers>
                     <Layer level="OVERLAY">
@@ -1179,7 +1244,7 @@
                             <Anchors>
                                 <Anchor point="TOPLEFT">
                                     <Offset>
-                                        <AbsDimension x="2" y="-70"/>
+                                        <AbsDimension x="12" y="-70"/>
                                     </Offset>
                                 </Anchor>
                             </Anchors>
@@ -1188,7 +1253,7 @@
                             <Anchors>
                                 <Anchor point="TOPLEFT">
                                     <Offset>
-                                        <AbsDimension x="140" y="-70"/>
+                                        <AbsDimension x="145" y="-70"/>
                                     </Offset>
                                 </Anchor>
                             </Anchors>
@@ -1205,14 +1270,32 @@
                     </Layer>
                 </Layers>
                 <Frames>
+                    <Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+                        <Size>
+                            <AbsDimension x="22" y="22"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-10" y="-4"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    toggleRLOptionsFrame()
+                                    PlaySound("igMainMenuOptionCheckBoxOn");
+                            </OnClick>
+                        </Scripts>
+                    </Button>
                     <Frame name="$parentTitleBar">
                         <Size>
-                            <AbsDimension x="300" y="1"/>
+                            <AbsDimension x="286" y="1"/>
                         </Size>
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="0" y="-25"/>
+                                    <AbsDimension x="6" y="-25"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -1222,26 +1305,6 @@
                             <!--                    </BackgroundInsets>-->
                         </Backdrop>
                     </Frame>
-
-                    <Button name="MLtoME" inherits="UIPanelButtonTemplate2" text="ML to me">
-                        <Size>
-                            <AbsDimension x="120" y="24"/>
-                        </Size>
-                        <Anchors>
-                            <Anchor point="TOPRIGHT">
-                                <Offset>
-                                    <AbsDimension x="-10" y="-30"/>
-                                </Offset>
-                            </Anchor>
-                        </Anchors>
-                        <Scripts>
-                            <OnClick>
-                                    MLTOME();
-                            </OnClick>
-
-                        </Scripts>
-                    </Button>
-
                 </Frames>
             </Frame>
 
