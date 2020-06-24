@@ -890,13 +890,10 @@ function VoteFrameListScroll_Update()
 
         if (getPlayerInfo(playerIndex)) then
 
-
             getglobal("ContestantFrame" .. i):SetID(playerIndex)
             getglobal("ContestantFrame" .. i).playerIndex = playerIndex;
-            getglobal("ContestantFrame" .. i).cfID = i;
             itemIndex, name, need, votes, ci1, ci2, roll = getPlayerInfo(playerIndex);
             getglobal("ContestantFrame" .. i).name = name;
-
 
             local class = getPlayerClass(name)
             local color = classColors[class]
@@ -1106,7 +1103,6 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             local votedItem = tonumber(itemVoteEx[2])
             local votedPlayer = itemVoteEx[3]
             local vote = itemVoteEx[4]
-            --        twdebug('voteditem ' .. votedItem .. ' votedplayuer ' .. votedPlayer .. ' ' .. vote)
             if (not LCVoteFrame.itemVotes[votedItem][votedPlayer]) then
                 LCVoteFrame.itemVotes[votedItem][votedPlayer] = {}
             end
@@ -1176,27 +1172,42 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         if (needEx[2] and needEx[3] and needEx[4]) then
 
-            --todo : check daca exista deja, limit once
-            if (LCVoteFrame.waitResponses[tonumber(needEx[2])]) then
-                LCVoteFrame.waitResponses[tonumber(needEx[2])] = LCVoteFrame.waitResponses[tonumber(needEx[2])] + 1
-            else
-                LCVoteFrame.waitResponses[tonumber(needEx[2])] = 1
+            local exists = false
+            if (table.getn(LCVoteFrame.playersWhoWantItems) ~= 0) then
+                for i = 1, table.getn(LCVoteFrame.playersWhoWantItems) do
+                    if LCVoteFrame.playersWhoWantItems[i]['itemIndex'] == tonumber(needEx[2]) and
+                            LCVoteFrame.playersWhoWantItems[i]['name'] == sender then
+                        exists = true
+                        break
+                    end
+                end
             end
 
-            LCVoteFrame.playersWhoWantItems[table.getn(LCVoteFrame.playersWhoWantItems) + 1] = {
-                ['itemIndex'] = tonumber(needEx[2]),
-                ['name'] = sender,
-                ['need'] = 'wait',
-                ['ci1'] = needEx[3],
-                ['ci2'] = needEx[4],
-                ['votes'] = 0,
-                ['roll'] = 0
-            }
+            if exists then
+                --same itemIndex & name --do nothing
+            else
 
-            LCVoteFrame.itemVotes[tonumber(needEx[2])] = {}
-            LCVoteFrame.itemVotes[tonumber(needEx[2])][sender] = {}
+                if (LCVoteFrame.waitResponses[tonumber(needEx[2])]) then
+                    LCVoteFrame.waitResponses[tonumber(needEx[2])] = LCVoteFrame.waitResponses[tonumber(needEx[2])] + 1
+                else
+                    LCVoteFrame.waitResponses[tonumber(needEx[2])] = 1
+                end
 
-            VoteFrameListScroll_Update()
+                LCVoteFrame.playersWhoWantItems[table.getn(LCVoteFrame.playersWhoWantItems) + 1] = {
+                    ['itemIndex'] = tonumber(needEx[2]),
+                    ['name'] = sender,
+                    ['need'] = 'wait',
+                    ['ci1'] = needEx[3],
+                    ['ci2'] = needEx[4],
+                    ['votes'] = 0,
+                    ['roll'] = 0
+                }
+
+                LCVoteFrame.itemVotes[tonumber(needEx[2])] = {}
+                LCVoteFrame.itemVotes[tonumber(needEx[2])][sender] = {}
+
+                VoteFrameListScroll_Update()
+            end
         else
             twdebug('needEx = string.split(t, =) error')
         end
