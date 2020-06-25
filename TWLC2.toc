@@ -1,7 +1,7 @@
 ## Interface: 11200
 ## Title: Turtle WoW Loot Council 2
 ## Author: Xerron/Er
-## Version: 1.0.0
+## Version: 1.0.4
 ## Notes: Addon to help with BWL loot council system
 ## SavedVariables: TWLC_ROSTER, TWLC_LOOT_HISTORY, TIME_TO_NEED, TIME_TO_VOTE, TWLC_ENABLED
 VoteFrame.xml
