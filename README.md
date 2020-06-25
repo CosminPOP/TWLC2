@@ -26,7 +26,6 @@ Loot can also be distributed if you click on a raider frame.<Br>
 
 ![distribute loot via raider list click](https://imgur.com/4ywEWTr.png)
 
-<br>
 Slashcommands:<br>
 `/twlc add [name]` - Adds `name` to the loot council member list<br>
 `/twlc rem [name]` - Removes `name` from the loot council member list<br>
