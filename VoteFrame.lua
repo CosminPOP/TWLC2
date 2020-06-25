@@ -1,4 +1,4 @@
-local addonVer = "1.0.3" --don't use letters!
+local addonVer = "1.0.4" --don't use letters!
 local me = UnitName('player')
 
 
@@ -224,17 +224,21 @@ SlashCmdList["TWLC"] = function(cmd)
         if (string.find(cmd, 'set', 1, true)) then
             local setEx = string.split(cmd, ' ')
             if (setEx[2] and setEx[3]) then
-                if (setEx[2] == 'ttn') then
-                    TIME_TO_NEED = tonumber(setEx[3])
-                    TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
-                    twprint('TIME_TO_NEED - set to ' .. TIME_TO_NEED .. 's')
-                    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
-                end
-                if (setEx[2] == 'ttv') then
-                    TIME_TO_VOTE = tonumber(setEx[3])
-                    VoteCountdown.countDownFrom = TIME_TO_VOTE
-                    twprint('TIME_TO_VOTE - set to ' .. TIME_TO_VOTE .. 's')
-                    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+                if (twlc2isRL(me)) then
+                    if (setEx[2] == 'ttn') then
+                        TIME_TO_NEED = tonumber(setEx[3])
+                        TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
+                        twprint('TIME_TO_NEED - set to ' .. TIME_TO_NEED .. 's')
+                        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
+                    end
+                    if (setEx[2] == 'ttv') then
+                        TIME_TO_VOTE = tonumber(setEx[3])
+                        VoteCountdown.countDownFrom = TIME_TO_VOTE
+                        twprint('TIME_TO_VOTE - set to ' .. TIME_TO_VOTE .. 's')
+                        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+                    end
+                else
+                    twprint('You are not the raid leader.')
                 end
             else
                 twprint('SET Options')
