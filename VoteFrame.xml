@@ -697,9 +697,10 @@
                             this:StopMovingOrSizing()
                     </OnDragStop>
                     <OnEnter>
-                            GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
-                            GameTooltip:AddLine('TWLC2')
-                            --                            GameTooltip:AddLine(DPSMate.L["minimapleft"], 0.5, 0.5, 0.5)
+                            GameTooltip:SetOwner(this, "ANCHOR_TOPLEFT", 0, 0)
+                            GameTooltip:AddLine('TWLC2', 1, 1, 1)
+                            GameTooltip:AddLine('Left-click to toggle frame')
+                            GameTooltip:AddLine('Right-click for options')
                             --                            GameTooltip:AddLine(DPSMate.L["minimapright"], 0.5, 0.5, 0.5)
                             GameTooltip:Show()
                     </OnEnter>
@@ -819,7 +820,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentNrOfVotes" inherits="GameFontNormal" text="2/11 Votes">
+                        <FontString name="$parentNrOfVotes" inherits="GameFontNormal" text="">
                             <Anchors>
                                 <Anchor point="TOP">
                                     <Offset>
@@ -1308,6 +1309,72 @@
                 </Frames>
             </Frame>
 
+            <Frame name="LootHistoryFrame" hidden="true">
+                <Size>
+                    <AbsDimension x="300" y="200"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="295" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                          edgeFile="Interface\addons\TWLC2\images\border work\border-azer"
+                          tile="false">
+                    <EdgeSize>
+                        <AbsValue val="32"/>
+                    </EdgeSize>
+                    <TileSize>
+                        <AbsValue val="1"/>
+                    </TileSize>
+                    <BackgroundInsets>
+                        <AbsInset left="5" right="5" top="5" bottom="5"/>
+                    </BackgroundInsets>
+                </Backdrop>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentTitle" inherits="GameFontNormal" text="Loot History">
+                            <Anchors>
+                                <Anchor point="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-10"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentItems" inherits="GameFontNormal" text="items" justifyH="RIGHT">
+                            <Anchors>
+                                <Anchor point="TOPRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="-20" y="-35"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Frame name="$parentTitleBar">
+                        <Size>
+                            <AbsDimension x="286" y="1"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="6" y="-25"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                            <!--                    <BackgroundInsets>-->
+                            <!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
+                            <!--                    </BackgroundInsets>-->
+                        </Backdrop>
+                    </Frame>
+                </Frames>
+            </Frame>
 
         </Frames>
 
