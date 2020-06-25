@@ -30,7 +30,7 @@ LCVoteFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 LCVoteFrame.VotedItemsFrames = {}
 LCVoteFrame.CurrentVotedItem = nil --slotIndex
 LCVoteFrame.currentPlayersList = {} --all
-LCVoteFrame.playersPerPage = 3
+LCVoteFrame.playersPerPage = 15
 LCVoteFrame.itemVotes = {}
 LCVoteFrame.LCVoters = 0
 LCVoteFrame.playersWhoWantItems = {}
@@ -45,6 +45,8 @@ LCVoteFrame.namePlayersThatWants = 0
 
 LCVoteFrame.waitResponses = {}
 LCVoteFrame.pickResponses = {}
+
+LCVoteFrame.lootHistoryMinRarity = 1
 
 local LCVoteFrameComms = CreateFrame("Frame")
 LCVoteFrameComms:RegisterEvent("CHAT_MSG_ADDON")
@@ -903,7 +905,7 @@ function buildMinimapMenu()
             twprint('Addon enabled.')
         else
             twprint('Addon disabled.')
-            end
+        end
     end
     UIDropDownMenu_AddButton(menu_enabled);
 
@@ -1716,6 +1718,44 @@ function Contestant_OnEnter(id)
     id = id - playerOffset
     local r, g, b, a = getglobal('ContestantFrame' .. id):GetBackdropColor()
     getglobal('ContestantFrame' .. id):SetBackdropColor(r, g, b, 1)
+
+    local totalItems = 0
+    local itemHistory = ""
+
+    local historyPlayerName = getglobal("ContestantFrame" .. id).name
+    for lootTime, item in next, TWLC_LOOT_HISTORY do
+        if (historyPlayerName == item['player']) then
+            local _, _, itemLink = string.find(item['item'], "(item:%d+:%d+:%d+:%d+)");
+            local itemName, _, itemRarity, _, _, _, _, itemSlot, _ = GetItemInfo(itemLink)
+            if (itemRarity >= LCVoteFrame.lootHistoryMinRarity) then
+                totalItems = totalItems + 1
+            end
+        end
+    end
+    GameTooltip:AddLine("Loot history (" .. totalItems .. ")")
+
+    for lootTime, item in pairsByKeys(TWLC_LOOT_HISTORY) do
+        if (historyPlayerName == item['player']) then
+
+            local _, _, itemLink = string.find(item['item'], "(item:%d+:%d+:%d+:%d+)");
+            local itemName, _, itemRarity, _, _, _, _, itemSlot, _ = GetItemInfo(itemLink)
+
+            if (itemRarity >= LCVoteFrame.lootHistoryMinRarity) then
+                itemHistory = itemHistory .. item['item'] .. " - " .. date("%d/%m", lootTime) .. "\n"
+            end
+        end
+    end
+
+    if totalItems == 0 then
+        itemHistory = 'no recorded loot'
+    end
+
+    local color = classColors[getPlayerClass(historyPlayerName)].c
+
+    getglobal('LootHistoryFrameTitle'):SetText(color .. historyPlayerName .. classColors['priest'].c .. " Loot History (" .. totalItems .. ")")
+    getglobal("LootHistoryFrameItems"):SetText(itemHistory)
+    getglobal("LootHistoryFrame"):SetHeight(50 + totalItems * 15)
+    getglobal('LootHistoryFrame'):Show()
 end
 
 function Contestant_OnLeave()
@@ -1723,6 +1763,7 @@ function Contestant_OnLeave()
         local r, g, b, a = getglobal('ContestantFrame' .. i):GetBackdropColor()
         getglobal('ContestantFrame' .. i):SetBackdropColor(r, g, b, 0.5)
     end
+    getglobal('LootHistoryFrame'):Hide()
 end
 
 function twlc2isCL(name)
@@ -1835,6 +1876,7 @@ function awardPlayer(playerName)
     --    twdebug(playerName)
 
     for i = 1, 40 do
+        twdebug(GetMasterLootCandidate(i) .. ' ==  ' .. playerName)
         if GetMasterLootCandidate(i) == playerName then
             unitIndex = i
             break
@@ -1842,11 +1884,11 @@ function awardPlayer(playerName)
     end
 
     if (unitIndex == 0) then
-        twprint("Something went wrong, winner name is not on loot list.")
+        twprint("Something went wrong, " .. playerName .. " is not on loot list.")
     else
         local link = LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].link
         --disabled youWon for now, it duplicates(youWon+chatmessage)
---        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "youWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
+        --        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "youWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
         ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "playerWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
         GiveMasterLoot(LCVoteFrame.CurrentVotedItem, unitIndex);
         LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo = playerName
