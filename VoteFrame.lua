@@ -1,4 +1,4 @@
-local addonVer = "1.0.4" --don't use letters!
+local addonVer = "1.0.5" --don't use letters!
 local me = UnitName('player')
 
 
@@ -47,6 +47,7 @@ LCVoteFrame.waitResponses = {}
 LCVoteFrame.pickResponses = {}
 
 LCVoteFrame.lootHistoryMinRarity = 1
+LCVoteFrame.selectedPlayer = {}
 
 local LCVoteFrameComms = CreateFrame("Frame")
 LCVoteFrameComms:RegisterEvent("CHAT_MSG_ADDON")
@@ -237,6 +238,11 @@ SlashCmdList["TWLC"] = function(cmd)
                         twprint('TIME_TO_VOTE - set to ' .. TIME_TO_VOTE .. 's')
                         ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
                     end
+                    if (setEx[2] == 'ttr') then
+                        TIME_TO_ROLL = tonumber(setEx[3])
+                        twprint('TIME_TO_ROLL - set to ' .. TIME_TO_ROLL .. 's')
+                        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
+                    end
                 else
                     twprint('You are not the raid leader.')
                 end
@@ -244,6 +250,7 @@ SlashCmdList["TWLC"] = function(cmd)
                 twprint('SET Options')
                 twprint('/twlc set ttn <time> - sets TIME_TO_NEED (current value: ' .. TIME_TO_NEED .. 's)')
                 twprint('/twlc set ttv <time> - sets TIME_TO_VOTE (current value: ' .. TIME_TO_VOTE .. 's)')
+                twprint('/twlc set ttr <time> - sets TIME_TO_ROLL (current value: ' .. TIME_TO_VOTE .. 's)')
             end
         end
         if (string.find(cmd, 'list', 1, true)) then
@@ -432,14 +439,34 @@ LCVoteFrame:SetScript("OnEvent", function()
             end
         end
         if (event == "CHAT_MSG_SYSTEM") then
-            if (string.find(arg1, "rolls", 1, true) and not string.find(arg1, "(1-100)", 1, true)) then --vote tie rolls
+            if (string.find(arg1, "rolls", 1, true) and string.find(arg1, "(1-100)", 1, true)) then --vote tie rolls
                 local r = string.split(arg1, " ")
+                --todo r checks
+                local name = r[1]
+                local roll = tonumber(r[3])
+                twdebug(' ' .. name .. ' rolled a ' .. roll)
+                --check if name is in playersWhoWantItems with vote == -2
+                for pwIndex, pwPlayer in next, LCVoteFrame.playersWhoWantItems do
+                    if (pwPlayer['name'] == name and pwPlayer['roll'] == -2) then
+                        LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
+                        ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll .. ":" .. LCVoteFrame.CurrentVotedItem, "RAID")
+                        VoteFrameListScroll_Update()
+                        break
+                    end
+                end
+
+                --                LCVoteFrame.playersWhoWantItems[tonumber(indexEx[2])]['roll'] = tonumber(indexEx[3])
+                --                LCVoteFrame.VotedItemsFrames[tonumber(indexEx[4])].rolled = true
+                --
+                --                LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
+                --                ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll .. ":" .. LCVoteFrame.CurrentVotedItem, "RAID")
             end
         end
         if (event == "ADDON_LOADED" and arg1 == 'TWLC2') then
 
             if not TIME_TO_NEED then TIME_TO_NEED = 30 end
             if not TIME_TO_VOTE then TIME_TO_VOTE = 30 end
+            if not TIME_TO_ROLL then TIME_TO_ROLL = 30 end
             if not TWLC_ROSTER then TWLC_ROSTER = {} end
             if not TWLC_LOOT_HISTORY then TWLC_LOOT_HISTORY = {} end
             if not TWLC_ENABLED then TWLC_ENABLED = false end
@@ -657,6 +684,7 @@ function BroadcastLoot_OnClick()
 
     ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
     ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
 
     sendReset()
 
@@ -685,6 +713,8 @@ function addVotedItem(index, texture, name, link)
     --    twdebug('addvoteditem ' .. index)
 
     LCVoteFrame.itemVotes[index] = {}
+
+    LCVoteFrame.selectedPlayer[index] = ''
 
     if (not LCVoteFrame.VotedItemsFrames[index]) then
         LCVoteFrame.VotedItemsFrames[index] = CreateFrame("Frame", "VotedItem" .. index,
@@ -853,6 +883,70 @@ function buildContestantMenu()
     UIDropDownMenu_AddButton(close);
 end
 
+function ContestantClick(id)
+
+    local playerOffset = FauxScrollFrame_GetOffset(getglobal("ContestantScrollListFrame"));
+    id = id - playerOffset
+
+    if (arg1 == 'RightButton') then
+        ShowContenstantDropdownMenu(id)
+        return true
+    end
+
+    if (getglobal('LootHistoryFrame'):IsVisible() and LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] == getglobal("ContestantFrame" .. id).name) then
+        getglobal('LootHistoryFrame'):Hide()
+    else
+
+        LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] = getglobal("ContestantFrame" .. id).name
+
+        local totalItems = 0
+        local itemHistory = ""
+
+        local historyPlayerName = getglobal("ContestantFrame" .. id).name
+        for lootTime, item in next, TWLC_LOOT_HISTORY do
+            if (historyPlayerName == item['player']) then
+                local _, _, itemLink = string.find(item['item'], "(item:%d+:%d+:%d+:%d+)");
+                local itemName, _, itemRarity, _, _, _, _, itemSlot, _ = GetItemInfo(itemLink)
+                if (itemRarity >= LCVoteFrame.lootHistoryMinRarity) then
+                    totalItems = totalItems + 1
+                end
+            end
+        end
+        GameTooltip:AddLine("Loot history (" .. totalItems .. ")")
+
+        for lootTime, item in pairsByKeys(TWLC_LOOT_HISTORY) do
+            if (historyPlayerName == item['player']) then
+
+                local _, _, itemLink = string.find(item['item'], "(item:%d+:%d+:%d+:%d+)");
+                local itemName, _, itemRarity, _, _, _, _, itemSlot, _ = GetItemInfo(itemLink)
+
+                if (itemRarity >= LCVoteFrame.lootHistoryMinRarity) then
+                    itemHistory = itemHistory .. item['item'] .. " - " .. date("%d/%m", lootTime) .. "\n"
+                end
+            end
+        end
+
+        local color = classColors[getPlayerClass(historyPlayerName)].c
+
+        if totalItems == 0 then
+            itemHistory = 'no recorded loot'
+            getglobal("LootHistoryFrame"):SetHeight(50 + 30 * 15)
+        else
+            getglobal("LootHistoryFrame"):SetHeight(50 + totalItems * 15)
+        end
+
+        getglobal('LootHistoryFrameTitle'):SetText(color .. historyPlayerName .. classColors['priest'].c .. " Loot History (" .. totalItems .. ")")
+        getglobal("LootHistoryFrameItems"):SetText(itemHistory)
+        getglobal('LootHistoryFrame'):Show()
+    end
+end
+
+function LootHistoryClose()
+    LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] = ''
+    getglobal('LootHistoryFrame'):Hide()
+    VoteFrameListScroll_Update()
+end
+
 function ShowContenstantDropdownMenu(id)
 
     if not twlc2isRL(me) then return end
@@ -988,6 +1082,12 @@ function VoteFrameListScroll_Update()
                 getglobal("ContestantFrame" .. i .. "Roll"):SetText(roll);
             else
                 getglobal("ContestantFrame" .. i .. "Roll"):SetText();
+            end
+            if (roll == -1) then
+                getglobal("ContestantFrame" .. i .. "Roll"):SetText('pass');
+            end
+            if (roll == -2) then
+                getglobal("ContestantFrame" .. i .. "Roll"):SetText('...');
             end
 
             getglobal("ContestantFrame" .. i .. "RightClickMenuButton1"):SetID(playerIndex);
@@ -1132,6 +1232,8 @@ function LCVoteFrame.ResetVars(show)
     LCVoteFrame.myVotes = {}
     LCVoteFrame.LCVoters = 0
 
+    LCVoteFrame.selectedPlayer = {}
+
     getglobal('LootLCVoteFrameWindowContestantCount'):SetText()
 
     getglobal('BroadcastLoot'):Disable()
@@ -1188,6 +1290,28 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         else
             --todo
         end
+    end
+    if (string.find(t, 'rollChoice=', 1, true)) then
+        if not canVote(me) then return end
+
+        local r = string.split(t, '=')
+        --r[2] = voteditem id
+        if (tonumber(r[3]) ~= -1) then return end
+
+        local name = sender
+        local roll = tonumber(r[3]) --or -1
+        twdebug(' ' .. name .. ' passed with a ' .. roll)
+        --check if name is in playersWhoWantItems with vote == -2
+        for pwIndex, pwPlayer in next, LCVoteFrame.playersWhoWantItems do
+            if (pwPlayer['name'] == name and pwPlayer['roll'] == -2) then
+                LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
+                --send to others ?
+--                ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll .. ":" .. LCVoteFrame.CurrentVotedItem, "RAID")
+                VoteFrameListScroll_Update()
+                break
+            end
+        end
+
     end
     if (string.find(t, 'itemVote:', 1, true)) then
 
@@ -1403,6 +1527,13 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         if ttv[2] then
             TIME_TO_VOTE = tonumber(ttv[2])
             VoteCountdown.countDownFrom = TIME_TO_VOTE
+        end
+    end
+    if (string.find(t, 'ttr=', 1, true)) then
+        if (not twlc2isRL(sender)) then return end
+        local ttv = string.split(t, "=")
+        if ttv[2] then
+            TIME_TO_ROLL = tonumber(ttv[2])
         end
     end
     if (string.find(t, 'withAddonNF=', 1, true)) then
@@ -1692,12 +1823,21 @@ function MLToWinner_OnClick()
         for i, d in next, LCVoteFrame.currentPlayersList do
             for pIndex, tieName in next, players do
                 if d['itemIndex'] == LCVoteFrame.CurrentVotedItem and d['name'] == tieName then
+
+                    local linkString = LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].link
+                    local _, _, itemLink = string.find(linkString, "(item:%d+:%d+:%d+:%d+)");
+                    local name, il, quality, _, _, _, _, _, tex = GetItemInfo(itemLink)
+
+
                     local roll = math.random(1, 100)
                     for pwIndex, pwPlayer in next, LCVoteFrame.playersWhoWantItems do
                         if (pwPlayer['name'] == tieName and pwPlayer['itemIndex'] == LCVoteFrame.CurrentVotedItem) then
                             -- found the wait=
-                            LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
-                            ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll .. ":" .. LCVoteFrame.CurrentVotedItem, "RAID")
+                            LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = -2 --roll
+                            --send to officers
+                            ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":-2:" .. LCVoteFrame.CurrentVotedItem, "RAID")
+                            --send to raiders
+                            ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'rollFor=' .. LCVoteFrame.CurrentVotedItem .. '=' .. tex .. '=' .. name .. '=' .. linkString .. '=' .. TIME_TO_ROLL .. '=' .. tieName, "RAID")
                             break
                         end
                     end
@@ -1722,52 +1862,15 @@ function Contestant_OnEnter(id)
     id = id - playerOffset
     local r, g, b, a = getglobal('ContestantFrame' .. id):GetBackdropColor()
     getglobal('ContestantFrame' .. id):SetBackdropColor(r, g, b, 1)
-
-    local totalItems = 0
-    local itemHistory = ""
-
-    local historyPlayerName = getglobal("ContestantFrame" .. id).name
-    for lootTime, item in next, TWLC_LOOT_HISTORY do
-        if (historyPlayerName == item['player']) then
-            local _, _, itemLink = string.find(item['item'], "(item:%d+:%d+:%d+:%d+)");
-            local itemName, _, itemRarity, _, _, _, _, itemSlot, _ = GetItemInfo(itemLink)
-            if (itemRarity >= LCVoteFrame.lootHistoryMinRarity) then
-                totalItems = totalItems + 1
-            end
-        end
-    end
-    GameTooltip:AddLine("Loot history (" .. totalItems .. ")")
-
-    for lootTime, item in pairsByKeys(TWLC_LOOT_HISTORY) do
-        if (historyPlayerName == item['player']) then
-
-            local _, _, itemLink = string.find(item['item'], "(item:%d+:%d+:%d+:%d+)");
-            local itemName, _, itemRarity, _, _, _, _, itemSlot, _ = GetItemInfo(itemLink)
-
-            if (itemRarity >= LCVoteFrame.lootHistoryMinRarity) then
-                itemHistory = itemHistory .. item['item'] .. " - " .. date("%d/%m", lootTime) .. "\n"
-            end
-        end
-    end
-
-    if totalItems == 0 then
-        itemHistory = 'no recorded loot'
-    end
-
-    local color = classColors[getPlayerClass(historyPlayerName)].c
-
-    getglobal('LootHistoryFrameTitle'):SetText(color .. historyPlayerName .. classColors['priest'].c .. " Loot History (" .. totalItems .. ")")
-    getglobal("LootHistoryFrameItems"):SetText(itemHistory)
-    getglobal("LootHistoryFrame"):SetHeight(50 + totalItems * 15)
-    getglobal('LootHistoryFrame'):Show()
 end
 
 function Contestant_OnLeave()
     for i = 1, LCVoteFrame.playersPerPage do
         local r, g, b, a = getglobal('ContestantFrame' .. i):GetBackdropColor()
-        getglobal('ContestantFrame' .. i):SetBackdropColor(r, g, b, 0.5)
+        if (LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] ~= getglobal('ContestantFrame' .. i).name) then
+            getglobal('ContestantFrame' .. i):SetBackdropColor(r, g, b, 0.5)
+        end
     end
-    getglobal('LootHistoryFrame'):Hide()
 end
 
 function twlc2isCL(name)
@@ -1940,3 +2043,18 @@ StaticPopupDialogs["EXAMPLE_HELLOWORLD"] = {
     hideOnEscape = false,
     preferredIndex = 3,
 }
+
+
+function SendTestRoll()
+
+    local id = LCVoteFrame.CurrentVotedItem
+
+    local link = LCVoteFrame.VotedItemsFrames[id].link
+
+    local _, _, itemLink = string.find(link, "(item:%d+:%d+:%d+:%d+)");
+    local name, itemLink2, quality, reqlvl, t1, t2, a7, equip_slot, tex = GetItemInfo(itemLink)
+
+
+    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "rollFor=" .. id .. "=" .. tex .. "=" .. name .. "=" .. link .. "=10=Kzktst", "RAID")
+    --'rollFor=0=' .. tex .. '=' .. name .. '=' .. linkString .. '=30=' .. me
+end
