@@ -321,8 +321,11 @@
                     </Anchor>
                 </Anchors>
                 <Scripts>
+                    <OnLoad>
+                            this:RegisterForClicks("LeftButtonUp", "RightButtonDown");
+                    </OnLoad>
                     <OnClick>
-                            ShowContenstantDropdownMenu(this:GetID())
+                            ContestantClick(this:GetID())
                     </OnClick>
                     <OnEnter>
                             Contestant_OnEnter(this:GetID())
@@ -347,8 +350,11 @@
                     </Anchor>
                 </Anchors>
                 <Scripts>
+                    <OnLoad>
+                            this:RegisterForClicks("LeftButtonUp", "RightButtonDown");
+                    </OnLoad>
                     <OnClick>
-                            ShowContenstantDropdownMenu(this:GetID())
+                            ContestantClick(this:GetID())
                     </OnClick>
                     <OnEnter>
                             Contestant_OnEnter(this:GetID())
@@ -373,8 +379,11 @@
                     </Anchor>
                 </Anchors>
                 <Scripts>
+                    <OnLoad>
+                            this:RegisterForClicks("LeftButtonUp", "RightButtonDown");
+                    </OnLoad>
                     <OnClick>
-                            ShowContenstantDropdownMenu(this:GetID())
+                            ContestantClick(this:GetID())
                     </OnClick>
                     <OnEnter>
                             Contestant_OnEnter(this:GetID())
@@ -838,6 +847,41 @@
 
                 </Scripts>
             </Button>
+
+            <Button name="TestRoll" inherits="UIPanelButtonTemplate2" hidden="false" text="SendTestRoll">
+                <Size>
+                    <AbsDimension x="200" y="24"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-20" y="33"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentNrOfVotes" inherits="GameFontNormal" text="">
+                            <Anchors>
+                                <Anchor point="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-30"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnClick>
+                            SendTestRoll();
+                    </OnClick>
+
+                </Scripts>
+            </Button>
+
+
+
 
             <Button name="WinnerStatus" inherits="UIPanelButtonTemplate" hidden="true" text="winner status">
                 <NormalTexture inherits=""/>
@@ -1373,6 +1417,24 @@
                             <!--                    </BackgroundInsets>-->
                         </Backdrop>
                     </Frame>
+
+                    <Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+                        <Size>
+                            <AbsDimension x="22" y="22"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-10" y="-4"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    LootHistoryClose()
+                            </OnClick>
+                        </Scripts>
+                    </Button>
                 </Frames>
             </Frame>
 
