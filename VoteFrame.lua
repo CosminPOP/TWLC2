@@ -1,7 +1,6 @@
-local addonVer = "1.0.2" --don't use letters!
+local addonVer = "1.0.3" --don't use letters!
 local me = UnitName('player')
 
-TWLC_ROSTER = {}
 
 function twprint(a)
     DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0[TWLC2] |cffffffff" .. a)
@@ -31,7 +30,7 @@ LCVoteFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 LCVoteFrame.VotedItemsFrames = {}
 LCVoteFrame.CurrentVotedItem = nil --slotIndex
 LCVoteFrame.currentPlayersList = {} --all
-LCVoteFrame.playersPerPage = 15
+LCVoteFrame.playersPerPage = 3
 LCVoteFrame.itemVotes = {}
 LCVoteFrame.LCVoters = 0
 LCVoteFrame.playersWhoWantItems = {}
@@ -433,8 +432,12 @@ LCVoteFrame:SetScript("OnEvent", function()
         end
         if (event == "ADDON_LOADED" and arg1 == 'TWLC2') then
 
-            if (not TIME_TO_NEED) then TIME_TO_NEED = 30 end
-            if (not TIME_TO_VOTE) then TIME_TO_VOTE = 30 end
+            if not TIME_TO_NEED then TIME_TO_NEED = 30 end
+            if not TIME_TO_VOTE then TIME_TO_VOTE = 30 end
+            if not TWLC_ROSTER then TWLC_ROSTER = {} end
+            if not TWLC_LOOT_HISTORY then TWLC_LOOT_HISTORY = {} end
+            if not TWLC_ENABLED then TWLC_ENABLED = false end
+            if not TWLC_LOOT_HISTORY then TWLC_LOOT_HISTORY = {} end
 
             TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
             VoteCountdown.countDownFrom = TIME_TO_VOTE
@@ -466,6 +469,7 @@ LCVoteFrame:SetScript("OnEvent", function()
             --            getglobal('LootLCVoteFrameWindow'):SetBackdropBorderColor(0, 0, 0, 1);
         end
         if (event == "LOOT_OPENED") then
+            if not TWLC_ENABLED then return end
             if (twlc2isRL(me)) then
                 getglobal('BroadcastLoot'):Show()
                 getglobal('BroadcastLoot'):Enable()
@@ -882,6 +886,26 @@ function buildMinimapMenu()
         toggleMainWindow()
     end
     UIDropDownMenu_AddButton(menu1);
+
+    UIDropDownMenu_AddButton(separator);
+
+    local menu_enabled = {};
+    menu_enabled.text = "Enabled"
+    menu_enabled.disabled = false
+    menu_enabled.isTitle = false
+    menu_enabled.tooltipTitle = 'Enabled'
+    menu_enabled.tooltipText = 'Use TWLC2 when you are the raid leader.'
+    menu_enabled.checked = TWLC_ENABLED
+    menu_enabled.justifyH = 'LEFT'
+    menu_enabled.func = function()
+        TWLC_ENABLED = not TWLC_ENABLED
+        if (TWLC_ENABLED) then
+            twprint('Addon enabled.')
+        else
+            twprint('Addon disabled.')
+            end
+    end
+    UIDropDownMenu_AddButton(menu_enabled);
 
 
     local close = {};
@@ -1336,13 +1360,27 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             end
         end
     end
+    --code still here, but disabled in awardplayer
     if (string.find(t, 'youWon=', 1, true)) then
         if (not twlc2isRL(sender)) then return end
         local wonData = string.split(t, "=")
         if wonData[4] then
             LCVoteFrame.VotedItemsFrames[tonumber(wonData[4])].awardedTo = wonData[2]
             LCVoteFrame.updateVotedItemsFrames()
-            --            twdebug('setting itemindex to ' .. tonumber(wonData[4]) .. ' for ' .. wonData[2])
+        end
+    end
+    --using playerWon instead, to let other CL know who got loot
+    if (string.find(t, 'playerWon=', 1, true)) then
+        if (not twlc2isRL(sender)) then return end
+        local wonData = string.split(t, "=")
+        if wonData[4] then
+            LCVoteFrame.VotedItemsFrames[tonumber(wonData[4])].awardedTo = wonData[2]
+            LCVoteFrame.updateVotedItemsFrames()
+            --save loot in history
+            TWLC_LOOT_HISTORY[time()] = {
+                ['player'] = wonData[2],
+                ['item'] = LCVoteFrame.VotedItemsFrames[tonumber(wonData[4])].link
+            }
         end
     end
     if (string.find(t, 'ttn=', 1, true)) then
@@ -1807,11 +1845,13 @@ function awardPlayer(playerName)
         twprint("Something went wrong, winner name is not on loot list.")
     else
         local link = LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].link
-        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "youWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
+        --disabled youWon for now, it duplicates(youWon+chatmessage)
+--        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "youWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
+        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "playerWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
         GiveMasterLoot(LCVoteFrame.CurrentVotedItem, unitIndex);
         LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo = playerName
         LCVoteFrame.updateVotedItemsFrames()
-        twdebug('GiveMasterLoot(' .. LCVoteFrame.CurrentVotedItem .. ', ' .. unitIndex .. ');')
+        --        twdebug('GiveMasterLoot(' .. LCVoteFrame.CurrentVotedItem .. ', ' .. unitIndex .. ');')
     end
 end
 
