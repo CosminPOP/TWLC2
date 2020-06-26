@@ -848,41 +848,6 @@
                 </Scripts>
             </Button>
 
-            <Button name="TestRoll" inherits="UIPanelButtonTemplate2" hidden="false" text="SendTestRoll">
-                <Size>
-                    <AbsDimension x="200" y="24"/>
-                </Size>
-                <Anchors>
-                    <Anchor point="TOPRIGHT">
-                        <Offset>
-                            <AbsDimension x="-20" y="33"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString name="$parentNrOfVotes" inherits="GameFontNormal" text="">
-                            <Anchors>
-                                <Anchor point="TOP">
-                                    <Offset>
-                                        <AbsDimension x="0" y="-30"/>
-                                    </Offset>
-                                </Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-                <Scripts>
-                    <OnClick>
-                            SendTestRoll();
-                    </OnClick>
-
-                </Scripts>
-            </Button>
-
-
-
-
             <Button name="WinnerStatus" inherits="UIPanelButtonTemplate" hidden="true" text="winner status">
                 <NormalTexture inherits=""/>
                 <PushedTexture inherits=""/>
