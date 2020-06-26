@@ -450,7 +450,7 @@ LCVoteFrame:SetScript("OnEvent", function()
                 if string.find(arg1, "würfelt. Ergebnis", 1, true) then
                     roll = tonumber(r[4])
                 end
-                twdebug(' ' .. name .. ' rolled a ' .. roll)
+                twdebug('ROLLCATCHER' .. name .. ' rolled a ' .. roll)
                 --check if name is in playersWhoWantItems with vote == -2
                 for pwIndex, pwPlayer in next, LCVoteFrame.playersWhoWantItems do
                     if (pwPlayer['name'] == name and pwPlayer['roll'] == -2) then
@@ -510,10 +510,17 @@ LCVoteFrame:SetScript("OnEvent", function()
         if (event == "LOOT_OPENED") then
             if not TWLC_ENABLED then return end
             if (twlc2isRL(me)) then
-                getglobal('BroadcastLoot'):Show()
-                getglobal('BroadcastLoot'):Enable()
-                getglobal('LootLCVoteFrameWindow'):Show()
-                --            BroadcastLoot_OnClick() -- dev
+
+                local lootmethod = GetLootMethod()
+                if (lootmethod == 'master') then
+                    getglobal('BroadcastLoot'):Show()
+                    getglobal('BroadcastLoot'):Enable()
+                    getglobal('LootLCVoteFrameWindow'):Show()
+                    --            BroadcastLoot_OnClick() -- dev
+                else
+                    twprint('Looting method is not master looter. (' .. lootmethod .. ')')
+                    getglobal('BroadcastLoot'):Hide()
+                end
             end
         end
         if (event == "LOOT_SLOT_CLEARED") then
@@ -1170,13 +1177,6 @@ function VoteFrameListScroll_Update()
                 getglobal("ContestantFrame" .. i .. "ReplacesItem2"):Hide()
             end
 
-            -- Highlight the correct who
-            --        if (selectedRosterName == name) then
-            --            getglobal("ContestantFrame" .. i):LockHighlight();
-            --        else
-            --            getglobal("ContestantFrame" .. i):UnlockHighlight();
-            --        end
-
             if (playerIndex > table.getn(LCVoteFrame.currentPlayersList)) then
                 getglobal("ContestantFrame" .. i):Hide();
             else
@@ -1283,7 +1283,7 @@ end)
 
 
 function LCVoteFrameComms:handleSync(pre, t, ch, sender)
-    twdebug(sender .. ' says: ' .. t)
+    --    twdebug(sender .. ' says: ' .. t)
     if (string.find(t, 'playerRoll:', 1, true)) then
 
         if not twlc2isRL(sender) or sender == me then return end
@@ -1303,22 +1303,22 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         local r = string.split(t, '=')
         --r[2] = voteditem id
-        if (tonumber(r[3]) ~= -1) then return end
+        if (tonumber(r[3]) == -1) then
 
-        local name = sender
-        local roll = tonumber(r[3]) --or -1
-        twdebug(' ' .. name .. ' passed with a ' .. roll)
-        --check if name is in playersWhoWantItems with vote == -2
-        for pwIndex, pwPlayer in next, LCVoteFrame.playersWhoWantItems do
-            if (pwPlayer['name'] == name and pwPlayer['roll'] == -2) then
-                LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
-                --send to others ?
---                ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll .. ":" .. LCVoteFrame.CurrentVotedItem, "RAID")
-                VoteFrameListScroll_Update()
-                break
+            local name = sender
+            local roll = tonumber(r[3]) --or -1
+            twdebug(' ' .. name .. ' passed with a ' .. roll)
+            --check if name is in playersWhoWantItems with vote == -2
+            for pwIndex, pwPlayer in next, LCVoteFrame.playersWhoWantItems do
+                if (pwPlayer['name'] == name and pwPlayer['roll'] == -2) then
+                    LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
+                    VoteFrameListScroll_Update()
+                    break
+                end
             end
+        else
+            twdebug('ROLLCATCHER ' .. sender .. ' rolled for ' .. r[2])
         end
-
     end
     if (string.find(t, 'itemVote:', 1, true)) then
 
@@ -1988,7 +1988,7 @@ function awardPlayer(playerName)
     --enddebug
 
     local unitIndex = 0
-    --    twdebug(playerName)
+    twdebug(playerName)
 
     for i = 1, 40 do
         twdebug(GetMasterLootCandidate(i) .. ' ==  ' .. playerName)
@@ -2006,6 +2006,10 @@ function awardPlayer(playerName)
         --        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "youWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
         ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "playerWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
         GiveMasterLoot(LCVoteFrame.CurrentVotedItem, unitIndex);
+
+        local itemIndex, name, need, votes, ci1, ci2, roll = getPlayerInfo(GetMasterLootCandidate(unitIndex));
+
+        SendChatMessage(GetMasterLootCandidate(unitIndex) .. ' was awarded with ' .. link .. ' for ' .. needs[need].text .. '!', "RAID")
         LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo = playerName
         LCVoteFrame.updateVotedItemsFrames()
         --        twdebug('GiveMasterLoot(' .. LCVoteFrame.CurrentVotedItem .. ', ' .. unitIndex .. ');')
@@ -2051,18 +2055,3 @@ StaticPopupDialogs["EXAMPLE_HELLOWORLD"] = {
     hideOnEscape = false,
     preferredIndex = 3,
 }
-
-
-function SendTestRoll()
-
-    local id = LCVoteFrame.CurrentVotedItem
-
-    local link = LCVoteFrame.VotedItemsFrames[id].link
-
-    local _, _, itemLink = string.find(link, "(item:%d+:%d+:%d+:%d+)");
-    local name, itemLink2, quality, reqlvl, t1, t2, a7, equip_slot, tex = GetItemInfo(itemLink)
-
-
-    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "rollFor=" .. id .. "=" .. tex .. "=" .. name .. "=" .. link .. "=10=Kzktst", "RAID")
-    --'rollFor=0=' .. tex .. '=' .. name .. '=' .. linkString .. '=30=' .. me
-end
