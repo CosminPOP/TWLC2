@@ -542,7 +542,90 @@
         </Scripts>
     </Frame>
 
-    <Frame name="LootLCVoteFrameWindow" hidden="true" toplevel="true"
+    <Frame name="HistoryItemTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="284" y="21"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="8" y="-40"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true" edgeSize="1">
+            <Color a=".3"/>
+        </Backdrop>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentDate" inherits="GameFontNormal" text="23/05" hidden="false">
+                    <Anchors>
+                        <Anchor point="RIGHT">
+                            <Offset>
+                                <AbsDimension x="-5" y="-1"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+
+            <Button name="$parentItem" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture file="Interface\Icons\inv_staff_20"/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="2" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentName" justifyH="LEFT" inherits="GameFontNormal" text="[longest item name ever ever ever ever ever ever]" hidden="false">
+                            <Anchors>
+                                <Anchor point="LEFT">
+                                    <Offset>
+                                        <AbsDimension x="25" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                            <Size>
+                                <AbsDimension x="200" y="20"/>
+                            </Size>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+<!--                    <OnLoad>-->
+<!--                            this:RegisterForClicks("LeftButtonUp", "RightButtonDown");-->
+<!--                    </OnLoad>-->
+<!--                    <OnClick>-->
+<!--                            ContestantClick(this:GetID())-->
+<!--                    </OnClick>-->
+<!--                    <OnEnter>-->
+<!--                            Contestant_OnEnter(this:GetID())-->
+<!--                    </OnEnter>-->
+<!--                    <OnLeave>-->
+<!--                            Contestant_OnLeave()-->
+<!--                    </OnLeave>-->
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnEnter>
+            </OnEnter>
+            <OnLeave>
+            </OnLeave>
+        </Scripts>
+    </Frame>
+
+    <Frame name="LootLCVoteFrameWindow" hidden="false" toplevel="true"
            parent="UIParent" movable="true" enableMouse="true">
         <Size>
             <AbsDimension x="516" y="475"/>
@@ -640,11 +723,14 @@
                 </FontString>
 
                 <FontString name="$parentVotedItemName" hidden="true" inherits="GameFontNormalLarge"
-                            text="[voted item name]">
+                            text="[voted item name]" justifyH="LEFT">
+                    <Size>
+                        <AbsDimension x="260" y="30"/>
+                    </Size>
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="65" y="-35"/>
+                                <AbsDimension x="63" y="-30"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -916,26 +1002,29 @@
 
             <Frame name="VotedItemsFrame">
                 <Size>
-                    <AbsDimension x="50" y="200"/>
+                    <AbsDimension x="60" y="200"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="-50" y="-25"/>
+                            <AbsDimension x="-55" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
-                <!--                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">-->
-                <!--                    <BackgroundInsets>-->
-                <!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
-                <!--                    </BackgroundInsets>-->
-                <!--                </Backdrop>-->
+                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                          edgeFile="Interface\addons\TWLC2\images\border-azer"
+                          tile="false">
+                    <EdgeSize>
+                        <AbsValue val="32"/>
+                    </EdgeSize>
+                    <TileSize>
+                        <AbsValue val="1"/>
+                    </TileSize>
+                    <BackgroundInsets>
+                        <AbsInset left="5" right="5" top="5" bottom="5"/>
+                    </BackgroundInsets>
+                </Backdrop>
                 <Frames>
-
-                    <!--                    <Frame name="test12333" inherits="VotedItemsButtonTemplate">-->
-                    <!--                    </Frame>-->
-                    <!--                    <Button name="$parentItem1" inherits="VotedItemsButtonTemplate" text="">-->
-                    <!--                    </Button>-->
                 </Frames>
             </Frame>
 
@@ -1318,7 +1407,7 @@
                 </Frames>
             </Frame>
 
-            <Frame name="LootHistoryFrame" hidden="true">
+            <Frame name="LootHistoryFrame" hidden="false">
                 <Size>
                     <AbsDimension x="300" y="200"/>
                 </Size>
@@ -1349,15 +1438,6 @@
                                 <Anchor point="TOP">
                                     <Offset>
                                         <AbsDimension x="0" y="-10"/>
-                                    </Offset>
-                                </Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString name="$parentItems" inherits="GameFontNormal" text="items" justifyH="RIGHT">
-                            <Anchors>
-                                <Anchor point="TOPRIGHT">
-                                    <Offset>
-                                        <AbsDimension x="-20" y="-35"/>
                                     </Offset>
                                 </Anchor>
                             </Anchors>
@@ -1400,6 +1480,7 @@
                             </OnClick>
                         </Scripts>
                     </Button>
+
                 </Frames>
             </Frame>
 
