@@ -625,7 +625,7 @@
         </Scripts>
     </Frame>
 
-    <Frame name="LootLCVoteFrameWindow" hidden="false" toplevel="true"
+    <Frame name="LootLCVoteFrameWindow" hidden="true" toplevel="true"
            parent="UIParent" movable="true" enableMouse="true">
         <Size>
             <AbsDimension x="516" y="475"/>
@@ -1407,7 +1407,7 @@
                 </Frames>
             </Frame>
 
-            <Frame name="LootHistoryFrame" hidden="false">
+            <Frame name="LootHistoryFrame" hidden="true">
                 <Size>
                     <AbsDimension x="300" y="200"/>
                 </Size>

@@ -1,4 +1,4 @@
-local addonVer = "1.0.5" --don't use letters!
+local addonVer = "1.0.6" --don't use letters!
 local me = UnitName('player')
 
 
@@ -682,10 +682,6 @@ end
 --        TWLCCloseLootFrame(frame)
 --    end
 --end
-
---[[
-doua functii. reset & close
-]] --
 
 function ResetClose_OnClick()
     sendReset()
