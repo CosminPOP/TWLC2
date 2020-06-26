@@ -49,6 +49,8 @@ LCVoteFrame.pickResponses = {}
 LCVoteFrame.lootHistoryMinRarity = 1
 LCVoteFrame.selectedPlayer = {}
 
+LCVoteFrame.lootHistoryFrames = {}
+
 local LCVoteFrameComms = CreateFrame("Frame")
 LCVoteFrameComms:RegisterEvent("CHAT_MSG_ADDON")
 
@@ -565,6 +567,9 @@ function toggleRLOptionsFrame()
     if getglobal('RLWindowFrame'):IsVisible() then
         getglobal('RLWindowFrame'):Hide()
     else
+        if getglobal('LootHistoryFrame'):IsVisible() then
+            LootHistoryClose()
+        end
         getglobal('RLWindowFrame'):Show()
         checkAssists()
     end
@@ -649,9 +654,9 @@ function checkAssists()
 end
 
 function sendReset()
-    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "needframe=reset", "RAID")
-    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "voteframe=reset", "RAID")
-    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "rollframe=reset", "RAID")
+    SendAddonMessage("TWLCNF", "needframe=reset", "RAID")
+    SendAddonMessage("TWLCNF", "voteframe=reset", "RAID")
+    SendAddonMessage("TWLCNF", "rollframe=reset", "RAID")
 end
 
 function sendCloseWindow()
@@ -696,9 +701,9 @@ function BroadcastLoot_OnClick()
 
     getglobal('BroadcastLoot'):Disable()
 
-    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
-    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
-    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
+    SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
+    SendAddonMessage("TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+    SendAddonMessage("TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
 
     sendReset()
 
@@ -715,7 +720,8 @@ function BroadcastLoot_OnClick()
             local _, _, itemLink = string.find(GetLootSlotLink(id), "(item:%d+:%d+:%d+:%d+)");
             local _, _, quality = GetItemInfo(itemLink)
             if (quality >= 0) then
-                ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "loot=" .. id .. "=" .. lootIcon .. "=" .. lootName .. "=" .. GetLootSlotLink(id) .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
+                ChatThrottleLib:SendAddonMessage("ALERT", "TWLCNF", "loot=" .. id .. "=" .. lootIcon .. "=" .. lootName .. "=" .. GetLootSlotLink(id) .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
+                --                SendAddonMessage("TWLCNF", "loot=" .. id .. "=" .. lootIcon .. "=" .. lootName .. "=" .. GetLootSlotLink(id) .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
             end
         end
     end
@@ -733,10 +739,11 @@ function addVotedItem(index, texture, name, link)
     if (not LCVoteFrame.VotedItemsFrames[index]) then
         LCVoteFrame.VotedItemsFrames[index] = CreateFrame("Frame", "VotedItem" .. index,
             getglobal("VotedItemsFrame"), "VotedItemsFrameTemplate")
-        --        twdebug('created frame ' .. index)
     end
 
-    LCVoteFrame.VotedItemsFrames[index]:SetPoint("TOPLEFT", getglobal("VotedItemsFrame"), "TOPLEFT", 7, 40 - (40 * index))
+    getglobal("VotedItemsFrame"):SetHeight(40 * index + 35)
+
+    LCVoteFrame.VotedItemsFrames[index]:SetPoint("TOPLEFT", getglobal("VotedItemsFrame"), "TOPLEFT", 12, 20 - (40 * index))
 
     LCVoteFrame.VotedItemsFrames[index]:Show()
     LCVoteFrame.VotedItemsFrames[index].link = link
@@ -765,21 +772,6 @@ function addVotedItem(index, texture, name, link)
     if (not LCVoteFrame.CurrentVotedItem) then
         VotedItemButton_OnClick(index)
     end
-
-    --    local _, _, itemLink = string.find(link, "(item:%d+:%d+:%d+:%d+)");
-    --    twdebug('itemLink in addVotedItem: ' .. itemLink)
-    --    local name, link, quality, reqlvl, t1, t2, a7, equip_slot, tex = GetItemInfo(itemLink)
-    --    twdebug('a1 : ' .. name)
-    --    twdebug('a2 : ' .. link)
-    --    twdebug('a3 : ' .. quality)
-    --    twdebug('reqlvl : ' .. reqlvl)
-    --    twdebug('t1 : ' .. t1)
-    --    twdebug('t2 : ' .. t2)
-    --    twdebug('a7 : ' .. a7)
-    --    twdebug('equip_slot : ' .. equip_slot)
-    --    twdebug('tex : ' .. tex)
-    --           twdebug(itemSubType)
-    --           twdebug(itemEquipLoc)
 end
 
 function VotedItemButton_OnClick(id)
@@ -908,13 +900,21 @@ function ContestantClick(id)
     end
 
     if (getglobal('LootHistoryFrame'):IsVisible() and LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] == getglobal("ContestantFrame" .. id).name) then
-        getglobal('LootHistoryFrame'):Hide()
+        LootHistoryClose()
     else
+
+        if getglobal('RLWindowFrame'):IsVisible() then
+            getglobal('RLWindowFrame'):Hide()
+        end
+
+        --hide prevs
+        for index in next, LCVoteFrame.lootHistoryFrames do
+            LCVoteFrame.lootHistoryFrames[index]:Hide()
+        end
 
         LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] = getglobal("ContestantFrame" .. id).name
 
         local totalItems = 0
-        local itemHistory = ""
 
         local historyPlayerName = getglobal("ContestantFrame" .. id).name
         for lootTime, item in next, TWLC_LOOT_HISTORY do
@@ -926,31 +926,46 @@ function ContestantClick(id)
                 end
             end
         end
-        GameTooltip:AddLine("Loot history (" .. totalItems .. ")")
 
-        for lootTime, item in pairsByKeys(TWLC_LOOT_HISTORY) do
+        local index = 0
+        for lootTime, item in pairsByKeysReverse(TWLC_LOOT_HISTORY) do
             if (historyPlayerName == item['player']) then
 
                 local _, _, itemLink = string.find(item['item'], "(item:%d+:%d+:%d+:%d+)");
-                local itemName, _, itemRarity, _, _, _, _, itemSlot, _ = GetItemInfo(itemLink)
+                local itemName, _, itemRarity, _, _, _, _, itemSlot, tex = GetItemInfo(itemLink)
 
                 if (itemRarity >= LCVoteFrame.lootHistoryMinRarity) then
-                    itemHistory = itemHistory .. item['item'] .. " - " .. date("%d/%m", lootTime) .. "\n"
+
+                    index = index + 1
+
+                    if not LCVoteFrame.lootHistoryFrames[index] then
+                        LCVoteFrame.lootHistoryFrames[index] = CreateFrame('Frame', 'HistoryItem' .. index, getglobal("LootHistoryFrame"), 'HistoryItemTemplate')
+                    end
+
+                    LCVoteFrame.lootHistoryFrames[index]:SetPoint("TOPLEFT", getglobal("LootHistoryFrame"), "TOPLEFT", 10, -8 - 22 * index)
+                    LCVoteFrame.lootHistoryFrames[index]:Show()
+
+                    local today = ''
+                    if date("%d/%m") == date("%d/%m", lootTime) then
+                        today = classColors['mage'].c
+                    end
+
+                    getglobal("HistoryItem" .. index .. 'Date'):SetText(classColors['rogue'].c .. today .. date("%d/%m", lootTime))
+                    getglobal("HistoryItem" .. index .. 'Item'):SetNormalTexture(tex)
+                    getglobal("HistoryItem" .. index .. 'Item'):SetPushedTexture(tex)
+                    addButtonOnEnterTooltip(getglobal("HistoryItem" .. index .. "Item"), itemLink)
+                    getglobal("HistoryItem" .. index .. 'ItemName'):SetText(item['item'])
                 end
             end
         end
 
-        local color = classColors[getPlayerClass(historyPlayerName)].c
-
         if totalItems == 0 then
-            itemHistory = 'no recorded loot'
-            getglobal("LootHistoryFrame"):SetHeight(50 + 30 * 15)
+            getglobal("LootHistoryFrame"):SetHeight(50 + 18)
         else
-            getglobal("LootHistoryFrame"):SetHeight(50 + totalItems * 15)
+            getglobal("LootHistoryFrame"):SetHeight(50 + totalItems * 22)
         end
 
-        getglobal('LootHistoryFrameTitle'):SetText(color .. historyPlayerName .. classColors['priest'].c .. " Loot History (" .. totalItems .. ")")
-        getglobal("LootHistoryFrameItems"):SetText(itemHistory)
+        getglobal('LootHistoryFrameTitle'):SetText(classColors[getPlayerClass(historyPlayerName)].c .. historyPlayerName .. classColors['priest'].c .. " Loot History (" .. totalItems .. ")")
         getglobal('LootHistoryFrame'):Show()
     end
 end
@@ -1283,7 +1298,7 @@ end)
 
 
 function LCVoteFrameComms:handleSync(pre, t, ch, sender)
-    --    twdebug(sender .. ' says: ' .. t)
+    twdebug(sender .. ' says: ' .. t)
     if (string.find(t, 'playerRoll:', 1, true)) then
 
         if not twlc2isRL(sender) or sender == me then return end
@@ -1957,6 +1972,22 @@ function pairsByKeys(t, f)
     for n in pairs(t) do table.insert(a, n)
     end
     table.sort(a, function(a, b) return a < b
+    end)
+    local i = 0 -- iterator variable
+    local iter = function() -- iterator function
+        i = i + 1
+        if a[i] == nil then return nil
+        else return a[i], t[a[i]]
+        end
+    end
+    return iter
+end
+
+function pairsByKeysReverse(t, f)
+    local a = {}
+    for n in pairs(t) do table.insert(a, n)
+    end
+    table.sort(a, function(a, b) return a > b
     end)
     local i = 0 -- iterator variable
     local iter = function() -- iterator function
