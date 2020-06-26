@@ -551,7 +551,7 @@
             <Anchor point="CENTER"/>
         </Anchors>
         <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-                  edgeFile="Interface\addons\TWLC2\images\border work\border-azer"
+                  edgeFile="Interface\addons\TWLC2\images\border-azer"
                   tile="false">
             <EdgeSize>
                 <AbsValue val="32"/>
@@ -739,7 +739,7 @@
                     </Anchor>
                 </Anchors>
                 <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-                          edgeFile="Interface\addons\TWLC2\images\border work\border-azer"
+                          edgeFile="Interface\addons\TWLC2\images\border-azer"
                           tile="false">
                     <EdgeSize>
                         <AbsValue val="32"/>
@@ -1227,7 +1227,7 @@
                     </Anchor>
                 </Anchors>
                 <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-                          edgeFile="Interface\addons\TWLC2\images\border work\border-azer"
+                          edgeFile="Interface\addons\TWLC2\images\border-azer"
                           tile="false">
                     <EdgeSize>
                         <AbsValue val="32"/>
@@ -1330,7 +1330,7 @@
                     </Anchor>
                 </Anchors>
                 <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-                          edgeFile="Interface\addons\TWLC2\images\border work\border-azer"
+                          edgeFile="Interface\addons\TWLC2\images\border-azer"
                           tile="false">
                     <EdgeSize>
                         <AbsValue val="32"/>
