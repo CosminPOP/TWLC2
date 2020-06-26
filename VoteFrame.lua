@@ -439,11 +439,17 @@ LCVoteFrame:SetScript("OnEvent", function()
             end
         end
         if (event == "CHAT_MSG_SYSTEM") then
-            if (string.find(arg1, "rolls", 1, true) and string.find(arg1, "(1-100)", 1, true)) then --vote tie rolls
+            if ((string.find(arg1, "rolls", 1, true) or string.find(arg1, "würfelt. Ergebnis", 1, true)) and string.find(arg1, "(1-100)", 1, true)) then --vote tie rolls
+                --en--Er rolls 47 (1-100)
+                --de--Er würfelt. Ergebnis: 47 (1-100)
                 local r = string.split(arg1, " ")
                 --todo r checks
                 local name = r[1]
                 local roll = tonumber(r[3])
+                --ger fix--todo test this
+                if string.find(arg1, "würfelt. Ergebnis", 1, true) then
+                    roll = tonumber(r[4])
+                end
                 twdebug(' ' .. name .. ' rolled a ' .. roll)
                 --check if name is in playersWhoWantItems with vote == -2
                 for pwIndex, pwPlayer in next, LCVoteFrame.playersWhoWantItems do
@@ -638,6 +644,7 @@ end
 function sendReset()
     ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "needframe=reset", "RAID")
     ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "voteframe=reset", "RAID")
+    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "rollframe=reset", "RAID")
 end
 
 function sendCloseWindow()
@@ -1650,6 +1657,7 @@ function calculateVotes()
         LCVoteFrame.currentPlayersList[pIndex].votes = 0
     end
 
+    -- todo check next table ?
     for n, d in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem] do
 
         local _, _, _, _, _, _, _, pIndex = getPlayerInfo(n)
