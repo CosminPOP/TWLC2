@@ -5,7 +5,7 @@ When enabled, and the **Raid Leader** opens boss loot frame, the addon frame wil
 allowing him to `broadcast` the loot to the raid.<BR>
 
 Raiders will get item frames and options to pick for each item: BIS/MS/OS/pass<BR>
-
+***Note:** Raiders require https://github.com/CosminPOP/TWLC2c addon for pick frames*<Br>
 ![loot frame](https://i.imgur.com/FS2NMC5.png)
 
 After the picking time (configurable by the raid leader) has passed, officers will get a voting time
@@ -13,7 +13,7 @@ After the picking time (configurable by the raid leader) has passed, officers wi
 
 ![voting time](https://imgur.com/oRrwY4E.png)
 
-Hovering a player in the player list will show that player's loot history<Br>
+Clicking a player in the player list will show that player's loot history<Br>
 
 ![loot history](https://imgur.com/PZymm6u.png)
 
@@ -31,4 +31,5 @@ Slashcommands:<br>
 `/twlc rem [name]` - Removes `name` from the loot council member list<br>
 `/twlc list` - Lists the loot council member list <Br>
 `/twlc set ttn [sec]` - Sets the time available to raiders to `pick` BIS/MS/OS/pass when an item drops<br> 
-`/twlc set ttv [sec]` - Sets the time available to loot council to `vote `
+`/twlc set ttv [sec]` - Sets the time available to loot council to `vote`<br>
+`/twlc set ttr [sec]` - Sets the time available to players to roll in a vote tie case<Br>
