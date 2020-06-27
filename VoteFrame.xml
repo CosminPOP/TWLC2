@@ -859,7 +859,7 @@
                         </Scripts>
                     </Button>
 
-                    <Button name="ResetClose" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
+                    <Button name="ResetClose" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
                             text="Reset and close">
                         <Size>
                             <AbsDimension x="120" y="20"/>

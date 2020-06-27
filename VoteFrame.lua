@@ -431,10 +431,14 @@ LCVoteFrame:SetScript("OnEvent", function()
                 getglobal('RLExtraFrame'):Show()
                 getglobal('MLToWinner'):Show()
                 getglobal('MLToWinner'):Disable()
+                getglobal('ResetClose'):Show()
                 checkAssists() --todo asta poate trebuie on ?
             else
                 getglobal('MLToWinner'):Hide()
                 getglobal('RLExtraFrame'):Hide()
+                getglobal('RLOptionsButton'):Hide()
+                getglobal('RLWindowFrame'):Hide()
+                getglobal('ResetClose'):Hide()
             end
             if not canVote(me) then
                 getglobal('LootLCVoteFrameWindow'):Hide()
