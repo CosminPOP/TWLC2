@@ -628,7 +628,7 @@
     <Frame name="LootLCVoteFrameWindow" hidden="true" toplevel="true"
            parent="UIParent" movable="true" enableMouse="true">
         <Size>
-            <AbsDimension x="516" y="475"/>
+            <AbsDimension x="516" y="365"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
@@ -1072,7 +1072,7 @@
 
             <Frame name="ContestantScrollListBackground">
                 <Size>
-                    <AbsDimension x="496" y="329"/>
+                    <AbsDimension x="496" y="219"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOP">
@@ -1242,7 +1242,7 @@
 
             <ScrollFrame name="ContestantScrollListFrame" hidden="false" inherits="FauxScrollFrameTemplate">
                 <Size>
-                    <AbsDimension x="460" y="325"/>
+                    <AbsDimension x="460" y="220"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeTo="LootLCVoteFrameWindow" relativePoint="TOPRIGHT">
