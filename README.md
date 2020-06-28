@@ -1,15 +1,16 @@
 # TWLC2
 Addon to help with Turtle Wow BWL Loot Council
 
-When enabled, and the **Raid Leader** opens boss loot frame, the addon frame will pop up
+When enabled (from the minimap button, disabled by default), and the **Raid Leader** opens boss loot frame, the addon frame will pop up
 allowing him to `broadcast` the loot to the raid.<BR>
+![broadcast button](https://imgur.com/kxV59t1.png)
 
 Raiders will get item frames and options to pick for each item: BIS/MS/OS/pass<BR>
 ***Note:** Raiders require https://github.com/CosminPOP/TWLC2c addon for pick frames*<Br>
 ![loot frame](https://i.imgur.com/FS2NMC5.png)
 
-After the picking time (configurable by the raid leader) has passed, officers will get a voting time
-(configurable by the raid leader)<BR>
+After the picking time (number of items * 30s) has passed, officers will get a voting time
+(number of items * 60s). Officers will also see the current raider's items.<BR>
 
 ![voting time](https://imgur.com/oRrwY4E.png)
 
@@ -19,17 +20,20 @@ Clicking a player in the player list will show that player's loot history<Br>
 
 After the voting time has passed, the Raid Leader can distribute loot based on votes, if there are no vote ties.<BR>
 
-In case there is a vote tie a `ROLL VOTE TIE` button will pop up and the addon will roll 1-100 for the people who are vote tied
-and pick a winner based on the highest roll<BR><BR>
-
-Loot can also be distributed if you click on a raider frame.<Br>
+Loot can also be distributed if you right-click on a raider frame.<Br>
 
 ![distribute loot via raider list click](https://imgur.com/4ywEWTr.png)
+
+In case there is a vote tie a `ROLL VOTE TIE` button will pop up. Pressing it will ask tie raiders to roll.<BR>
+
+![rollframe](https://imgur.com/cqaJlbf.png)
+
+Rolls are recorded and shown to officers. ML can distribute the item based on the roll winner<Br>
+
+![rollwinner](https://imgur.com/886zw8y.png)
 
 Slashcommands:<br>
 `/twlc add [name]` - Adds `name` to the loot council member list<br>
 `/twlc rem [name]` - Removes `name` from the loot council member list<br>
 `/twlc list` - Lists the loot council member list <Br>
-`/twlc set ttn [sec]` - Sets the time available to raiders to `pick` BIS/MS/OS/pass when an item drops<br> 
-`/twlc set ttv [sec]` - Sets the time available to loot council to `vote`<br>
 `/twlc set ttr [sec]` - Sets the time available to players to roll in a vote tie case<Br>
