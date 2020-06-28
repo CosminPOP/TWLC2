@@ -1120,8 +1120,10 @@ function VoteFrameListScroll_Update()
             else
                 getglobal("ContestantFrame" .. i .. "Roll"):SetText();
             end
+            getglobal("ContestantFrame" .. i .. "RollPass"):Hide();
             if (roll == -1) then
-                getglobal("ContestantFrame" .. i .. "Roll"):SetText('pass');
+                getglobal("ContestantFrame" .. i .. "RollPass"):Show();
+                getglobal("ContestantFrame" .. i .. "Roll"):SetText(' -');
             end
             if (roll == -2) then
                 getglobal("ContestantFrame" .. i .. "Roll"):SetText('...');

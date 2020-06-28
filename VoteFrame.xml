@@ -284,6 +284,19 @@
                         </Anchor>
                     </Anchors>
                 </Texture>
+                <Texture name="$parentRollPass" hidden="true" file="Interface\Buttons\UI-GroupLoot-Pass-Up">
+                    <Size>
+                        <AbsDimension x="16" y="16"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="284" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+
                 <FontString name="$parentRoll" inherits="GameFontNormal" text="[roll]" hidden="false">
                     <Anchors>
                         <Anchor point="LEFT">
