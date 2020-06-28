@@ -1,5 +1,6 @@
 # TWLC2
-Addon to help with Turtle Wow BWL Loot Council
+_!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
+Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
 When enabled (from the minimap button, disabled by default), and the **Raid Leader** opens boss loot frame, the addon frame will pop up
 allowing him to `broadcast` the loot to the raid.<BR>
