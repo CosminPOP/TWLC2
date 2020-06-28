@@ -1,4 +1,4 @@
-local addonVer = "1.0.7" --don't use letters!
+local addonVer = "1.0.8" --don't use letters!
 local me = UnitName('player')
 
 --[[
@@ -106,7 +106,7 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
             end
 
             getglobal('LootLCVoteFrameWindowTimeLeft'):SetText(math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) .. 's')
-            getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", tlx, 12)
+            getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", tlx, 10)
 
             getglobal('LootLCVoteFrameWindowTimeLeftBar'):SetWidth((TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime + plus) * 500 / TWLCCountDownFRAME.countDownFrom)
         end
@@ -631,7 +631,7 @@ function checkAssists()
             RLWindowFrame.assistFrames[i] = CreateFrame('Frame', 'AssistFrame' .. i, getglobal("RLWindowFrame"), 'CLListFrameTemplate')
         end
 
-        RLWindowFrame.assistFrames[i]:SetPoint("TOPLEFT", getglobal("RLWindowFrame"), "TOPLEFT", 10, d.y)
+        RLWindowFrame.assistFrames[i]:SetPoint("TOPLEFT", getglobal("RLWindowFrame"), "TOPLEFT", 4, d.y)
         RLWindowFrame.assistFrames[i]:Show()
         RLWindowFrame.assistFrames[i].name = d.name
 
@@ -751,7 +751,7 @@ function addVotedItem(index, texture, name, link)
 
     getglobal("VotedItemsFrame"):SetHeight(40 * index + 35)
 
-    LCVoteFrame.VotedItemsFrames[index]:SetPoint("TOPLEFT", getglobal("VotedItemsFrame"), "TOPLEFT", 12, 20 - (40 * index))
+    LCVoteFrame.VotedItemsFrames[index]:SetPoint("TOPLEFT", getglobal("VotedItemsFrame"), "TOPLEFT", 8, 30 - (40 * index))
 
     LCVoteFrame.VotedItemsFrames[index]:Show()
     LCVoteFrame.VotedItemsFrames[index].link = link

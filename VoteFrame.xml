@@ -105,7 +105,7 @@
 
     <Frame name="CLListFrameTemplate" virtual="true" enableMouse="true">
         <Size>
-            <AbsDimension x="280" y="24"/>
+            <AbsDimension x="292" y="24"/>
         </Size>
         <Anchors>
             <Anchor point="TOPLEFT">
@@ -407,7 +407,6 @@
                 </Scripts>
             </Button>
 
-
             <Button name="$parentReplacesItem1" inherits="UIPanelButtonTemplate" text="">
                 <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
                     <Size>
@@ -650,7 +649,7 @@
                   edgeFile="Interface\addons\TWLC2\images\border-azer"
                   tile="false">
             <EdgeSize>
-                <AbsValue val="32"/>
+                <AbsValue val="16"/>
             </EdgeSize>
             <TileSize>
                 <AbsValue val="1"/>
@@ -719,7 +718,7 @@
                     <Anchors>
                         <Anchor point="BOTTOMLEFT">
                             <Offset>
-                                <AbsDimension x="14" y="12"/>
+                                <AbsDimension x="10" y="10"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -729,7 +728,7 @@
                     <Anchors>
                         <Anchor point="BOTTOMLEFT">
                             <Offset>
-                                <AbsDimension x="500" y="12"/>
+                                <AbsDimension x="500" y="10"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -828,7 +827,7 @@
             <Frame name="RLExtraFrame" hidden="true" toplevel="true"
                    parent="LootLCVoteFrameWindow" movable="false" enableMouse="true">
                 <Size>
-                    <AbsDimension x="516" y="55"/>
+                    <AbsDimension x="516" y="50"/>
                 </Size>
                 <Anchors>
                     <Anchor point="BOTTOM">
@@ -841,7 +840,7 @@
                           edgeFile="Interface\addons\TWLC2\images\border-azer"
                           tile="false">
                     <EdgeSize>
-                        <AbsValue val="32"/>
+                        <AbsValue val="16"/>
                     </EdgeSize>
                     <TileSize>
                         <AbsValue val="1"/>
@@ -984,7 +983,7 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT">
                         <Offset>
-                            <AbsDimension x="-10" y="-4"/>
+                            <AbsDimension x="-5" y="-4"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1015,20 +1014,20 @@
 
             <Frame name="VotedItemsFrame">
                 <Size>
-                    <AbsDimension x="60" y="200"/>
+                    <AbsDimension x="50" y="200"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="-55" y="0"/>
+                            <AbsDimension x="-50" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
-                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-                          edgeFile="Interface\addons\TWLC2\images\border-azer"
+                <Backdrop bgFile="1Interface\DialogFrame\UI-DialogBox-Background"
+                          edgeFile="1Interface\addons\TWLC2\images\border-azer"
                           tile="false">
                     <EdgeSize>
-                        <AbsValue val="32"/>
+                        <AbsValue val="16"/>
                     </EdgeSize>
                     <TileSize>
                         <AbsValue val="1"/>
@@ -1085,7 +1084,7 @@
 
             <Frame name="ContestantScrollListBackground">
                 <Size>
-                    <AbsDimension x="496" y="219"/>
+                    <AbsDimension x="508" y="219"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOP">
@@ -1303,12 +1302,12 @@
 
             <Frame name="$parentTimeLeftBar" framestrata="BACKGROUND">
                 <Size>
-                    <AbsDimension x="500" y="22"/>
+                    <AbsDimension x="508" y="22"/>
                 </Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT">
                         <Offset>
-                            <AbsDimension x="10" y="5"/>
+                            <AbsDimension x="4" y="5"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1324,7 +1323,7 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT">
                         <Offset>
-                            <AbsDimension x="295" y="0"/>
+                            <AbsDimension x="300" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1332,7 +1331,7 @@
                           edgeFile="Interface\addons\TWLC2\images\border-azer"
                           tile="false">
                     <EdgeSize>
-                        <AbsValue val="32"/>
+                        <AbsValue val="16"/>
                     </EdgeSize>
                     <TileSize>
                         <AbsValue val="1"/>
@@ -1389,7 +1388,7 @@
                         <Anchors>
                             <Anchor point="TOPRIGHT">
                                 <Offset>
-                                    <AbsDimension x="-10" y="-4"/>
+                                    <AbsDimension x="-5" y="-4"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -1435,7 +1434,7 @@
                           edgeFile="Interface\addons\TWLC2\images\border-azer"
                           tile="false">
                     <EdgeSize>
-                        <AbsValue val="32"/>
+                        <AbsValue val="16"/>
                     </EdgeSize>
                     <TileSize>
                         <AbsValue val="1"/>
@@ -1483,7 +1482,7 @@
                         <Anchors>
                             <Anchor point="TOPRIGHT">
                                 <Offset>
-                                    <AbsDimension x="-10" y="-4"/>
+                                    <AbsDimension x="-5" y="-4"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
