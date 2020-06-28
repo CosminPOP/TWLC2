@@ -1,6 +1,9 @@
-local addonVer = "1.0.6" --don't use letters!
+local addonVer = "1.0.7" --don't use letters!
 local me = UnitName('player')
 
+--[[
+test item history
+]] --
 
 function twprint(a)
     DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0[TWLC2] |cffffffff" .. a)
@@ -10,6 +13,7 @@ function twdebug(a)
     if (me == 'Er2' or
             me == 'Xerrbear' or
             me == 'Testwarr' or
+            me == 'Dande' or
             me == 'Kzktst' or
             me == 'Tabc') then
         twprint('|cff0070de[d:' .. time() .. ']|cffffffff[' .. a .. ']')
@@ -30,7 +34,7 @@ LCVoteFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 LCVoteFrame.VotedItemsFrames = {}
 LCVoteFrame.CurrentVotedItem = nil --slotIndex
 LCVoteFrame.currentPlayersList = {} --all
-LCVoteFrame.playersPerPage = 15
+LCVoteFrame.playersPerPage = 10
 LCVoteFrame.itemVotes = {}
 LCVoteFrame.LCVoters = 0
 LCVoteFrame.playersWhoWantItems = {}
@@ -88,11 +92,11 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
             end
 
             local tlx = 15 + ((TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime + plus) * 500 / TWLCCountDownFRAME.countDownFrom)
-            if (tlx <= 250) then
-                tlx = 250
-            end
+            if tlx > 470 then tlx = 470 end
+            if tlx <= 250 then tlx = 250 end
             if math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) > 55 then
-                getglobal('LootLCVoteFrameWindowTimeLeft'):Hide()
+                --                getglobal('LootLCVoteFrameWindowTimeLeft'):Hide()
+                getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
             end
             if math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) <= 55 then
                 getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
@@ -252,7 +256,7 @@ SlashCmdList["TWLC"] = function(cmd)
                 twprint('SET Options')
                 twprint('/twlc set ttn <time> - sets TIME_TO_NEED (current value: ' .. TIME_TO_NEED .. 's)')
                 twprint('/twlc set ttv <time> - sets TIME_TO_VOTE (current value: ' .. TIME_TO_VOTE .. 's)')
-                twprint('/twlc set ttr <time> - sets TIME_TO_ROLL (current value: ' .. TIME_TO_VOTE .. 's)')
+                twprint('/twlc set ttr <time> - sets TIME_TO_ROLL (current value: ' .. TIME_TO_ROLL .. 's)')
             end
         end
         if (string.find(cmd, 'list', 1, true)) then
@@ -432,7 +436,7 @@ LCVoteFrame:SetScript("OnEvent", function()
                 getglobal('MLToWinner'):Show()
                 getglobal('MLToWinner'):Disable()
                 getglobal('ResetClose'):Show()
-                checkAssists() --todo asta poate trebuie on ?
+                checkAssists()
             else
                 getglobal('MLToWinner'):Hide()
                 getglobal('RLExtraFrame'):Hide()
@@ -650,9 +654,11 @@ function checkAssists()
         getglobal('AssistFrame' .. i .. 'AssistCheck'):SetChecked(d.assist)
         getglobal('AssistFrame' .. i .. 'CLCheck'):SetChecked(d.cl)
 
-        if (d.name == me) then getglobal('AssistFrame' .. i .. 'CLCheck'):Disable()
-        end
-        if (d.name == me) then getglobal('AssistFrame' .. i .. 'AssistCheck'):Disable()
+        if (d.name == me) then
+            if getglobal('AssistFrame' .. i .. 'CLCheck'):GetChecked() then
+                getglobal('AssistFrame' .. i .. 'CLCheck'):Disable()
+            end
+            getglobal('AssistFrame' .. i .. 'AssistCheck'):Disable()
         end
     end
 end
@@ -701,7 +707,9 @@ function BroadcastLoot_OnClick()
 
     getglobal('BroadcastLoot'):Disable()
 
+    TIME_TO_NEED = GetNumLootItems() * 30
     SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
+    TIME_TO_VOTE = GetNumLootItems() * 60
     SendAddonMessage("TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
     SendAddonMessage("TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
 
@@ -2013,6 +2021,10 @@ end
 
 function awardPlayer(playerName)
 
+    if not playerName then
+        twprint('[Error] AwardPlayer: playerName is nil.')
+        return false
+    end
     --debug
     --    local link = LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].link
     --    ChatThrottleLib:SendAddonMessage("NORMAL","TWLCNF", "youWon=" .. playerName .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
@@ -2022,8 +2034,8 @@ function awardPlayer(playerName)
     twdebug(playerName)
 
     for i = 1, 40 do
-        twdebug(GetMasterLootCandidate(i) .. ' ==  ' .. playerName)
         if GetMasterLootCandidate(i) == playerName then
+            twdebug('found: loot candidate' .. GetMasterLootCandidate(i) .. ' ==  arg1:' .. playerName)
             unitIndex = i
             break
         end
