@@ -334,7 +334,6 @@ function syncRoster()
     if (twlc2isRL(me)) then checkAssists() end
 end
 
---RAID_CLASS_COLORS
 --r, g, b, hex = GetItemQualityColor(quality)
 local classColors = {
     ["warrior"] = { r = 0.78, g = 0.61, b = 0.43, c = "|cffc79c6e" },
@@ -1568,19 +1567,6 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             TIME_TO_ROLL = tonumber(ttv[2])
         end
     end
-    if (string.find(t, 'withAddonNF=', 1, true)) then
-        local i = string.split(t, "=")
-        if (i[2] == me) then --i[2] = who requested the who
-            if (i[4]) then
-                local verColor = ""
-                --todo : addonVer aici e de la voteframe, i4 e de la needframe.
-                if (twlc_ver(i[4]) == twlc_ver(addonVer)) then verColor = classColors['hunter'].c end
-                if (twlc_ver(i[4]) < twlc_ver(addonVer)) then verColor = '|cffff222a' end
-                local color = classColors[getPlayerClass(i[3])]
-                twdebug(color.c .. i[3] .. " v" .. verColor .. i[4])
-            end
-        end
-    end
 end
 
 function refreshList()
@@ -1886,9 +1872,6 @@ function MLToWinner_OnClick()
     end
 end
 
-function whoNF()
-    ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "needframe=whoNF=" .. addonVer, "RAID")
-end
 
 function Contestant_OnEnter(id)
     local playerOffset = FauxScrollFrame_GetOffset(getglobal("ContestantScrollListFrame"));
