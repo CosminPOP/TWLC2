@@ -1,4 +1,4 @@
-local addonVer = "1.0.8" --don't use letters!
+local addonVer = "1.0.9" --don't use letters!
 local me = UnitName('player')
 
 --[[
@@ -56,6 +56,7 @@ LCVoteFrame.lootHistoryMinRarity = 1
 LCVoteFrame.selectedPlayer = {}
 
 LCVoteFrame.lootHistoryFrames = {}
+LCVoteFrame.peopleWithAddon = ''
 
 local LCVoteFrameComms = CreateFrame("Frame")
 LCVoteFrameComms:RegisterEvent("CHAT_MSG_ADDON")
@@ -273,6 +274,11 @@ SlashCmdList["TWLC"] = function(cmd)
         end
         if (cmd == 'show') then
             getglobal("LootLCVoteFrameWindow"):Show()
+        end
+        if (cmd == 'who') then
+            getglobal('VoteFrameWho'):Show()
+            LCVoteFrame.peopleWithAddon = ''
+            ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "voteframe=whoVF=" .. addonVer, "RAID")
         end
     end
 end
@@ -1380,6 +1386,9 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             if (command[2] == "show") then
                 LCVoteFrame.showWindow()
             end
+            if (command[2] == "whoVF") then
+                ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "withAddonVF=" .. sender .. "=" .. me .. "=" .. addonVer, "RAID")
+            end
         else
             twerror('voteframe command not found')
         end
@@ -1558,6 +1567,22 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         local ttv = string.split(t, "=")
         if ttv[2] then
             TIME_TO_ROLL = tonumber(ttv[2])
+        end
+    end
+    if (string.find(t, 'withAddonVF=', 1, true)) then
+        local i = string.split(t, "=")
+        nfdebug(t)
+        if (i[2] == me) then --i[2] = who requested the who
+            if (i[4]) then
+                local verColor = ""
+                if (twlc_ver(i[4]) == twlc_ver(addonVer)) then verColor = classColors['hunter'].c end
+                if (twlc_ver(i[4]) < twlc_ver(addonVer)) then verColor = '|cffff222a' end
+                local star = ''
+                if twlc2isRLorAssist(sender) then star = '*' end
+                LCVoteFrame.peopleWithAddon = star .. sender .. verColor .. i[4] .. '\n'
+                getglobal('VoteFrameWhoTitle'):SetText('TWLC2 With Addon')
+                getglobal('VoteFrameWhoText'):SetText(LCVoteFrame.peopleWithAddon)
+            end
         end
     end
 end
@@ -2042,6 +2067,10 @@ function twlc_ver(ver)
     return tonumber(string.sub(ver, 1, 1)) * 100 +
             tonumber(string.sub(ver, 3, 3)) * 10 +
             tonumber(string.sub(ver, 5, 5)) * 1
+end
+
+function closeWhoWindow()
+    getglobal('VoteFrameWho'):Hide()
 end
 
 StaticPopupDialogs["TWLC_CONFIRM_LOOT_DISTRIBUTION"] = {
