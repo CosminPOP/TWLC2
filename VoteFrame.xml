@@ -1550,11 +1550,11 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentText" text="need who" inherits="GameFontNormal">
+                <FontString name="$parentText"  justifyH="LEFT" text="" inherits="GameFontNormal">
                     <Anchors>
-                        <Anchor point="CENTER">
+                        <Anchor point="TOP">
                             <Offset>
-                                <AbsDimension x="0" y="0"/>
+                                <AbsDimension x="-20" y="-40"/>
                             </Offset>
                         </Anchor>
                     </Anchors>

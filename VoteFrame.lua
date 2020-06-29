@@ -1371,11 +1371,16 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         end
     end
     if (string.find(t, 'voteframe=', 1, true)) then
+        local command = string.split(t, '=')
+        if (command[2]) then
+            if (command[2] == "whoVF") then
+                ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "withAddonVF=" .. sender .. "=" .. me .. "=" .. addonVer, "RAID")
+            end
+        end
 
         if not twlc2isRL(sender) then return end
         if not canVote(me) then return end
 
-        local command = string.split(t, '=')
         if (command[2]) then
             if (command[2] == "reset") then
                 LCVoteFrame.ResetVars()
@@ -1385,9 +1390,6 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             end
             if (command[2] == "show") then
                 LCVoteFrame.showWindow()
-            end
-            if (command[2] == "whoVF") then
-                ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "withAddonVF=" .. sender .. "=" .. me .. "=" .. addonVer, "RAID")
             end
         else
             twerror('voteframe command not found')
@@ -1577,9 +1579,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
                 local verColor = ""
                 if (twlc_ver(i[4]) == twlc_ver(addonVer)) then verColor = classColors['hunter'].c end
                 if (twlc_ver(i[4]) < twlc_ver(addonVer)) then verColor = '|cffff222a' end
-                local star = ''
+                local star = ' '
                 if twlc2isRLorAssist(sender) then star = '*' end
-                LCVoteFrame.peopleWithAddon = star .. sender .. verColor .. i[4] .. '\n'
+                LCVoteFrame.peopleWithAddon = LCVoteFrame.peopleWithAddon .. star ..
+                        classColors[getPlayerClass(sender)].c ..
+                        sender .. ' ' .. verColor .. i[4] .. '\n'
                 getglobal('VoteFrameWhoTitle'):SetText('TWLC2 With Addon')
                 getglobal('VoteFrameWhoText'):SetText(LCVoteFrame.peopleWithAddon)
             end
