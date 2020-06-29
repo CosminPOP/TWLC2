@@ -6,18 +6,20 @@ test item history
 ]] --
 
 function twprint(a)
+    if a == nil then
+        DEFAULT_CHAT_FRAME:AddMessage('|cff69ccf0[TWLC2Error]|cff0070de:' .. time() .. '|cffffffff attempt to print a nil value.')
+        return false
+    end
     DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0[TWLC2] |cffffffff" .. a)
 end
 
+function twerror(a)
+    DEFAULT_CHAT_FRAME:AddMessage('|cff69ccf0[TWLC2Error]|cff0070de:' .. time() .. '|cffffffff[' .. a .. ']')
+end
+
 function twdebug(a)
-    if (me == 'Er2' or
-            me == 'Xerrbear' or
-            me == 'Testwarr' or
-            me == 'Dande' or
-            me == 'Kzktst' or
-            me == 'Tabc') then
-        twprint('|cff0070de[d:' .. time() .. ']|cffffffff[' .. a .. ']')
-    end
+    if not TWLC_DEBUG then return end
+    twprint('|cff0070de[DEBUG:' .. time() .. ']|cffffffff[' .. a .. ']')
 end
 
 local RLWindowFrame = CreateFrame("Frame")
@@ -195,7 +197,6 @@ VoteCountdown:SetScript("OnUpdate", function()
 
                 getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
                 getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Time\'s up ! Voting closed !')
-                --                twdebug('vote countdown finished')
                 getglobal("MLToWinner"):Enable()
             end
         else
@@ -261,6 +262,14 @@ SlashCmdList["TWLC"] = function(cmd)
         end
         if (string.find(cmd, 'list', 1, true)) then
             listRoster()
+        end
+        if (string.find(cmd, 'debug', 1, true)) then
+            TWLC_DEBUG = not TWLC_DEBUG
+            if TWLC_DEBUG then
+                twprint('|cff69ccf0[TWLCc] |cffffffffDebug ENABLED')
+            else
+                twprint('|cff69ccf0[TWLC2c] |cffffffffDebug DISABLED')
+            end
         end
         if (cmd == 'show') then
             getglobal("LootLCVoteFrameWindow"):Show()
@@ -427,7 +436,6 @@ end
 
 LCVoteFrame:SetScript("OnEvent", function()
     if (event) then
-        --        twdebug(event)
         if (event == "RAID_ROSTER_UPDATE") then
             if (twlc2isRL(me)) then
                 getglobal('RLOptionsButton'):Show()
@@ -469,12 +477,6 @@ LCVoteFrame:SetScript("OnEvent", function()
                         break
                     end
                 end
-
-                --                LCVoteFrame.playersWhoWantItems[tonumber(indexEx[2])]['roll'] = tonumber(indexEx[3])
-                --                LCVoteFrame.VotedItemsFrames[tonumber(indexEx[4])].rolled = true
-                --
-                --                LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
-                --                ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll .. ":" .. LCVoteFrame.CurrentVotedItem, "RAID")
             end
         end
         if (event == "ADDON_LOADED" and arg1 == 'TWLC2') then
@@ -486,6 +488,7 @@ LCVoteFrame:SetScript("OnEvent", function()
             if not TWLC_LOOT_HISTORY then TWLC_LOOT_HISTORY = {} end
             if not TWLC_ENABLED then TWLC_ENABLED = false end
             if not TWLC_LOOT_HISTORY then TWLC_LOOT_HISTORY = {} end
+            if not TWLC_DEBUG then TWLC_DEBUG = false end
 
             TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
             VoteCountdown.countDownFrom = TIME_TO_VOTE
@@ -556,10 +559,10 @@ function setAssistFromUI(id, to)
             local n, r = GetRaidRosterInfo(i);
             if (n == RLWindowFrame.assistFrames[id].name) then
                 if (to) then
-                    --                    twdebug('promote ')
+                    twdebug('promote ')
                     PromoteToAssistant(n)
                 else
-                    --                    twdebug('demote ')
+                    twdebug('demote ')
                     DemoteAssistant(n)
                 end
                 return true
@@ -737,8 +740,6 @@ end
 
 function addVotedItem(index, texture, name, link)
 
-    --    twdebug('addvoteditem ' .. index)
-
     LCVoteFrame.itemVotes[index] = {}
 
     LCVoteFrame.selectedPlayer[index] = ''
@@ -769,8 +770,6 @@ function addVotedItem(index, texture, name, link)
 
     getglobal('VotedItem' .. index .. 'VotedItemButtonCheck'):Hide()
     getglobal('VotedItem' .. index .. 'VotedItemButton'):SetHighlightTexture(texture)
-
-    --    twdebug('show : ' .. index)
 
     if (index ~= 1) then
         SetDesaturation(getglobal('VotedItem' .. index .. 'VotedItemButton'):GetNormalTexture(), 1)
@@ -1063,8 +1062,6 @@ end
 
 function VoteFrameListScroll_Update()
 
-    --    twdebug('VoteFrameListScroll_Update()');
-
     refreshList()
     calculateVotes()
     updateLCVoters()
@@ -1330,7 +1327,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         if (tonumber(r[3]) == -1) then
 
             local name = sender
-            local roll = tonumber(r[3]) --or -1
+            local roll = tonumber(r[3]) -- -1
             twdebug(' ' .. name .. ' passed with a ' .. roll)
             --check if name is in playersWhoWantItems with vote == -2
             for pwIndex, pwPlayer in next, LCVoteFrame.playersWhoWantItems do
@@ -1360,11 +1357,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             LCVoteFrame.itemVotes[votedItem][votedPlayer][sender] = vote
             VoteFrameListScroll_Update()
         else
-            twdebug('[ERROR] string split : string.find(t, itemVote:, 1, true)')
-            twdebug('split[1] = ' .. itemVoteEx[1])
-            twdebug('split[2] = ' .. itemVoteEx[2])
-            twdebug('split[3] = ' .. itemVoteEx[3])
-            twdebug('split[4] = ' .. itemVoteEx[4])
+            twerror('[ERROR] string split : string.find(t, itemVote:, 1, true)')
+            twerror('split[1] = ' .. itemVoteEx[1])
+            twerror('split[2] = ' .. itemVoteEx[2])
+            twerror('split[3] = ' .. itemVoteEx[3])
+            twerror('split[4] = ' .. itemVoteEx[4])
         end
     end
     if (string.find(t, 'voteframe=', 1, true)) then
@@ -1384,7 +1381,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
                 LCVoteFrame.showWindow()
             end
         else
-            twdebug(' voteframe command not found')
+            twerror('voteframe command not found')
         end
     end
     if (string.find(t, 'loot=', 1, true)) then
@@ -1399,7 +1396,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             local link = item[5]
             addVotedItem(index, texture, name, link)
         else
-            twdebug('item = string.split(t, "=") error')
+            twerror('item = string.split(t, "=") error')
         end
     end
     if (string.find(t, 'countdownframe=', 1, true)) then
@@ -1409,15 +1406,13 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         local action = string.split(t, "=")
         if (action[2]) then
-            if (action[2] == 'show') then TWLCCountDownFRAME:Show()
-            end
+            if (action[2] == 'show') then TWLCCountDownFRAME:Show() end
         end
     end
     if (string.find(t, 'wait=', 1, true)) then
 
         if not canVote(me) then return end
 
-        --        twdebug('wait from ' .. sender .. ': ' .. t)
         local startWork = GetTime()
         local needEx = string.split(t, '=')
 
@@ -1460,7 +1455,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
                 VoteFrameListScroll_Update()
             end
         else
-            twdebug('needEx = string.split(t, =) error')
+            twerror('needEx = string.split(t, =) error')
         end
 
         --        twdebug('wait process took : ' .. (GetTime() - startWork))
@@ -1469,10 +1464,8 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     if (string.find(t, 'bis=', 1, true) or string.find(t, 'ms=', 1, true)
             or string.find(t, 'os=', 1, true) or string.find(t, 'pass=', 1, true)
             or string.find(t, 'autopass=', 1, true)) then
-        --or string.find(t, 'wait=')
-        local needEx = string.split(t, '=')
 
-        --todo : check daca exista deja, limit once
+        local needEx = string.split(t, '=')
 
         if (needEx[2] and needEx[3] and needEx[4]) then
 
