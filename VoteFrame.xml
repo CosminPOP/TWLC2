@@ -640,7 +640,7 @@
     <Frame name="LootLCVoteFrameWindow" hidden="true" toplevel="true"
            parent="UIParent" movable="true" enableMouse="true">
         <Size>
-            <AbsDimension x="516" y="365"/>
+            <AbsDimension x="516" y="345"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
@@ -664,7 +664,7 @@
                     <Anchors>
                         <Anchor point="TOP">
                             <Offset>
-                                <AbsDimension x="0" y="-10"/>
+                                <AbsDimension x="0" y="-7"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -673,7 +673,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="15" y="-105"/>
+                                <AbsDimension x="15" y="-85"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -682,7 +682,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="135" y="-105"/>
+                                <AbsDimension x="135" y="-85"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -691,7 +691,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="227" y="-105"/>
+                                <AbsDimension x="227" y="-85"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -700,7 +700,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="305" y="-105"/>
+                                <AbsDimension x="305" y="-85"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -709,7 +709,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="445" y="-105"/>
+                                <AbsDimension x="445" y="-85"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -760,6 +760,48 @@
             </Layer>
         </Layers>
         <Frames>
+
+            <Frame name="$parentNewTitleFrame" hidden="true" toplevel="true">
+                <Size>
+                    <AbsDimension x="400" y="22"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOP">
+                        <Offset>
+                            <AbsDimension x="0" y="17"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                          edgeFile="Interface\addons\TWLC2\images\border-azer"
+                          tile="false">
+                    <EdgeSize>
+                        <AbsValue val="16"/>
+                    </EdgeSize>
+                    <TileSize>
+                        <AbsValue val="1"/>
+                    </TileSize>
+                    <BackgroundInsets>
+                        <AbsInset left="5" right="5" top="5" bottom="5"/>
+                    </BackgroundInsets>
+                </Backdrop>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentTitle" text="Title" inherits="GameFontNormal">
+                            <Anchors>
+                                <Anchor point="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-5"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+
+                </Frames>
+            </Frame>
 
             <Button name="TWLC2_Minimap" movable="true" parent="UIParent" enableMouse="true" toplevel="true"
                     frameStrata="LOW">
@@ -994,7 +1036,7 @@
                 </Scripts>
             </Button>
 
-            <Frame name="$parentTitleBar">
+            <Frame name="$parentTitleBar" hidden="false">
                 <Size>
                     <AbsDimension x="505" y="1"/>
                 </Size>
@@ -1089,7 +1131,7 @@
                 <Anchors>
                     <Anchor point="TOP">
                         <Offset>
-                            <AbsDimension x="0" y="-119"/>
+                            <AbsDimension x="0" y="-99"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1106,7 +1148,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="LootLCVoteFrameWindow">
                         <Offset>
-                            <AbsDimension x="9" y="-120"/>
+                            <AbsDimension x="9" y="-100"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1259,7 +1301,7 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeTo="LootLCVoteFrameWindow" relativePoint="TOPRIGHT">
                         <Offset>
-                            <AbsDimension x="-30" y="-118"/>
+                            <AbsDimension x="-27" y="-98"/>
                         </Offset>
                     </Anchor>
                 </Anchors>

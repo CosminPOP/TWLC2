@@ -1,4 +1,4 @@
-local addonVer = "1.0.9" --don't use letters!
+local addonVer = "1.0.10" --don't use letters!
 local me = UnitName('player')
 
 --[[
@@ -500,6 +500,7 @@ LCVoteFrame:SetScript("OnEvent", function()
             VoteCountdown.countDownFrom = TIME_TO_VOTE
 
             getglobal('LootLCVoteFrameWindowTitle'):SetText('Turtle WoW Loot Council2 v' .. addonVer)
+            getglobal('LootLCVoteFrameWindowNewTitleFrameTitle'):SetText('Turtle WoW Loot Council2 v' .. addonVer)
 
             getglobal('BroadcastLoot'):Disable()
 
