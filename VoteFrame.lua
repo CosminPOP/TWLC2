@@ -1,4 +1,4 @@
-local addonVer = "1.0.10" --don't use letters!
+local addonVer = "1.0.11" --don't use letters!
 local me = UnitName('player')
 
 --[[
@@ -584,7 +584,7 @@ function toggleRLOptionsFrame()
     if getglobal('RLWindowFrame'):IsVisible() then
         getglobal('RLWindowFrame'):Hide()
     else
-        if getglobal('LootHistoryFrame'):IsVisible() then
+        if getglobal('TWLCLootHistoryFrame'):IsVisible() then
             LootHistoryClose()
         end
         getglobal('RLWindowFrame'):Show()
@@ -912,7 +912,7 @@ function ContestantClick(id)
         return true
     end
 
-    if (getglobal('LootHistoryFrame'):IsVisible() and LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] == getglobal("ContestantFrame" .. id).name) then
+    if (getglobal('TWLCLootHistoryFrame'):IsVisible() and LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] == getglobal("ContestantFrame" .. id).name) then
         LootHistoryClose()
     else
 
@@ -940,52 +940,57 @@ function ContestantClick(id)
             end
         end
 
-        local index = 0
-        for lootTime, item in pairsByKeysReverse(TWLC_LOOT_HISTORY) do
-            if (historyPlayerName == item['player']) then
+        if totalItems > 0 then
 
-                local _, _, itemLink = string.find(item['item'], "(item:%d+:%d+:%d+:%d+)");
-                local itemName, _, itemRarity, _, _, _, _, itemSlot, tex = GetItemInfo(itemLink)
+            local index = 0
+            for lootTime, item in pairsByKeysReverse(TWLC_LOOT_HISTORY) do
+                if (historyPlayerName == item['player']) then
 
-                if (itemRarity >= LCVoteFrame.lootHistoryMinRarity) then
+                    local _, _, itemLink = string.find(item['item'], "(item:%d+:%d+:%d+:%d+)");
+                    local itemName, _, itemRarity, _, _, _, _, itemSlot, tex = GetItemInfo(itemLink)
 
-                    index = index + 1
+                    if (itemRarity >= LCVoteFrame.lootHistoryMinRarity) then
 
-                    if not LCVoteFrame.lootHistoryFrames[index] then
-                        LCVoteFrame.lootHistoryFrames[index] = CreateFrame('Frame', 'HistoryItem' .. index, getglobal("LootHistoryFrame"), 'HistoryItemTemplate')
+                        index = index + 1
+
+                        if not LCVoteFrame.lootHistoryFrames[index] then
+                            LCVoteFrame.lootHistoryFrames[index] = CreateFrame('Frame', 'HistoryItem' .. index, getglobal("TWLCLootHistoryFrame"), 'HistoryItemTemplate')
+                        end
+
+                        LCVoteFrame.lootHistoryFrames[index]:SetPoint("TOPLEFT", getglobal("TWLCLootHistoryFrame"), "TOPLEFT", 10, -8 - 22 * index)
+                        LCVoteFrame.lootHistoryFrames[index]:Show()
+
+                        local today = ''
+                        if date("%d/%m") == date("%d/%m", lootTime) then
+                            today = classColors['mage'].c
+                        end
+
+                        getglobal("HistoryItem" .. index .. 'Date'):SetText(classColors['rogue'].c .. today .. date("%d/%m", lootTime))
+                        getglobal("HistoryItem" .. index .. 'Item'):SetNormalTexture(tex)
+                        getglobal("HistoryItem" .. index .. 'Item'):SetPushedTexture(tex)
+                        addButtonOnEnterTooltip(getglobal("HistoryItem" .. index .. "Item"), itemLink)
+                        getglobal("HistoryItem" .. index .. 'ItemName'):SetText(item['item'])
                     end
-
-                    LCVoteFrame.lootHistoryFrames[index]:SetPoint("TOPLEFT", getglobal("LootHistoryFrame"), "TOPLEFT", 10, -8 - 22 * index)
-                    LCVoteFrame.lootHistoryFrames[index]:Show()
-
-                    local today = ''
-                    if date("%d/%m") == date("%d/%m", lootTime) then
-                        today = classColors['mage'].c
-                    end
-
-                    getglobal("HistoryItem" .. index .. 'Date'):SetText(classColors['rogue'].c .. today .. date("%d/%m", lootTime))
-                    getglobal("HistoryItem" .. index .. 'Item'):SetNormalTexture(tex)
-                    getglobal("HistoryItem" .. index .. 'Item'):SetPushedTexture(tex)
-                    addButtonOnEnterTooltip(getglobal("HistoryItem" .. index .. "Item"), itemLink)
-                    getglobal("HistoryItem" .. index .. 'ItemName'):SetText(item['item'])
                 end
             end
         end
 
         if totalItems == 0 then
-            getglobal("LootHistoryFrame"):SetHeight(50 + 18)
+            getglobal("TWLCLootHistoryFrame"):SetHeight(50 + 18)
         else
-            getglobal("LootHistoryFrame"):SetHeight(50 + totalItems * 22)
+            getglobal("TWLCLootHistoryFrame"):SetHeight(50 + totalItems * 22)
         end
 
-        getglobal('LootHistoryFrameTitle'):SetText(classColors[getPlayerClass(historyPlayerName)].c .. historyPlayerName .. classColors['priest'].c .. " Loot History (" .. totalItems .. ")")
-        getglobal('LootHistoryFrame'):Show()
+        getglobal('TWLCLootHistoryFrameTitle'):SetText(classColors[getPlayerClass(historyPlayerName)].c .. historyPlayerName .. classColors['priest'].c .. " Loot History (" .. totalItems .. ")")
+        getglobal('TWLCLootHistoryFrame'):Show()
     end
 end
 
 function LootHistoryClose()
-    LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] = ''
-    getglobal('LootHistoryFrame'):Hide()
+    if LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] then
+        LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] = ''
+    end
+    getglobal('TWLCLootHistoryFrame'):Hide()
     VoteFrameListScroll_Update()
 end
 
@@ -1692,14 +1697,16 @@ function calculateVotes()
     end
 
     -- todo check next table ?
-    for n, d in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem] do
+    if LCVoteFrame.CurrentVotedItem ~= nil then
+        for n, d in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem] do
 
-        local _, _, _, _, _, _, _, pIndex = getPlayerInfo(n)
+            local _, _, _, _, _, _, _, pIndex = getPlayerInfo(n)
 
-        for voter, vote in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][n] do
-            if vote == '+' then
-                LCVoteFrame.currentPlayersList[pIndex].votes = LCVoteFrame.currentPlayersList[pIndex].votes + 1
-            else
+            for voter, vote in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][n] do
+                if vote == '+' then
+                    LCVoteFrame.currentPlayersList[pIndex].votes = LCVoteFrame.currentPlayersList[pIndex].votes + 1
+                else
+                end
             end
         end
     end

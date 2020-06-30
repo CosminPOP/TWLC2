@@ -1461,14 +1461,14 @@
                 </Frames>
             </Frame>
 
-            <Frame name="LootHistoryFrame" hidden="true">
+            <Frame name="TWLCLootHistoryFrame" hidden="true">
                 <Size>
                     <AbsDimension x="300" y="200"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT">
                         <Offset>
-                            <AbsDimension x="295" y="0"/>
+                            <AbsDimension x="300" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
