@@ -716,7 +716,8 @@ function BroadcastLoot_OnClick()
 
     getglobal('BroadcastLoot'):Disable()
 
-    TIME_TO_NEED = GetNumLootItems() * 30
+    TIME_TO_NEED = GetNumLootItems() * 10
+    TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
     SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
     TIME_TO_VOTE = GetNumLootItems() * 60
     SendAddonMessage("TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
