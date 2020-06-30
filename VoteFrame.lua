@@ -1,4 +1,4 @@
-local addonVer = "1.0.11" --don't use letters!
+local addonVer = "1.0.12" --don't use letters!
 local me = UnitName('player')
 
 --[[
@@ -111,7 +111,7 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
             local secondsLeft = math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) -- .. 's'
 
             getglobal('LootLCVoteFrameWindowTimeLeft'):SetText(SecondsToClock(secondsLeft))
---            getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", tlx, 10)
+            --            getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", tlx, 10)
             getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", 240, 10)
 
             getglobal('LootLCVoteFrameWindowTimeLeftBar'):SetWidth((TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime + plus) * 500 / TWLCCountDownFRAME.countDownFrom)
@@ -163,7 +163,7 @@ VoteCountdown:SetScript("OnUpdate", function()
                 getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
                 local secondsLeftToVote = math.floor((VoteCountdown.countDownFrom - VoteCountdown.currentTime)) --.. 's left ! '
                 getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", 202, 10)
-                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Please VOTE ! ' ..  SecondsToClock(secondsLeftToVote))
+                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Please VOTE ! ' .. SecondsToClock(secondsLeftToVote))
             end
 
             for i = 1, LCVoteFrame.playersPerPage, 1 do
@@ -1176,7 +1176,8 @@ function VoteFrameListScroll_Update()
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetWidth(90)
             end
-            if (LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem]) then
+            if LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem]
+                    and LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo == '' then
                 getglobal("ContestantFrame" .. i .. "VoteButton"):Enable();
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, 1)
             end
@@ -2071,17 +2072,54 @@ function awardPlayer(playerName)
         twprint("Something went wrong, " .. playerName .. " is not on loot list.")
     else
         local link = LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].link
-        --disabled youWon for now, it duplicates(youWon+chatmessage)
-        --        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "youWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
-        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "playerWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
-        GiveMasterLoot(LCVoteFrame.CurrentVotedItem, unitIndex);
+        local itemIndex = LCVoteFrame.CurrentVotedItem
 
-        local itemIndex, name, need, votes, ci1, ci2, roll = getPlayerInfo(GetMasterLootCandidate(unitIndex));
+        twdebug('ML item should be ' .. link)
+        local foundItemIndexInLootFrame = false
+        for id = 0, GetNumLootItems() do
+            if GetLootSlotInfo(id) and GetLootSlotLink(id) then
+                if link == GetLootSlotLink(id) then
+                    foundItemIndexInLootFrame = true
+                    itemIndex = id
+                end
+            end
+        end
 
-        SendChatMessage(GetMasterLootCandidate(unitIndex) .. ' was awarded with ' .. link .. ' for ' .. needs[need].text .. '!', "RAID")
-        LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo = playerName
-        LCVoteFrame.updateVotedItemsFrames()
-        --        twdebug('GiveMasterLoot(' .. LCVoteFrame.CurrentVotedItem .. ', ' .. unitIndex .. ');')
+        if foundItemIndexInLootFrame then
+
+            --old youWon, disabled
+            --ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "youWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
+            ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "playerWon=" .. GetMasterLootCandidate(unitIndex) .. "=" .. link .. "=" .. LCVoteFrame.CurrentVotedItem, "RAID")
+
+            GiveMasterLoot(itemIndex, unitIndex);
+            --twdebug('GiveMasterLoot(' .. LCVoteFrame.CurrentVotedItem .. ', ' .. unitIndex .. ');')
+
+            local itemIndex, name, need, votes, ci1, ci2, roll = getPlayerInfo(GetMasterLootCandidate(unitIndex));
+
+            SendChatMessage(GetMasterLootCandidate(unitIndex) .. ' was awarded with ' .. link .. ' for ' .. needs[need].text .. '!', "RAID")
+            LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo = playerName
+            LCVoteFrame.updateVotedItemsFrames()
+
+        else
+            twerror('item not found ???')
+        end
+
+        --lootIcon, lootName, lootQuantity, currencyID, lootQuality, locked, isQuestItem, questID, isActive = GetLootSlotInfo(slot)
+        --        local LootSlotInfo = GetLootSlotInfo(LCVoteFrame.CurrentVotedItem)
+
+        --"itemLink" = GetLootSlotLink(index)
+        --        local LootSlotLink = GetLootSlotLink(LCVoteFrame.CurrentVotedItem)
+
+        --        twdebug('ML item index:'..LCVoteFrame.CurrentVotedItem..' is ' .. LootSlotLink)
+
+
+        --        if link == LootSlotLink then
+        --            twdebug('LOOT SLOT OK')
+        --        else
+        --            twdebug('LOOT SLOT ---- NOT OK --- trying next...')
+        --            return false
+        --        end
+        --check LCVoteFrame.CurrentVotedItem
     end
 end
 
