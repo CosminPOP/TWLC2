@@ -108,8 +108,11 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
                 getglobal('LootLCVoteFrameWindowTimeLeft'):Hide()
             end
 
-            getglobal('LootLCVoteFrameWindowTimeLeft'):SetText(math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) .. 's')
-            getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", tlx, 10)
+            local secondsLeft = math.floor(TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime) -- .. 's'
+
+            getglobal('LootLCVoteFrameWindowTimeLeft'):SetText(SecondsToClock(secondsLeft))
+--            getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", tlx, 10)
+            getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", 240, 10)
 
             getglobal('LootLCVoteFrameWindowTimeLeftBar'):SetWidth((TWLCCountDownFRAME.countDownFrom - TWLCCountDownFRAME.currentTime + plus) * 500 / TWLCCountDownFRAME.countDownFrom)
         end
@@ -158,7 +161,9 @@ VoteCountdown:SetScript("OnUpdate", function()
             --tick
             if (VoteCountdown.countDownFrom - VoteCountdown.currentTime) >= 0 then
                 getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
-                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Please VOTE ! ' .. math.floor((VoteCountdown.countDownFrom - VoteCountdown.currentTime)) .. 's left ! ')
+                local secondsLeftToVote = math.floor((VoteCountdown.countDownFrom - VoteCountdown.currentTime)) --.. 's left ! '
+                getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", 202, 10)
+                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Please VOTE ! ' ..  SecondsToClock(secondsLeftToVote))
             end
 
             for i = 1, LCVoteFrame.playersPerPage, 1 do
@@ -286,6 +291,7 @@ end
 local minibtn = getglobal('TWLC2_Minimap')
 
 function toggleMainWindow()
+    if not canVote(me) and not twlc2isRL(me) then return false end
     if (getglobal('LootLCVoteFrameWindow'):IsVisible()) then
         getglobal('LootLCVoteFrameWindow'):Hide()
     else
@@ -716,7 +722,7 @@ function BroadcastLoot_OnClick()
 
     getglobal('BroadcastLoot'):Disable()
 
-    TIME_TO_NEED = GetNumLootItems() * 10
+    TIME_TO_NEED = GetNumLootItems() * 16
     TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
     SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
     TIME_TO_VOTE = GetNumLootItems() * 60
@@ -1169,6 +1175,10 @@ function VoteFrameListScroll_Update()
                 getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetTexture(0.4, 0.4, 0.4, .4)
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetWidth(90)
+            end
+            if (LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem]) then
+                getglobal("ContestantFrame" .. i .. "VoteButton"):Enable();
+                getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, 1)
             end
 
             getglobal("ContestantFrame" .. i .. "RollWinner"):Hide();
@@ -2084,6 +2094,20 @@ end
 
 function closeWhoWindow()
     getglobal('VoteFrameWho'):Hide()
+end
+
+
+function SecondsToClock(seconds)
+    local seconds = tonumber(seconds)
+
+    if seconds <= 0 then
+        return "00:00";
+    else
+        hours = string.format("%02.f", math.floor(seconds / 3600));
+        mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
+        secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
+        return mins .. ":" .. secs
+    end
 end
 
 StaticPopupDialogs["TWLC_CONFIRM_LOOT_DISTRIBUTION"] = {

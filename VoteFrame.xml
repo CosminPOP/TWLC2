@@ -728,7 +728,7 @@
                     <Anchors>
                         <Anchor point="BOTTOMLEFT">
                             <Offset>
-                                <AbsDimension x="500" y="10"/>
+                                <AbsDimension x="480" y="10"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
