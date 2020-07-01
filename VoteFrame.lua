@@ -280,6 +280,8 @@ SlashCmdList["TWLC"] = function(cmd)
         end
         if (cmd == 'synchistory') then
 
+            if not twlc2isRL(me) then return end
+
             local totalItems = 0
 
             for lootTime, item in next, TWLC_LOOT_HISTORY do
