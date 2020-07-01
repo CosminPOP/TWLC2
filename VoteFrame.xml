@@ -263,6 +263,19 @@
                     </Anchors>
                 </Texture>
 
+                <Texture name="$parentCLVote" hidden="true" file="Interface\GroupFrame\UI-Group-LeaderIcon">
+                    <Size>
+                        <AbsDimension x="16" y="16"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="RIGHT">
+                            <Offset>
+                                <AbsDimension x="-60" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+
                 <FontString name="$parentNeed" inherits="GameFontNormal" text="[need]" hidden="false">
                     <Anchors>
                         <Anchor point="LEFT">
@@ -297,7 +310,7 @@
                     </Anchors>
                 </Texture>
 
-                <FontString name="$parentRoll" inherits="GameFontNormal" text="[roll]" hidden="false">
+                <FontString name="$parentRoll" inherits="GameFontNormal" text="69" hidden="false">
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
@@ -306,7 +319,7 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentVotes" inherits="GameFontNormal" text="[votes]" hidden="false">
+                <FontString name="$parentVotes" inherits="GameFontNormal" text="10" hidden="false">
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
@@ -513,15 +526,15 @@
                             </Anchors>
                             <Color r="0" g="0.88" b="0.06" a="1"/>
                         </Texture>
-                        <Texture name="$parentTimeLeftBackground">
-                            <Size x="90" y="20"/>
-                            <Anchors>
-                                <Anchor point="TOPLEFT">
-                                    <Offset x="0" y="0"/>
-                                </Anchor>
-                            </Anchors>
-                            <Color r="0" g="0.88" b="0.06" a="1"/>
-                        </Texture>
+<!--                        <Texture name="$parentTimeLeftBackground">-->
+<!--                            <Size x="90" y="20"/>-->
+<!--                            <Anchors>-->
+<!--                                <Anchor point="TOPLEFT">-->
+<!--                                    <Offset x="0" y="0"/>-->
+<!--                                </Anchor>-->
+<!--                            </Anchors>-->
+<!--                            <Color r="0" g="0.88" b="0.06" a="1"/>-->
+<!--                        </Texture>-->
                     </Layer>
                 </Layers>
                 <Anchors>
@@ -753,7 +766,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="65" y="-55"/>
+                                <AbsDimension x="65" y="-58"/>
                             </Offset>
                         </Anchor>
                     </Anchors>

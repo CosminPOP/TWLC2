@@ -1,4 +1,4 @@
-# TWLC2 v1.0.13
+# TWLC2 v1.0.14
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
 Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
@@ -40,4 +40,4 @@ Slashcommands[RL]:<br>
 `/twlc who` - Lists people with the addon <Br>
 `/twlc set ttr [sec]` - Sets the time available to players to roll in a vote tie case<Br>
 `/twlc synchistory` - Syncs loot history with other people with the addon.<Br>
-`/twlc debug` - Toggle debuggin on or off<Br>
+`/twlc debug` - Toggle debugging on or off<Br>
