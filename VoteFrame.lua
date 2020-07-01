@@ -273,9 +273,6 @@ SlashCmdList["TWLC"] = function(cmd)
                 twprint('|cff69ccf0[TWLC2c] |cffffffffDebug DISABLED')
             end
         end
-        if (cmd == 'show') then
-            getglobal("LootLCVoteFrameWindow"):Show()
-        end
         if (cmd == 'who') then
             getglobal('VoteFrameWho'):Show()
             LCVoteFrame.peopleWithAddon = ''
@@ -293,7 +290,7 @@ SlashCmdList["TWLC"] = function(cmd)
                 end
             end
 
-            twdebug('starting sync history, ' .. totalItems .. ' entries...')
+            twprint('Starting History Sync, ' .. totalItems .. ' entries...')
             ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "loot_history_sync=start", "RAID")
             for lootTime, item in next, TWLC_LOOT_HISTORY do
                 local _, _, itemLink = string.find(item['item'], "(item:%d+:%d+:%d+:%d+)");
@@ -1642,6 +1639,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         end
     end
     if (string.find(t, 'loot_history_sync=', 1, true)) then
+
+        if twlc2isRL(sender) and sender == me and t == 'loot_history_sync=end' then
+            twprint('History Sync complete.')
+        end
+
         if not twlc2isRL(sender) or sender == me then return end
         local lh = string.split(t, "=")
         if lh[2] == 'start' then TWLC_LOOT_HISTORY = {}
