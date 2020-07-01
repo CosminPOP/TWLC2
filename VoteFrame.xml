@@ -599,7 +599,8 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentName" justifyH="LEFT" inherits="GameFontNormal" text="[longest item name ever ever ever ever ever ever]" hidden="false">
+                        <FontString name="$parentName" justifyH="LEFT" inherits="GameFontNormal"
+                                    text="[longest item name ever ever ever ever ever ever]" hidden="false">
                             <Anchors>
                                 <Anchor point="LEFT">
                                     <Offset>
@@ -614,18 +615,18 @@
                     </Layer>
                 </Layers>
                 <Scripts>
-<!--                    <OnLoad>-->
-<!--                            this:RegisterForClicks("LeftButtonUp", "RightButtonDown");-->
-<!--                    </OnLoad>-->
-<!--                    <OnClick>-->
-<!--                            ContestantClick(this:GetID())-->
-<!--                    </OnClick>-->
-<!--                    <OnEnter>-->
-<!--                            Contestant_OnEnter(this:GetID())-->
-<!--                    </OnEnter>-->
-<!--                    <OnLeave>-->
-<!--                            Contestant_OnLeave()-->
-<!--                    </OnLeave>-->
+                    <!--                    <OnLoad>-->
+                    <!--                            this:RegisterForClicks("LeftButtonUp", "RightButtonDown");-->
+                    <!--                    </OnLoad>-->
+                    <!--                    <OnClick>-->
+                    <!--                            ContestantClick(this:GetID())-->
+                    <!--                    </OnClick>-->
+                    <!--                    <OnEnter>-->
+                    <!--                            Contestant_OnEnter(this:GetID())-->
+                    <!--                    </OnEnter>-->
+                    <!--                    <OnLeave>-->
+                    <!--                            Contestant_OnLeave()-->
+                    <!--                    </OnLeave>-->
                 </Scripts>
             </Button>
         </Frames>
@@ -1310,36 +1311,6 @@
                         FauxScrollFrame_OnVerticalScroll(20, VoteFrameListScroll_Update);
                     </OnVerticalScroll>
                 </Scripts>
-                <Layers>
-                    <Layer level="BACKGROUND">
-                        <!--                        <Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">-->
-                        <!--                            <Size>-->
-                        <!--                                <AbsDimension x="31" y="226"/>-->
-                        <!--                            </Size>-->
-                        <!--                            <Anchors>-->
-                        <!--                                <Anchor point="TOPLEFT" relativePoint="TOPRIGHT">-->
-                        <!--                                    <Offset>-->
-                        <!--                                        <AbsDimension x="-2" y="5"/>-->
-                        <!--                                    </Offset>-->
-                        <!--                                </Anchor>-->
-                        <!--                            </Anchors>-->
-                        <!--                            <TexCoords left="0" right="0.484375" top="0" bottom="0.8828125"/>-->
-                        <!--                        </Texture>-->
-                        <!--                        <Texture file="Interface\PaperDollInfoFrame\UI-Character-ScrollBar">-->
-                        <!--                            <Size>-->
-                        <!--                                <AbsDimension x="31" y="106"/>-->
-                        <!--                            </Size>-->
-                        <!--                            <Anchors>-->
-                        <!--                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">-->
-                        <!--                                    <Offset>-->
-                        <!--                                        <AbsDimension x="-2" y="-2"/>-->
-                        <!--                                    </Offset>-->
-                        <!--                                </Anchor>-->
-                        <!--                            </Anchors>-->
-                        <!--                            <TexCoords left="0.515625" right="1.0" top="0" bottom="0.4140625"/>-->
-                        <!--                        </Texture>-->
-                    </Layer>
-                </Layers>
             </ScrollFrame>
 
             <Frame name="$parentTimeLeftBar" framestrata="BACKGROUND">
@@ -1463,12 +1434,12 @@
 
             <Frame name="TWLCLootHistoryFrame" hidden="true">
                 <Size>
-                    <AbsDimension x="300" y="200"/>
+                    <AbsDimension x="320" y="345"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT">
                         <Offset>
-                            <AbsDimension x="300" y="0"/>
+                            <AbsDimension x="320" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1535,6 +1506,28 @@
                         </Scripts>
                     </Button>
 
+
+                    <ScrollFrame name="$parentScrollFrame" hidden="true" inherits="FauxScrollFrameTemplate">
+                        <Size>
+                            <AbsDimension x="290" y="308"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="-25"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnVerticalScroll>
+                                FauxScrollFrame_OnVerticalScroll(22, LootHistory_Update);
+                            </OnVerticalScroll>
+                            <OnShow>
+                                    --                                    AtlasScrollBar_Update()
+                            </OnShow>
+                        </Scripts>
+                    </ScrollFrame>
+
                 </Frames>
             </Frame>
 
@@ -1592,7 +1585,7 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentText"  justifyH="LEFT" text="" inherits="GameFontNormal">
+                <FontString name="$parentText" justifyH="LEFT" text="" inherits="GameFontNormal">
                     <Anchors>
                         <Anchor point="TOP">
                             <Offset>
