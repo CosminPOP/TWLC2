@@ -1,4 +1,4 @@
-local addonVer = "1.0.14" --don't use letters!
+local addonVer = "1.0.15" --don't use letters!
 local me = UnitName('player')
 
 function twprint(a)
@@ -274,6 +274,10 @@ SlashCmdList["TWLC"] = function(cmd)
             end
         end
         if (cmd == 'who') then
+            if not inRaid then
+                twprint('You are not in a raid.')
+                return false
+            end
             getglobal('VoteFrameWho'):Show()
             LCVoteFrame.peopleWithAddon = ''
             ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "voteframe=whoVF=" .. addonVer, "RAID")
@@ -920,11 +924,11 @@ function buildContestantMenu()
     separator.disabled = true
 
     local title = {};
-    title.text = getglobal("ContestantFrame" .. id .. "Name"):GetText()
+    title.text = getglobal("ContestantFrame" .. id .. "Name"):GetText() .. ' ' ..
+            getglobal("ContestantFrame" .. id .. "Need"):GetText()
     title.disabled = false
     title.isTitle = true
-    title.func =
-    function()
+    title.func = function()
         --
     end
     UIDropDownMenu_AddButton(title);
@@ -942,6 +946,57 @@ function buildContestantMenu()
         awardPlayer(getglobal("ContestantFrame" .. id).name)
     end
     UIDropDownMenu_AddButton(award);
+    UIDropDownMenu_AddButton(separator);
+
+    local changeToBIS = {}
+    changeToBIS.text = "Change to " .. needs['bis'].c .. needs['bis'].text
+    changeToBIS.disabled = getglobal("ContestantFrame" .. id).need == 'bis'
+    changeToBIS.isTitle = false
+    changeToBIS.tooltipTitle = 'Change choice'
+    changeToBIS.tooltipText = 'Change contestant\'s choice to ' .. needs['bis'].c .. needs['bis'].text
+    changeToBIS.justifyH = 'LEFT'
+    changeToBIS.func = function()
+        changePlayerPickTo(getglobal("ContestantFrame" .. id).name, 'bis')
+    end
+    UIDropDownMenu_AddButton(changeToBIS);
+
+    local changeToMS = {}
+    changeToMS.text = "Change to " .. needs['ms'].c .. needs['ms'].text
+    changeToMS.disabled = getglobal("ContestantFrame" .. id).need == 'ms'
+    changeToMS.isTitle = false
+    changeToMS.tooltipTitle = 'Change choice'
+    changeToMS.tooltipText = 'Change contestant\'s choice to ' .. needs['ms'].c .. needs['ms'].text
+    changeToMS.justifyH = 'LEFT'
+    changeToMS.func = function()
+        changePlayerPickTo(getglobal("ContestantFrame" .. id).name, 'ms')
+    end
+    UIDropDownMenu_AddButton(changeToMS);
+
+    local changeToOS = {}
+    changeToOS.text = "Change to " .. needs['os'].c .. needs['os'].text
+    changeToOS.disabled = getglobal("ContestantFrame" .. id).need == 'os'
+    changeToOS.isTitle = false
+    changeToOS.tooltipTitle = 'Change choice'
+    changeToOS.tooltipText = 'Change contestant\'s choice to ' .. needs['os'].c .. needs['os'].text
+    changeToOS.justifyH = 'LEFT'
+    changeToOS.func = function()
+        changePlayerPickTo(getglobal("ContestantFrame" .. id).name, 'os')
+    end
+    UIDropDownMenu_AddButton(changeToOS);
+
+    local changeToPass = {}
+    changeToPass.text = "Change to " .. needs['pass'].c .. needs['pass'].text
+    changeToPass.disabled = getglobal("ContestantFrame" .. id).need == 'pass'
+    changeToPass.isTitle = false
+    changeToPass.tooltipTitle = 'Change choice'
+    changeToPass.tooltipText = 'Change contestant\'s choice to ' .. needs['pass'].c .. needs['pass'].text
+    changeToPass.justifyH = 'LEFT'
+    changeToPass.func = function()
+        changePlayerPickTo(getglobal("ContestantFrame" .. id).name, 'pass')
+    end
+    UIDropDownMenu_AddButton(changeToPass);
+
+    UIDropDownMenu_AddButton(separator);
 
     local close = {};
     close.text = "Close"
@@ -952,6 +1007,15 @@ function buildContestantMenu()
         --
     end
     UIDropDownMenu_AddButton(close);
+end
+
+function changePlayerPickTo(playerName, newPick)
+    for k, player in next, LCVoteFrame.currentPlayersList do
+        if player['name'] == playerName then
+            player['need'] = newPick
+        end
+    end
+    VoteFrameListScroll_Update()
 end
 
 LCVoteFrame.HistoryId = 0
@@ -1184,6 +1248,7 @@ function VoteFrameListScroll_Update()
             getglobal("ContestantFrame" .. i).playerIndex = playerIndex;
             itemIndex, name, need, votes, ci1, ci2, roll = getPlayerInfo(playerIndex);
             getglobal("ContestantFrame" .. i).name = name;
+            getglobal("ContestantFrame" .. i).need = need;
 
             local class = getPlayerClass(name)
             local color = classColors[class]
@@ -1749,9 +1814,6 @@ function refreshList()
     end
     for pIndex, data in next, LCVoteFrame.playersWhoWantItems do
         if (data['itemIndex'] == LCVoteFrame.CurrentVotedItem) then
-            --            twdebug('printing LCVoteFrame.playersWhoWantItems[' .. pIndex .. ']')
-            --            twdebug('name ' .. LCVoteFrame.playersWhoWantItems[pIndex]['name'])
-            --            twdebug('votes ' .. LCVoteFrame.playersWhoWantItems[pIndex]['votes'])
             LCVoteFrame.currentPlayersList[table.getn(LCVoteFrame.currentPlayersList) + 1] = LCVoteFrame.playersWhoWantItems[pIndex]
         end
     end
@@ -2139,7 +2201,7 @@ end
 
 function awardPlayer(playerName)
 
-    if not playerName then
+    if not playerName or playerName == '' then
         twprint('[Error] AwardPlayer: playerName is nil.')
         return false
     end
