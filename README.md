@@ -1,4 +1,4 @@
-# TWLC2 v1.0.11
+# TWLC2 v1.0.13
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
 Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
@@ -33,8 +33,11 @@ Rolls are recorded and shown to officers. ML can distribute the item based on th
 
 ![rollwinner](https://imgur.com/886zw8y.png)
 
-Slashcommands:<br>
+Slashcommands[RL]:<br>
 `/twlc add [name]` - Adds `name` to the loot council member list<br>
 `/twlc rem [name]` - Removes `name` from the loot council member list<br>
 `/twlc list` - Lists the loot council member list <Br>
+`/twlc who` - Lists people with the addon <Br>
 `/twlc set ttr [sec]` - Sets the time available to players to roll in a vote tie case<Br>
+`/twlc synchistory` - Syncs loot history with other people with the addon.<Br>
+`/twlc debug` - Toggle debuggin on or off<Br>
