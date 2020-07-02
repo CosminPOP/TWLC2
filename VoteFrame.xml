@@ -1425,6 +1425,26 @@
                             </OnClick>
                         </Scripts>
                     </Button>
+
+                    <Button name="$parentSyncLootHistory" inherits="UIPanelButtonTemplate2" text="Sync Loot History">
+                        <Size>
+                            <AbsDimension x="220" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="10" y="-35"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    syncLootHistory_OnClick()
+                            </OnClick>
+
+                        </Scripts>
+                    </Button>
+
                     <Frame name="$parentTitleBar">
                         <Size>
                             <AbsDimension x="286" y="1"/>
