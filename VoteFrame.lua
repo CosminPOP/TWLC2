@@ -1,4 +1,4 @@
-local addonVer = "1.0.16" --don't use letters!
+local addonVer = "1.0.1.6" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 function twprint(a)
@@ -995,18 +995,6 @@ function buildContestantMenu()
     end
     UIDropDownMenu_AddButton(changeToOS);
 
-    local changeToPass = {}
-    changeToPass.text = "Change to " .. needs['pass'].c .. needs['pass'].text
-    changeToPass.disabled = getglobal("ContestantFrame" .. id).need == 'pass'
-    changeToPass.isTitle = false
-    changeToPass.tooltipTitle = 'Change choice'
-    changeToPass.tooltipText = 'Change contestant\'s choice to ' .. needs['pass'].c .. needs['pass'].text
-    changeToPass.justifyH = 'LEFT'
-    changeToPass.func = function()
-        changePlayerPickTo(getglobal("ContestantFrame" .. id).name, 'pass')
-    end
-    UIDropDownMenu_AddButton(changeToPass);
-
     UIDropDownMenu_AddButton(separator);
 
     local close = {};
@@ -1751,6 +1739,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
                 if (twlc_ver(i[4]) == twlc_ver(addonVer)) then verColor = classColors['hunter'].c end
                 if (twlc_ver(i[4]) < twlc_ver(addonVer)) then verColor = '|cffff222a' end
                 local star = ' '
+                if string.len(i[4]) < 7 then i[4] = '0.' .. i[4] end
                 if twlc2isRLorAssist(sender) then star = '*' end
                 LCVoteFrame.peopleWithAddon = LCVoteFrame.peopleWithAddon .. star ..
                         classColors[getPlayerClass(sender)].c ..
@@ -2297,9 +2286,12 @@ end
 
 
 function twlc_ver(ver)
-    return tonumber(string.sub(ver, 1, 1)) * 100 +
-            tonumber(string.sub(ver, 3, 3)) * 10 +
-            tonumber(string.sub(ver, 5, 5)) * 1
+    if string.sub(ver, 7, 7) == '' then ver = '0.' .. ver end
+
+    return tonumber(string.sub(ver, 1, 1)) * 1000 +
+            tonumber(string.sub(ver, 3, 3)) * 100 +
+            tonumber(string.sub(ver, 5, 5)) * 10 +
+            tonumber(string.sub(ver, 7, 7)) * 1
 end
 
 function closeWhoWindow()
