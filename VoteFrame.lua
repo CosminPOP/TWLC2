@@ -284,6 +284,10 @@ SlashCmdList["TWLC"] = function(cmd)
             if not twlc2isRL(me) then return end
             syncLootHistory_OnClick()
         end
+        if cmd == 'clearhistory' then
+            TWLC_LOOT_HISTORY = {}
+            twprint('Loot History cleared.')
+        end
         if string.sub(cmd, 1, 6) == 'search' then
             local cmdEx = string.split(cmd, ' ')
 
@@ -493,6 +497,18 @@ LCVoteFrame:SetScript("OnEvent", function()
     if (event) then
         if (event == "RAID_ROSTER_UPDATE") then
             if (twlc2isRL(me)) then
+                twdebug('RAID_ROSTER_UPDATE');
+                for i = 0, GetNumRaidMembers() do
+                    if (GetRaidRosterInfo(i)) then
+                        local n, r = GetRaidRosterInfo(i);
+                        if twlc2isCL(n) and r ~= 1 and n ~= me then
+                            twdebug('PROMOTE TRIGGER');
+                            PromoteToAssistant(n)
+                            return false
+                        end
+                    end
+                end
+                twdebug('RAID_ROSTER_UPDATE CONTINUE');
                 getglobal('RLOptionsButton'):Show()
                 getglobal('RLExtraFrame'):Show()
                 getglobal('MLToWinner'):Show()
@@ -1862,11 +1878,12 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             return false
         end
 
-        if lh[2] == 'start' then TWLC_LOOT_HISTORY = {}
+        if lh[2] == 'start' then
+            --TWLC_LOOT_HISTORY = {}
         elseif lh[2] == 'end' then
             twdebug('loot history synced.')
         else
-            TWLC_LOOT_HISTORY[lh[2]] = {
+            TWLC_LOOT_HISTORY[tonumber(lh[2])] = {
                 ["player"] = lh[3],
                 ["item"] = lh[4],
             }
