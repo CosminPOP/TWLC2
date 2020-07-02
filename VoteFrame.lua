@@ -516,13 +516,21 @@ LCVoteFrame:SetScript("OnEvent", function()
                 --de--Er würfelt. Ergebnis: 47 (1-100)
                 local r = string.split(arg1, " ")
 
-                if not r[2] or not r[3] then twerror('bad roll syntax') return false end
+                if not r[2] or not r[3] then
+                    twerror('bad roll syntax')
+                    twerror(arg1)
+                    return false
+                end
 
                 local name = r[1]
                 local roll = tonumber(r[3])
 
                 if string.find(arg1, "würfelt. Ergebnis", 1, true) then
-                    if not r[4] then twerror('bad german roll syntax') return false end
+                    if not r[4] then
+                        twerror('bad german roll syntax')
+                        twerror(arg1)
+                        return false
+                    end
                     roll = tonumber(r[4])
                 end
 
@@ -1382,7 +1390,11 @@ function addButtonOnEnterTooltip(frame, itemLink)
     if (string.find(itemLink, "|", 1, true)) then
         local ex = string.split(itemLink, "|")
 
-        if not ex[2] or not ex[3] then twerror('bad addButtonOnEnterTooltip itemLink syntadx') return false end
+        if not ex[2] or not ex[3] then
+            twerror('bad addButtonOnEnterTooltip itemLink syntadx')
+            twerror(itemLink)
+            return false
+        end
 
         frame:SetScript("OnEnter", function(self)
             LCTooltipVoteFrame:SetOwner(this, "ANCHOR_RIGHT", -(this:GetWidth() / 4), -(this:GetHeight() / 4));
@@ -1482,7 +1494,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         local indexEx = string.split(t, ':')
 
-        if not indexEx[2] or not indexEx[3] then twerror('bad playerRoll syntax') return false end
+        if not indexEx[2] or not indexEx[3] then
+            twerror('bad playerRoll syntax')
+            twerror(t)
+            return false
+        end
         if not tonumber(indexEx[3]) then return false end
 
         LCVoteFrame.playersWhoWantItems[tonumber(indexEx[2])]['roll'] = tonumber(indexEx[3])
@@ -1495,9 +1511,17 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         if not canVote(me) then return end
 
         local pickEx = string.split(t, '@')
-        if not pickEx[2] or not pickEx[3] or not pickEx[4] then twerror('bad changePick syntax') return false end
+        if not pickEx[2] or not pickEx[3] or not pickEx[4] then
+            twerror('bad changePick syntax')
+            twerror(t)
+            return false
+        end
 
-        if not tonumber(pickEx[4]) then twerror('bad changePick itemIndex') return false end
+        if not tonumber(pickEx[4]) then
+            twerror('bad changePick itemIndex')
+            twerror(t)
+            return false
+        end
 
         changePlayerPickTo(pickEx[2], pickEx[3], tonumber(pickEx[4]))
     end
@@ -1509,7 +1533,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         local r = string.split(t, '=')
         --r[2] = voteditem id
         --r[3] = roll
-        if not r[2] or not r[3] then twerror('bad rollChoice syntax') return false end
+        if not r[2] or not r[3] then
+            twerror('bad rollChoice syntax')
+            twerror(t)
+            return false
+        end
 
         if (tonumber(r[3]) == -1) then
 
@@ -1537,6 +1565,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         if not itemVoteEx[2] or not itemVoteEx[3] or not itemVoteEx[4] then
             twerror('bad itemVote syntax')
+            twerror(t)
             return false
         end
 
@@ -1552,7 +1581,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     if string.find(t, 'voteframe=', 1, true) then
         local command = string.split(t, '=')
 
-        if not command[2] then twerror('bad voteframe syntax') return false end
+        if not command[2] then
+            twerror('bad voteframe syntax')
+            twerror(t)
+            return false
+        end
 
         if (command[2] == "whoVF") then
             ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "withAddonVF=" .. sender .. "=" .. me .. "=" .. addonVer, "RAID")
@@ -1580,10 +1613,15 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         if not item[2] or not item[3] or not item[4] or not item[5] then
             twerror('bad loot syntax')
+            twerror(t)
             return false
         end
 
-        if not tonumber(item[2]) then twerror('bad loot index') return false end
+        if not tonumber(item[2]) then
+            twerror('bad loot index')
+            twerror(t)
+            return false
+        end
 
         local index = tonumber(item[2])
         local texture = item[3]
@@ -1598,7 +1636,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         local action = string.split(t, "=")
 
-        if not action[2] then twerror('bad countdownframe syntax') return false end
+        if not action[2] then
+            twerror('bad countdownframe syntax')
+            twerror(t)
+            return false
+        end
 
         if (action[2] == 'show') then TWLCCountDownFRAME:Show() end
     end
@@ -1609,9 +1651,17 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         local startWork = GetTime()
         local needEx = string.split(t, '=')
 
-        if not needEx[2] or not needEx[3] or not needEx[4] then twerror('bad wait syntax') return false end
+        if not needEx[2] or not needEx[3] or not needEx[4] then
+            twerror('bad wait syntax')
+            twerror(t)
+            return false
+        end
 
-        if not tonumber(needEx[2]) then twerror('bad wait itemIndex') return false end
+        if not tonumber(needEx[2]) then
+            twerror('bad wait itemIndex')
+            twerror(t)
+            return false
+        end
 
         if (table.getn(LCVoteFrame.playersWhoWantItems) ~= 0) then
             for i = 1, table.getn(LCVoteFrame.playersWhoWantItems) do
@@ -1654,7 +1704,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
             local needEx = string.split(t, '=')
 
-            if not needEx[2] or not needEx[3] or not needEx[4] then twerror('bad need syntax') return false end
+            if not needEx[2] or not needEx[3] or not needEx[4] then
+                twerror('bad need syntax')
+                twerror(t)
+                return false
+            end
 
             if (LCVoteFrame.pickResponses[tonumber(needEx[2])]) then
                 LCVoteFrame.pickResponses[tonumber(needEx[2])] = LCVoteFrame.pickResponses[tonumber(needEx[2])] + 1
@@ -1685,7 +1739,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         local command = string.split(t, '=')
 
-        if not command[2] then twerror('bad syncRoster syntax') return false end
+        if not command[2] then
+            twerror('bad syncRoster syntax')
+            twerror(t)
+            return false
+        end
 
         if (command[2] == "start") then
             LCVoteSyncFrame.NEW_ROSTER = {}
@@ -1712,6 +1770,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         if not wonData[2] or not wonData[3] or not wonData[4] then
             twerror('bad playerWon syntax')
+            twerror(t)
             return false
         end
 
@@ -1728,7 +1787,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         local ttn = string.split(t, "=")
 
-        if not ttn[2] then twerror('bad ttn syntax') return false end
+        if not ttn[2] then
+            twerror('bad ttn syntax')
+            twerror(t)
+            return false
+        end
 
         TIME_TO_NEED = tonumber(ttn[2])
         TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
@@ -1738,7 +1801,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         local ttv = string.split(t, "=")
 
-        if not ttv[2] then twerror('bad ttv syntax') return false end
+        if not ttv[2] then
+            twerror('bad ttv syntax')
+            twerror(t)
+            return false
+        end
 
         TIME_TO_VOTE = tonumber(ttv[2])
         VoteCountdown.countDownFrom = TIME_TO_VOTE
@@ -1748,14 +1815,22 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 
         local ttr = string.split(t, "=")
 
-        if not ttr[2] then twerror('bat ttr syntax') return false end
+        if not ttr[2] then
+            twerror('bat ttr syntax')
+            twerror(t)
+            return false
+        end
 
         TIME_TO_ROLL = tonumber(ttr[2])
     end
     if string.find(t, 'withAddonVF=', 1, true) then
         local i = string.split(t, "=")
 
-        if not i[2] or not i[3] or not i[4] then twerror('bad withAddonVF syntax') return false end
+        if not i[2] or not i[3] or not i[4] then
+            twerror('bad withAddonVF syntax')
+            twerror(t)
+            return false
+        end
 
         if (i[2] == me) then --i[2] = who requested the who
             local verColor = ""
@@ -1781,7 +1856,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         if not twlc2isRL(sender) or sender == me then return end
         local lh = string.split(t, ";")
 
-        if not lh[2] or not lh[3] or not lh[4] then twerror('bad loot_history_sync syntax') return false end
+        if not lh[2] or not lh[3] or not lh[4] then
+            twerror('bad loot_history_sync syntax')
+            twerror(t)
+            return false
+        end
 
         if lh[2] == 'start' then TWLC_LOOT_HISTORY = {}
         elseif lh[2] == 'end' then
