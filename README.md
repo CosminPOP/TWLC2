@@ -1,4 +1,4 @@
-# TWLC2 v1.0.1.6
+# TWLC2 v1.0.1.7
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
 Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
