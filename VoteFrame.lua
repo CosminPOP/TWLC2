@@ -1,4 +1,4 @@
-local addonVer = "1.0.1.7" --don't use letters or numbers > 10
+local addonVer = "1.0.1.8" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 function twprint(a)
@@ -126,6 +126,24 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
             getglobal('MLToWinner'):Enable()
 
             VoteCountdown.votingOpen = true
+
+            --desynch case, players have client minimised
+            for index, votedItem in next, LCVoteFrame.VotedItemsFrames do
+                for i = 1, table.getn(LCVoteFrame.playersWhoWantItems) do
+                    if LCVoteFrame.playersWhoWantItems[i]['itemIndex'] == index then
+                        if LCVoteFrame.playersWhoWantItems[i]['need'] == 'wait' then
+                            changePlayerPickTo(LCVoteFrame.playersWhoWantItems[i]['name'], 'autopass', index)
+                            if (LCVoteFrame.pickResponses[index]) then
+                                if LCVoteFrame.pickResponses[index] < LCVoteFrame.waitResponses[index] then
+                                    LCVoteFrame.pickResponses[index] = LCVoteFrame.pickResponses[index] + 1
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+
+
             VoteFrameListScroll_Update()
 
             VoteCountdown:Show()
@@ -295,7 +313,7 @@ SlashCmdList["TWLC"] = function(cmd)
 
                 local numItems = 0
                 for lootTime, item in pairsByKeysReverse(TWLC_LOOT_HISTORY) do
-                    if cmdEx[2] == item['player'] then
+                    if string.lower(cmdEx[2]) == string.lower(item['player']) then
                         numItems = numItems + 1
                     end
                 end
@@ -303,7 +321,7 @@ SlashCmdList["TWLC"] = function(cmd)
                 twprint('Listing ' .. cmdEx[2] .. '\'s loot history:')
                 if numItems > 0 then
                     for lootTime, item in pairsByKeysReverse(TWLC_LOOT_HISTORY) do
-                        if cmdEx[2] == item['player'] then
+                        if string.lower(cmdEx[2]) == string.lower(item['player']) then
                             twprint(item['item'] .. ' - ' .. date("%d/%m", lootTime))
                         end
                     end
@@ -710,7 +728,6 @@ function checkAssists()
     local people = {}
 
     i = 0
-    -- todo maybe remove this block
     for name, cl in next, assistsAndCL do
         i = i + 1
 
@@ -806,7 +823,7 @@ function BroadcastLoot_OnClick()
 
     getglobal('BroadcastLoot'):Disable()
 
-    TIME_TO_NEED = GetNumLootItems() * 10
+    TIME_TO_NEED = GetNumLootItems() * 15
     TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
     SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
     TIME_TO_VOTE = GetNumLootItems() * 25
@@ -1040,7 +1057,7 @@ function changePlayerPickTo(playerName, newPick, itemIndex)
         end
     end
     if twlc2isRL(me) then
-        SendAddonMessage("TWLCNF", "changePickTo@" .. playerName .. "@" .. newPick .."@" .. LCVoteFrame.CurrentVotedItem, "RAID")
+        SendAddonMessage("TWLCNF", "changePickTo@" .. playerName .. "@" .. newPick .. "@" .. itemIndex, "RAID")
     end
 
     VoteFrameListScroll_Update()
@@ -1727,7 +1744,9 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             end
 
             if (LCVoteFrame.pickResponses[tonumber(needEx[2])]) then
-                LCVoteFrame.pickResponses[tonumber(needEx[2])] = LCVoteFrame.pickResponses[tonumber(needEx[2])] + 1
+                if LCVoteFrame.pickResponses[tonumber(needEx[2])] < LCVoteFrame.waitResponses[tonumber(needEx[2])] then
+                    LCVoteFrame.pickResponses[tonumber(needEx[2])] = LCVoteFrame.pickResponses[tonumber(needEx[2])] + 1
+                end
             else
                 LCVoteFrame.pickResponses[tonumber(needEx[2])] = 1
             end
@@ -1892,8 +1911,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
 end
 
 function refreshList()
-    --    twdebug('refreshList()')
-    -- sort list ?
+    --getto ordering
     local tempTable = LCVoteFrame.playersWhoWantItems
     LCVoteFrame.playersWhoWantItems = {}
     local j = 0
@@ -1987,7 +2005,6 @@ function calculateVotes()
         LCVoteFrame.currentPlayersList[pIndex].votes = 0
     end
 
-    -- todo check next table ?
     if LCVoteFrame.CurrentVotedItem ~= nil then
         for n, d in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem] do
 
