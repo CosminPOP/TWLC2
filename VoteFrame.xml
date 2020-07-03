@@ -569,7 +569,7 @@
 
     <Frame name="HistoryItemTemplate" virtual="true">
         <Size>
-            <AbsDimension x="284" y="21"/>
+            <AbsDimension x="184" y="21"/>
         </Size>
         <Anchors>
             <Anchor point="TOPLEFT">
@@ -622,7 +622,7 @@
                                 </Anchor>
                             </Anchors>
                             <Size>
-                                <AbsDimension x="200" y="20"/>
+                                <AbsDimension x="100" y="20"/>
                             </Size>
                         </FontString>
                     </Layer>
@@ -1467,12 +1467,12 @@
 
             <Frame name="TWLCLootHistoryFrame" hidden="true">
                 <Size>
-                    <AbsDimension x="320" y="345"/>
+                    <AbsDimension x="200" y="345"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT">
                         <Offset>
-                            <AbsDimension x="320" y="0"/>
+                            <AbsDimension x="200" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1505,7 +1505,7 @@
                 <Frames>
                     <Frame name="$parentTitleBar">
                         <Size>
-                            <AbsDimension x="286" y="1"/>
+                            <AbsDimension x="186" y="1"/>
                         </Size>
                         <Anchors>
                             <Anchor point="TOPLEFT">

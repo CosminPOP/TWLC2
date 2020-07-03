@@ -268,13 +268,24 @@ SlashCmdList["TWLC"] = function(cmd)
                         twprint('TIME_TO_ROLL - set to ' .. TIME_TO_ROLL .. 's')
                         ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
                     end
+                    --factors
+                    if (setEx[2] == 'ttnfactor') then
+                        TWLC_TTN_FACTOR = tonumber(setEx[3])
+                        twprint('TWLC_TTN_FACTOR - set to ' .. TWLC_TTN_FACTOR .. 's')
+                        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttnfactor=' .. TWLC_TTN_FACTOR, "RAID")
+                    end
+                    if (setEx[2] == 'ttvfactor') then
+                        TWLC_TTV_FACTOR = tonumber(setEx[3])
+                        twprint('TWLC_TTV_FACTOR - set to ' .. TWLC_TTV_FACTOR .. 's')
+                        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttvfactor=' .. TWLC_TTV_FACTOR, "RAID")
+                    end
                 else
                     twprint('You are not the raid leader.')
                 end
             else
                 twprint('SET Options')
-                twprint('/twlc set ttn <time> - sets TIME_TO_NEED (current value: ' .. TIME_TO_NEED .. 's)')
-                twprint('/twlc set ttv <time> - sets TIME_TO_VOTE (current value: ' .. TIME_TO_VOTE .. 's)')
+                twprint('/twlc set ttnfactor <time> - sets TWLC_TTN_FACTOR (current value: numItems * ' .. TWLC_TTN_FACTOR .. 's)')
+                twprint('/twlc set ttvfactor <time> - sets TWLC_TTV_FACTOR (current value: numItems * ' .. TWLC_TTV_FACTOR .. 's)')
                 twprint('/twlc set ttr <time> - sets TIME_TO_ROLL (current value: ' .. TIME_TO_ROLL .. 's)')
             end
         end
@@ -589,6 +600,8 @@ LCVoteFrame:SetScript("OnEvent", function()
             if not TWLC_ENABLED then TWLC_ENABLED = false end
             if not TWLC_LOOT_HISTORY then TWLC_LOOT_HISTORY = {} end
             if not TWLC_DEBUG then TWLC_DEBUG = false end
+            if not TWLC_TTN_FACTOR then TWLC_TTN_FACTOR = 15 end
+            if not TWLC_TTV_FACTOR then TWLC_TTV_FACTOR = 15 end
 
             TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
             VoteCountdown.countDownFrom = TIME_TO_VOTE
@@ -823,10 +836,13 @@ function BroadcastLoot_OnClick()
 
     getglobal('BroadcastLoot'):Disable()
 
-    TIME_TO_NEED = GetNumLootItems() * 15
+    SendAddonMessage("TWLCNF", 'ttnfactor=' .. TWLC_TTN_FACTOR, "RAID")
+    SendAddonMessage("TWLCNF", 'ttvfactor=' .. TWLC_TTV_FACTOR, "RAID")
+
+    TIME_TO_NEED = GetNumLootItems() * TWLC_TTN_FACTOR
     TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
     SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
-    TIME_TO_VOTE = GetNumLootItems() * 25
+    TIME_TO_VOTE = GetNumLootItems() * TWLC_TTV_FACTOR
     SendAddonMessage("TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
     SendAddonMessage("TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
 
@@ -1857,6 +1873,32 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         end
 
         TIME_TO_ROLL = tonumber(ttr[2])
+    end
+    if string.sub(t, 1, 10) == 'ttnfactor=' then
+        if not twlc2isRL(sender) then return end
+
+        local ttnfactor = string.split(t, "=")
+
+        if not ttnfactor[2] then
+            twerror('bat ttr syntax')
+            twerror(t)
+            return false
+        end
+
+        TWLC_TTN_FACTOR = tonumber(ttnfactor[2])
+    end
+    if string.sub(t, 1, 10) == 'ttvfactor=' then
+        if not twlc2isRL(sender) then return end
+
+        local ttvfactor = string.split(t, "=")
+
+        if not ttvfactor[2] then
+            twerror('bat ttr syntax')
+            twerror(t)
+            return false
+        end
+
+        TWLC_TTV_FACTOR = tonumber(ttvfactor[2])
     end
     if string.find(t, 'withAddonVF=', 1, true) then
         local i = string.split(t, "=")

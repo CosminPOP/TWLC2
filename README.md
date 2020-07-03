@@ -38,6 +38,12 @@ Slashcommands[RL]:<br>
 `/twlc rem [name]` - Removes `name` from the loot council member list<br>
 `/twlc list` - Lists the loot council member list <Br>
 `/twlc who` - Lists people with the addon <Br>
+`/twlc set ttnfactor [sec]` - Sets the time available to players to pick for each item (final duration is number of items * this factor, in seconds)<Br>
+`/twlc set ttvfactor [sec]` - Sets the time available to council members to vote for each item (final duration is number of items * this factor, in seconds)<Br>
 `/twlc set ttr [sec]` - Sets the time available to players to roll in a vote tie case<Br>
 `/twlc synchistory` - Syncs loot history with other people with the addon.<Br>
 `/twlc debug` - Toggle debugging on or off<Br>
+
+
+Known bugs:
+* Icons of Items you haven't seen don't show up in the `replaces` fields or show up as `?` icon.
