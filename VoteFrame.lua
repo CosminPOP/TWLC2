@@ -1,4 +1,4 @@
-local addonVer = "1.0.1.8" --don't use letters or numbers > 10
+local addonVer = "1.0.1.9" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 function twprint(a)
@@ -255,29 +255,29 @@ SlashCmdList["TWLC"] = function(cmd)
                         TIME_TO_NEED = tonumber(setEx[3])
                         TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
                         twprint('TIME_TO_NEED - set to ' .. TIME_TO_NEED .. 's')
-                        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
+                        SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
                     end
                     if (setEx[2] == 'ttv') then
                         TIME_TO_VOTE = tonumber(setEx[3])
                         VoteCountdown.countDownFrom = TIME_TO_VOTE
                         twprint('TIME_TO_VOTE - set to ' .. TIME_TO_VOTE .. 's')
-                        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+                        SendAddonMessage("TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
                     end
                     if (setEx[2] == 'ttr') then
                         TIME_TO_ROLL = tonumber(setEx[3])
                         twprint('TIME_TO_ROLL - set to ' .. TIME_TO_ROLL .. 's')
-                        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
+                        SendAddonMessage("TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
                     end
                     --factors
                     if (setEx[2] == 'ttnfactor') then
                         TWLC_TTN_FACTOR = tonumber(setEx[3])
                         twprint('TWLC_TTN_FACTOR - set to ' .. TWLC_TTN_FACTOR .. 's')
-                        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttnfactor=' .. TWLC_TTN_FACTOR, "RAID")
+                        SendAddonMessage("TWLCNF", 'ttnfactor=' .. TWLC_TTN_FACTOR, "RAID")
                     end
                     if (setEx[2] == 'ttvfactor') then
                         TWLC_TTV_FACTOR = tonumber(setEx[3])
                         twprint('TWLC_TTV_FACTOR - set to ' .. TWLC_TTV_FACTOR .. 's')
-                        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", 'ttvfactor=' .. TWLC_TTV_FACTOR, "RAID")
+                        SendAddonMessage("TWLCNF", 'ttvfactor=' .. TWLC_TTV_FACTOR, "RAID")
                     end
                 else
                     twprint('You are not the raid leader.')
@@ -307,7 +307,7 @@ SlashCmdList["TWLC"] = function(cmd)
             end
             getglobal('VoteFrameWho'):Show()
             LCVoteFrame.peopleWithAddon = ''
-            ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "voteframe=whoVF=" .. addonVer, "RAID")
+            SendAddonMessage("TWLCNF", "voteframe=whoVF=" .. addonVer, "RAID")
         end
         if cmd == 'synchistory' then
             if not twlc2isRL(me) then return end
@@ -583,7 +583,7 @@ LCVoteFrame:SetScript("OnEvent", function()
                 for pwIndex, pwPlayer in next, LCVoteFrame.playersWhoWantItems do
                     if (pwPlayer['name'] == name and pwPlayer['roll'] == -2) then
                         LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = roll
-                        ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll .. ":" .. LCVoteFrame.CurrentVotedItem, "RAID")
+                        SendAddonMessage("TWLCNF", "playerRoll:" .. pwIndex .. ":" .. roll .. ":" .. LCVoteFrame.CurrentVotedItem, "RAID")
                         VoteFrameListScroll_Update()
                         break
                     end
@@ -799,7 +799,7 @@ function sendReset()
 end
 
 function sendCloseWindow()
-    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "voteframe=close", "RAID")
+    SendAddonMessage("TWLCNF", "voteframe=close", "RAID")
 end
 
 function LCVoteFrame.closeWindow()
@@ -848,10 +848,10 @@ function BroadcastLoot_OnClick()
 
     sendReset()
 
-    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "voteframe=show", "RAID")
+    SendAddonMessage("TWLCNF", "voteframe=show", "RAID")
 
     TWLCCountDownFRAME:Show()
-    ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'countdownframe=show', "RAID")
+    SendAddonMessage("TWLCNF", 'countdownframe=show', "RAID")
 
 
     for id = 0, GetNumLootItems() do
@@ -1583,8 +1583,8 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         --r[2] = voteditem id
         --r[3] = roll
         if not r[2] or not r[3] then
-            twerror('bad rollChoice syntax')
-            twerror(t)
+            twdebug('bad rollChoice syntax')
+            twdebug(t)
             return false
         end
 
@@ -2012,14 +2012,14 @@ function VoteButton_OnClick(id)
         LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name] = {
             [me] = '+'
         }
-        ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":+", "RAID")
+        SendAddonMessage("TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":+", "RAID")
     else
         if LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name][me] == '+' then
             LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name][me] = '-'
-            ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":-", "RAID")
+            SendAddonMessage("TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":-", "RAID")
         else
             LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name][me] = '+'
-            ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":+", "RAID")
+            SendAddonMessage("TWLCNF", "itemVote:" .. LCVoteFrame.CurrentVotedItem .. ":" .. name .. ":+", "RAID")
         end
     end
 
@@ -2237,9 +2237,9 @@ function MLToWinner_OnClick()
                             -- found the wait=
                             LCVoteFrame.playersWhoWantItems[pwIndex]['roll'] = -2 --roll
                             --send to officers
-                            ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", "playerRoll:" .. pwIndex .. ":-2:" .. LCVoteFrame.CurrentVotedItem, "RAID")
+                            SendAddonMessage("TWLCNF", "playerRoll:" .. pwIndex .. ":-2:" .. LCVoteFrame.CurrentVotedItem, "RAID")
                             --send to raiders
-                            ChatThrottleLib:SendAddonMessage("BULK", "TWLCNF", 'rollFor=' .. LCVoteFrame.CurrentVotedItem .. '=' .. tex .. '=' .. name .. '=' .. linkString .. '=' .. TIME_TO_ROLL .. '=' .. tieName, "RAID")
+                            SendAddonMessage("TWLCNF", 'rollFor=' .. LCVoteFrame.CurrentVotedItem .. '=' .. tex .. '=' .. name .. '=' .. linkString .. '=' .. TIME_TO_ROLL .. '=' .. tieName, "RAID")
                             break
                         end
                     end
@@ -2428,7 +2428,7 @@ function awardPlayer(playerName)
 
         if foundItemIndexInLootFrame then
 
-            ChatThrottleLib:SendAddonMessage("NORMAL", "TWLCNF", "playerWon#" .. GetMasterLootCandidate(unitIndex) .. "#" .. link .. "#" .. LCVoteFrame.CurrentVotedItem, "RAID")
+            SendAddonMessage("TWLCNF", "playerWon#" .. GetMasterLootCandidate(unitIndex) .. "#" .. link .. "#" .. LCVoteFrame.CurrentVotedItem, "RAID")
 
             GiveMasterLoot(itemIndex, unitIndex);
 
@@ -2504,3 +2504,17 @@ StaticPopupDialogs["EXAMPLE_HELLOWORLD"] = {
     hideOnEscape = false,
     preferredIndex = 3,
 }
+
+function testComs(j)
+    local total = 0
+    local k = 0
+    for i = 1, j do
+        k = k + 1
+        if k == 1 then SendAddonMessage("TWLCNF", "bis=1=0=0", "RAID") end
+        if k == 2 then SendAddonMessage("TWLCNF", "ms=1=0=0", "RAID") end
+        if k == 3 then SendAddonMessage("TWLCNF", "os=1=0=0", "RAID") end
+        if k == 4 then SendAddonMessage("TWLCNF", "pass=1=0=0", "RAID") k = 0 end
+        total = total + string.len("pass=1=0=0")
+    end
+    twdebug('come len : ' .. total)
+end
