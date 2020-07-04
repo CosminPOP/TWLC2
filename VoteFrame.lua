@@ -1,4 +1,4 @@
-local addonVer = "1.0.1.9" --don't use letters or numbers > 10
+local addonVer = "1.0.2.0" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 function twprint(a)
@@ -271,6 +271,7 @@ SlashCmdList["TWLC"] = function(cmd)
                     --factors
                     if (setEx[2] == 'ttnfactor') then
                         TWLC_TTN_FACTOR = tonumber(setEx[3])
+                        getglobal('BroadcastLoot'):SetText('Broadcast Loot (' .. TWLC_TTN_FACTOR .. 's)')
                         twprint('TWLC_TTN_FACTOR - set to ' .. TWLC_TTN_FACTOR .. 's')
                         SendAddonMessage("TWLCNF", 'ttnfactor=' .. TWLC_TTN_FACTOR, "RAID")
                     end
@@ -646,6 +647,7 @@ LCVoteFrame:SetScript("OnEvent", function()
                 if (lootmethod == 'master') then
                     getglobal('BroadcastLoot'):Show()
                     getglobal('BroadcastLoot'):Enable()
+                    getglobal('BroadcastLoot'):SetText('Broadcast Loot (' .. TWLC_TTN_FACTOR .. 's)')
                     getglobal('LootLCVoteFrameWindow'):Show()
                 else
                     twprint('Looting method is not master looter. (' .. lootmethod .. ')')
@@ -656,7 +658,7 @@ LCVoteFrame:SetScript("OnEvent", function()
         if (event == "LOOT_SLOT_CLEARED") then
         end
         if (event == "LOOT_CLOSED") then
-            getglobal('BroadcastLoot'):Hide()
+            --            getglobal('BroadcastLoot'):Hide()
             getglobal('BroadcastLoot'):Disable()
         end
     end
@@ -948,10 +950,16 @@ function setCurrentVotedItem(id)
     local name, link, quality, reqlvl, t1, t2, a7, equip_slot, tex = GetItemInfo(itemLink)
     local votedItemType = ''
     --    if (t1) then votedItemType = t1 end
-    if (t2) then votedItemType = votedItemType .. t2
+    if (t2) then
+        if not string.find(string.lower(t2), 'misc', 1, true)
+                and not string.find(string.lower(t2), 'shields', 1, true) then
+            votedItemType = votedItemType .. t2 .. ' '
+        end
     end
-    if (equip_slot) then votedItemType = votedItemType .. ' ' .. getEquipSlot(equip_slot)
-    end
+    if (equip_slot) then votedItemType = votedItemType .. getEquipSlot(equip_slot) end
+
+    if votedItemType == 'Cloth Cloak' then votedItemType = 'Cloak' end
+
     getglobal('LootLCVoteFrameWindowVotedItemType'):SetText(votedItemType)
     VoteFrameListScroll_Update()
 end
@@ -976,8 +984,8 @@ function getPlayerClass(name)
     for i = 0, GetNumRaidMembers() do
         if (GetRaidRosterInfo(i)) then
             local n = GetRaidRosterInfo(i);
-            local _, unitClass = UnitClass('raid' .. i) --standard
             if (name == n) then
+                local _, unitClass = UnitClass('raid' .. i) --standard
                 return string.lower(unitClass)
             end
         end
@@ -1158,7 +1166,7 @@ function LootHistory_Update()
                     getglobal("HistoryItem" .. index .. 'Item'):SetNormalTexture(tex)
                     getglobal("HistoryItem" .. index .. 'Item'):SetPushedTexture(tex)
                     addButtonOnEnterTooltip(getglobal("HistoryItem" .. index .. "Item"), item['item'])
-                    getglobal("HistoryItem" .. index .. 'ItemName'):SetText(item['item'] .. ' ' .. index)
+                    getglobal("HistoryItem" .. index .. 'ItemName'):SetText(item['item'])
                 end
             end
         end
@@ -1886,6 +1894,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         end
 
         TWLC_TTN_FACTOR = tonumber(ttnfactor[2])
+        getglobal('BroadcastLoot'):SetText('Broadcast Loot (' .. TWLC_TTN_FACTOR .. 's)')
     end
     if string.sub(t, 1, 10) == 'ttvfactor=' then
         if not twlc2isRL(sender) then return end
@@ -2390,7 +2399,7 @@ end
 function awardPlayer(playerName)
 
     if not playerName or playerName == '' then
-        twprint('[Error] AwardPlayer: playerName is nil.')
+        twerror('AwardPlayer: playerName is nil.')
         return false
     end
     --debug
@@ -2439,7 +2448,7 @@ function awardPlayer(playerName)
             LCVoteFrame.updateVotedItemsFrames()
 
         else
-            twerror('item not found ???')
+            twerror('Item not found. Is the loot window opened ?')
         end
     end
 end
@@ -2517,4 +2526,57 @@ function testComs(j)
         total = total + string.len("pass=1=0=0")
     end
     twdebug('come len : ' .. total)
+end
+
+
+function TestNeedButton_OnClick()
+
+    local testItem1 = "\124cffa335ee\124Hitem:19401:0:0:0:0:0:0:0:0\124h[Primalist's Linked Legguards]\124h\124r";
+--    local testItem1 = "\124cffa335ee\124Hitem:22802:0:0:0:0:0:0:0:0\124h[Kingsfall]\124h\124r";
+    local testItem2 = "\124cffa335ee\124Hitem:19362:0:0:0:0:0:0:0:0\124h[Doom's Edge]\124h\124r";
+
+    local _, _, itemLink1 = string.find(testItem1, "(item:%d+:%d+:%d+:%d+)");
+    local lootName1, itemLink1, quality1, _, _, _, _, _, lootIcon1 = GetItemInfo(itemLink1)
+
+    local _, _, itemLink2 = string.find(testItem2, "(item:%d+:%d+:%d+:%d+)");
+    local lootName2, itemLink2, quality2, _, _, _, _, _, lootIcon2 = GetItemInfo(itemLink2)
+
+    if quality1 and lootIcon1 and quality2 and lootIcon2 then
+
+        SendChatMessage('This is a test, click whatever you want!', "RAID_WARNING")
+        getglobal('BroadcastLoot'):Disable()
+
+        SendAddonMessage("TWLCNF", 'ttnfactor=' .. TWLC_TTN_FACTOR, "RAID")
+        SendAddonMessage("TWLCNF", 'ttvfactor=' .. TWLC_TTV_FACTOR, "RAID")
+
+        TIME_TO_NEED = 2 * TWLC_TTN_FACTOR
+        TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
+        SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
+        TIME_TO_VOTE = 2 * TWLC_TTV_FACTOR
+        SendAddonMessage("TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+        SendAddonMessage("TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
+
+        sendReset()
+
+        SendAddonMessage("TWLCNF", "voteframe=show", "RAID")
+
+        TWLCCountDownFRAME:Show()
+        SendAddonMessage("TWLCNF", 'countdownframe=show', "RAID")
+
+        ChatThrottleLib:SendAddonMessage("ALERT", "TWLCNF", "loot=1=" .. lootIcon1 .. "=" .. lootName1 .. "=" .. testItem1 .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
+        ChatThrottleLib:SendAddonMessage("ALERT", "TWLCNF", "loot=2=" .. lootIcon2 .. "=" .. lootName2 .. "=" .. testItem2 .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
+
+        getglobal("MLToWinner"):Disable();
+    else
+
+        local _, _, itemLink1 = string.find(testItem1, "(item:%d+:%d+:%d+:%d+)");
+        GameTooltip:SetHyperlink(itemLink1)
+        GameTooltip:Hide()
+
+        local _, _, itemLink2 = string.find(testItem2, "(item:%d+:%d+:%d+:%d+)");
+        GameTooltip:SetHyperlink(itemLink2)
+        GameTooltip:Hide()
+
+        twerror(testItem1 .. ' or ' .. testItem2 .. ' was not seen before, try again...')
+    end
 end

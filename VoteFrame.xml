@@ -678,7 +678,7 @@
                     <Anchors>
                         <Anchor point="TOP">
                             <Offset>
-                                <AbsDimension x="0" y="-7"/>
+                                <AbsDimension x="0" y="-9"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -883,12 +883,12 @@
             <Frame name="RLExtraFrame" hidden="true" toplevel="true"
                    parent="LootLCVoteFrameWindow" movable="false" enableMouse="true">
                 <Size>
-                    <AbsDimension x="516" y="50"/>
+                    <AbsDimension x="516" y="60"/>
                 </Size>
                 <Anchors>
                     <Anchor point="BOTTOM">
                         <Offset>
-                            <AbsDimension x="0" y="-50"/>
+                            <AbsDimension x="0" y="-60"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -910,12 +910,12 @@
                     <Button name="BroadcastLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
                             text="Broadcast Loot">
                         <Size>
-                            <AbsDimension x="120" y="20"/>
+                            <AbsDimension x="140" y="20"/>
                         </Size>
                         <Anchors>
-                            <Anchor point="LEFT">
+                            <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="20" y="0"/>
+                                    <AbsDimension x="20" y="-10"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -933,9 +933,9 @@
                             <AbsDimension x="120" y="20"/>
                         </Size>
                         <Anchors>
-                            <Anchor point="CENTER">
+                            <Anchor point="TOP">
                                 <Offset>
-                                    <AbsDimension x="0" y="0"/>
+                                    <AbsDimension x="0" y="-10"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -953,9 +953,9 @@
                             <AbsDimension x="120" y="20"/>
                         </Size>
                         <Anchors>
-                            <Anchor point="RIGHT">
+                            <Anchor point="TOPRIGHT">
                                 <Offset>
-                                    <AbsDimension x="-20" y="0"/>
+                                    <AbsDimension x="-20" y="-10"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -963,6 +963,25 @@
                             <OnClick>
                                     toggleRLOptionsFrame()
                                     PlaySound("igMainMenuOptionCheckBoxOn");
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button name="TestNeedFrameButton" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+                            text="Test Need">
+                        <Size>
+                            <AbsDimension x="120" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-20" y="10"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    TestNeedButton_OnClick()
                             </OnClick>
                         </Scripts>
                     </Button>
@@ -1467,12 +1486,12 @@
 
             <Frame name="TWLCLootHistoryFrame" hidden="true">
                 <Size>
-                    <AbsDimension x="200" y="345"/>
+                    <AbsDimension x="220" y="345"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT">
                         <Offset>
-                            <AbsDimension x="200" y="0"/>
+                            <AbsDimension x="220" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1505,7 +1524,7 @@
                 <Frames>
                     <Frame name="$parentTitleBar">
                         <Size>
-                            <AbsDimension x="186" y="1"/>
+                            <AbsDimension x="206" y="1"/>
                         </Size>
                         <Anchors>
                             <Anchor point="TOPLEFT">
@@ -1542,12 +1561,12 @@
 
                     <ScrollFrame name="$parentScrollFrame" hidden="true" inherits="FauxScrollFrameTemplate">
                         <Size>
-                            <AbsDimension x="290" y="308"/>
+                            <AbsDimension x="190" y="305"/>
                         </Size>
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="0" y="-25"/>
+                                    <AbsDimension x="0" y="-28"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
