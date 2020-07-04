@@ -1,4 +1,4 @@
-local addonVer = "1.0.2.0" --don't use letters or numbers > 10
+local addonVer = "1.0.2.1" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 function twprint(a)
@@ -2059,13 +2059,16 @@ function calculateVotes()
     if LCVoteFrame.CurrentVotedItem ~= nil then
         for n, d in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem] do
 
-            local _, _, _, _, _, _, _, pIndex = getPlayerInfo(n)
+            if getPlayerInfo(n) then
+                local _, _, _, _, _, _, _, pIndex = getPlayerInfo(n)
 
-            for voter, vote in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][n] do
-                if vote == '+' then
-                    LCVoteFrame.currentPlayersList[pIndex].votes = LCVoteFrame.currentPlayersList[pIndex].votes + 1
-                else
+                for voter, vote in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][n] do
+                    if vote == '+' then
+                        LCVoteFrame.currentPlayersList[pIndex].votes = LCVoteFrame.currentPlayersList[pIndex].votes + 1
+                    end
                 end
+            else
+                twerror('getPlayerInfo(' .. n .. ') Not Found. Please report this.')
             end
         end
     end
@@ -2532,8 +2535,8 @@ end
 function TestNeedButton_OnClick()
 
     local testItem1 = "\124cffa335ee\124Hitem:19401:0:0:0:0:0:0:0:0\124h[Primalist's Linked Legguards]\124h\124r";
---    local testItem1 = "\124cffa335ee\124Hitem:22802:0:0:0:0:0:0:0:0\124h[Kingsfall]\124h\124r";
     local testItem2 = "\124cffa335ee\124Hitem:19362:0:0:0:0:0:0:0:0\124h[Doom's Edge]\124h\124r";
+--    local testItem3 = "\124cffa335ee\124Hitem:16533:0:0:0:0:0:0:0:0\124h[Warlord's Silk Cowl]\124h\124r";
 
     local _, _, itemLink1 = string.find(testItem1, "(item:%d+:%d+:%d+:%d+)");
     local lootName1, itemLink1, quality1, _, _, _, _, _, lootIcon1 = GetItemInfo(itemLink1)
