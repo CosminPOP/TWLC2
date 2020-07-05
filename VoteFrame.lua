@@ -302,13 +302,7 @@ SlashCmdList["TWLC"] = function(cmd)
             end
         end
         if cmd == 'who' then
-            if not UnitInRaid('player') then
-                twprint('You are not in a raid.')
-                return false
-            end
-            getglobal('VoteFrameWho'):Show()
-            LCVoteFrame.peopleWithAddon = ''
-            SendAddonMessage("TWLCNF", "voteframe=whoVF=" .. addonVer, "RAID")
+            RefreshWho_OnClick()
         end
         if cmd == 'synchistory' then
             if not twlc2isRL(me) then return end
@@ -346,6 +340,17 @@ SlashCmdList["TWLC"] = function(cmd)
             end
         end
     end
+end
+
+function RefreshWho_OnClick()
+    if not UnitInRaid('player') then
+        twprint('You are not in a raid.')
+        return false
+    end
+    getglobal('VoteFrameWho'):Show()
+    LCVoteFrame.peopleWithAddon = ''
+    getglobal('VoteFrameWhoText'):SetText('Loading...')
+    SendAddonMessage("TWLCNF", "voteframe=whoVF=" .. addonVer, "RAID")
 end
 
 local minibtn = getglobal('TWLC2_Minimap')
@@ -1355,7 +1360,6 @@ function VoteFrameListScroll_Update()
                     not LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone or
                     not VoteCountdown.votingOpen then
                 getglobal("ContestantFrame" .. i .. "VoteButton"):Disable();
-                --                getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetTexture(0.4, 0.4, 0.4, .4)
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetWidth(90)
             end
@@ -1364,6 +1368,12 @@ function VoteFrameListScroll_Update()
                 getglobal("ContestantFrame" .. i .. "VoteButton"):Enable();
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, 1)
             end
+
+            -- don't lock vote buttons for now till we figure out the decent vote time
+--            if not VoteCountdown.votingOpen then
+--                getglobal("ContestantFrame" .. i .. "VoteButton"):Disable();
+--                getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
+--            end
 
             if LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name] then
                 if LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name][me] then
@@ -1943,9 +1953,11 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         local lh = string.split(t, ";")
 
         if not lh[2] or not lh[3] or not lh[4] then
-            twerror('bad loot_history_sync syntax')
-            twerror(t)
-            return false
+            if t ~= 'loot_history_sync;start' and t ~= 'loot_history_sync;end' then
+                twerror('bad loot_history_sync syntax')
+                twerror(t)
+                return false
+            end
         end
 
         if lh[2] == 'start' then
@@ -2536,7 +2548,7 @@ function TestNeedButton_OnClick()
 
     local testItem1 = "\124cffa335ee\124Hitem:19401:0:0:0:0:0:0:0:0\124h[Primalist's Linked Legguards]\124h\124r";
     local testItem2 = "\124cffa335ee\124Hitem:19362:0:0:0:0:0:0:0:0\124h[Doom's Edge]\124h\124r";
---    local testItem3 = "\124cffa335ee\124Hitem:16533:0:0:0:0:0:0:0:0\124h[Warlord's Silk Cowl]\124h\124r";
+    --    local testItem3 = "\124cffa335ee\124Hitem:16533:0:0:0:0:0:0:0:0\124h[Warlord's Silk Cowl]\124h\124r";
 
     local _, _, itemLink1 = string.find(testItem1, "(item:%d+:%d+:%d+:%d+)");
     local lootName1, itemLink1, quality1, _, _, _, _, _, lootIcon1 = GetItemInfo(itemLink1)

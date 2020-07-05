@@ -1666,6 +1666,26 @@
                     </OnClick>
                 </Scripts>
             </Button>
+
+            <Button name="$parentRefreshWho" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+                    text="Refresh">
+                <Size>
+                    <AbsDimension x="140" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            RefreshWho_OnClick();
+                    </OnClick>
+
+                </Scripts>
+            </Button>
         </Frames>
         <Scripts>
             <OnLoad>
