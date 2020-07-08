@@ -1,4 +1,4 @@
-local addonVer = "1.0.2.1" --don't use letters or numbers > 10
+local addonVer = "1.0.2.2" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 function twprint(a)
@@ -53,6 +53,33 @@ LCVoteFrame.selectedPlayer = {}
 
 LCVoteFrame.lootHistoryFrames = {}
 LCVoteFrame.peopleWithAddon = ''
+
+LCVoteFrame.doneVoting = {} --self / item
+LCVoteFrame.clDoneVotingItem = {}
+
+function TWLC2MainWindow_Resizing()
+    getglobal('LootLCVoteFrameWindow'):SetAlpha(0.5)
+end
+function TWLC2MainWindow_Resized()
+
+    local MW = getglobal('LootLCVoteFrameWindow');
+    local MWH = MW:GetHeight()
+    --346 = 10
+    --456 = 15   diff = 110, 22 per
+    -- 22 * 15 = 330
+    -- 456 - 330 = 120 - top margin
+
+    LCVoteFrame.playersPerPage = math.floor(( MWH - 120 ) / 22)
+    TWLC_PPP = LCVoteFrame.playersPerPage
+    MW:SetHeight(120 + LCVoteFrame.playersPerPage * 22 + 5)
+    getglobal('ContestantScrollListFrame'):SetHeight(LCVoteFrame.playersPerPage * 22)
+    getglobal('ContestantScrollListBackground'):SetHeight(LCVoteFrame.playersPerPage * 22)
+
+    MW:SetAlpha(TWLC_ALPHA)
+
+    VoteFrameListScroll_Update()
+end
+
 
 local LCVoteFrameComms = CreateFrame("Frame")
 LCVoteFrameComms:RegisterEvent("CHAT_MSG_ADDON")
@@ -175,7 +202,11 @@ VoteCountdown:SetScript("OnUpdate", function()
                 getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
                 local secondsLeftToVote = math.floor((VoteCountdown.countDownFrom - VoteCountdown.currentTime)) --.. 's left ! '
                 getglobal('LootLCVoteFrameWindowTimeLeft'):SetPoint("BOTTOMLEFT", 202, 10)
-                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Please VOTE ! ' .. SecondsToClock(secondsLeftToVote))
+                if LCVoteFrame.doneVoting[LCVoteFrame.CurrentVotedItem] == true then
+                    getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('')
+                else
+                    getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Please VOTE ! ' .. SecondsToClock(secondsLeftToVote))
+                end
             end
 
             for i = 1, LCVoteFrame.playersPerPage, 1 do
@@ -185,9 +216,9 @@ VoteCountdown:SetScript("OnUpdate", function()
 
                     if (w > 0 and w <= 1) then
                         getglobal('LootLCVoteFrameWindowTimeLeftBar'):Show()
-                        --                        getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, 1)
+                        --getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, 1)
                         getglobal('LootLCVoteFrameWindowTimeLeftBar'):SetWidth(500 * w)
-                        --                        getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetWidth(math.floor(w * 90))
+                        --getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetWidth(math.floor(w * 90))
                     else
                         getglobal('LootLCVoteFrameWindowTimeLeftBar'):Hide()
                     end
@@ -204,17 +235,17 @@ VoteCountdown:SetScript("OnUpdate", function()
                 VoteCountdown:Hide()
                 VoteCountdown.currentTime = 1
                 VoteCountdown.votingOpen = false
-                for i = 1, LCVoteFrame.playersPerPage, 1 do
-                    if getglobal('ContestantFrame' .. i .. 'VoteButton'):IsEnabled() == 1 then
-                        getglobal('ContestantFrame' .. i .. 'VoteButton'):Disable()
-                        --                        getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetTexture(0.4, 0.4, 0.4, 0)
-                        getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
-                        --                        getglobal('ContestantFrame' .. i .. 'VoteButtonTimeLeftBackground'):SetWidth(90)
-                    end
-                end
+--                for i = 1, LCVoteFrame.playersPerPage, 1 do
+--                    if getglobal('ContestantFrame' .. i .. 'VoteButton'):IsEnabled() == 1 then
+                        --dont disable them for now
+--                        getglobal('ContestantFrame' .. i .. 'VoteButton'):Disable()
+--                        getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
+--                    end
+--                end
 
                 getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
-                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Time\'s up ! Voting closed !')
+                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('')
+--                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Time\'s up ! Voting closed !')
                 getglobal("MLToWinner"):Enable()
             end
         else
@@ -339,6 +370,39 @@ SlashCmdList["TWLC"] = function(cmd)
                 twprint('Search syntax: /twlc search [Playername]')
             end
         end
+        if string.sub(cmd, 1, 5) == 'scale' then
+            local scaleEx = string.split(cmd, ' ')
+            if not scaleEx[1] or not scaleEx[2] or not tonumber(scaleEx[2]) then
+                twprint('Set scale syntax: |cfffff569/twlc scale [scale from 0.5 to 2]')
+                return false
+            end
+
+            if tonumber(scaleEx[2]) >= 0.5 and tonumber(scaleEx[2]) <= 2 then
+                getglobal('LootLCVoteFrameWindow'):SetScale(tonumber(scaleEx[2]))
+                getglobal('LootLCVoteFrameWindow'):ClearAllPoints();
+                getglobal('LootLCVoteFrameWindow'):SetPoint("CENTER", UIParent);
+                TWLC_SCALE = tonumber(scaleEx[2])
+                twprint('Scale set to |cfffff569x' .. TWLC_SCALE)
+            else
+                twprint('Set scale syntax: |cfffff569/twlc scale [scale from 0.5 to 2]')
+            end
+        end
+        if string.sub(cmd, 1, 5) == 'alpha' then
+            local alphaEx = string.split(cmd, ' ')
+            if not alphaEx[1] or not alphaEx[2] or not tonumber(alphaEx[2]) then
+                twprint('Set alpha syntax: |cfffff569/twlc alpha [0.2-1]')
+                return false
+            end
+
+            if tonumber(alphaEx[2]) >= 0.2 and tonumber(alphaEx[2]) <= 1 then
+                getglobal('LootLCVoteFrameWindow'):SetAlpha(tonumber(alphaEx[2]))
+                TWLC_ALPHA = tonumber(alphaEx[2])
+                getglobal('LootLCVoteFrameWindow'):SetAlpha(TWLC_ALPHA)
+                twprint('Alpha set to |cfffff569' .. TWLC_ALPHA)
+            else
+                twprint('Set alpha syntax: |cfffff569/twlc alpha [0.2-1]')
+            end
+        end
     end
 end
 
@@ -373,10 +437,11 @@ function syncLootHistory_OnClick()
 end
 
 function toggleMainWindow()
-    if not canVote(me) and not twlc2isRL(me) then return false end
+
     if (getglobal('LootLCVoteFrameWindow'):IsVisible()) then
         getglobal('LootLCVoteFrameWindow'):Hide()
     else
+        if not canVote(me) and not twlc2isRL(me) then return false end
         getglobal('LootLCVoteFrameWindow'):Show()
     end
 end
@@ -608,6 +673,14 @@ LCVoteFrame:SetScript("OnEvent", function()
             if not TWLC_DEBUG then TWLC_DEBUG = false end
             if not TWLC_TTN_FACTOR then TWLC_TTN_FACTOR = 15 end
             if not TWLC_TTV_FACTOR then TWLC_TTV_FACTOR = 15 end
+            if not TWLC_SCALE then TWLC_SCALE = 1 end
+            if not TWLC_PPP then TWLC_PPP = 10 end
+            if not TWLC_ALPHA then TWLC_ALPHA = 1 end
+            LCVoteFrame.playersPerPage = TWLC_PPP
+            getglobal('LootLCVoteFrameWindow'):SetHeight(120 + LCVoteFrame.playersPerPage * 22 + 5)
+            TWLC2MainWindow_Resized()
+
+            getglobal('LootLCVoteFrameWindow'):SetScale(TWLC_SCALE)
 
             TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
             VoteCountdown.countDownFrom = TIME_TO_VOTE
@@ -616,6 +689,7 @@ LCVoteFrame:SetScript("OnEvent", function()
             getglobal('LootLCVoteFrameWindowNewTitleFrameTitle'):SetText('Turtle WoW Loot Council2 v' .. addonVer)
 
             getglobal('BroadcastLoot'):Disable()
+            getglobal('LootLCVoteFrameWindowDoneVoting'):Disable();
 
             if (twlc2isRL(me)) then
                 getglobal('RLOptionsButton'):Show()
@@ -650,13 +724,30 @@ LCVoteFrame:SetScript("OnEvent", function()
 
                 local lootmethod = GetLootMethod()
                 if (lootmethod == 'master') then
-                    getglobal('BroadcastLoot'):Show()
+
+                    local blueOrEpic = false
+
+                    for id = 0, GetNumLootItems() do
+                        if GetLootSlotInfo(id) and GetLootSlotLink(id) then
+                            local lootIcon, lootName, _, _, q = GetLootSlotInfo(id)
+
+                            local _, _, itemLink = string.find(GetLootSlotLink(id), "(item:%d+:%d+:%d+:%d+)");
+                            local _, _, quality = GetItemInfo(itemLink)
+                            if (quality >= 3) then
+                                blueOrEpic = true
+                            end
+                        end
+                    end
+
+                    if not blueOrEpic then return false end
+
+                    --getglobal('BroadcastLoot'):Show()
                     getglobal('BroadcastLoot'):Enable()
                     getglobal('BroadcastLoot'):SetText('Broadcast Loot (' .. TWLC_TTN_FACTOR .. 's)')
                     getglobal('LootLCVoteFrameWindow'):Show()
                 else
-                    twprint('Looting method is not master looter. (' .. lootmethod .. ')')
-                    getglobal('BroadcastLoot'):Hide()
+                    --twprint('Looting method is not master looter. (' .. lootmethod .. ')')
+                    getglobal('BroadcastLoot'):Disable()
                 end
             end
         end
@@ -817,24 +908,18 @@ function LCVoteFrame.showWindow()
     getglobal('LootLCVoteFrameWindow'):Show()
 end
 
---TWLCCloseLootFrame = HideUIPanel
---function HideUIPanel(frame)
---    twdebug('----------hideuicall----')
---    if (frame == LootFrame) then
---        twdebug('hideui ------------------ lootframe call')
---        TWLCCloseLootFrame(LootFrame)
---    else
---        twdebug('hideui otherframe call ')
---        TWLCCloseLootFrame(frame)
---    end
---end
-
 function ResetClose_OnClick()
     sendReset()
     sendCloseWindow()
 end
 
 function BroadcastLoot_OnClick()
+
+    local lootmethod = GetLootMethod()
+    if (lootmethod ~= 'master') then
+        twprint('Looting method is not master looter. (' .. lootmethod .. ')')
+        return false
+    end
 
     if (GetNumLootItems() == 0) then
         twprint('There are no items in the loot frame.')
@@ -880,6 +965,8 @@ function addVotedItem(index, texture, name, link)
 
     LCVoteFrame.itemVotes[index] = {}
 
+    LCVoteFrame.doneVoting[index] = false
+
     LCVoteFrame.selectedPlayer[index] = ''
 
     if (not LCVoteFrame.VotedItemsFrames[index]) then
@@ -916,6 +1003,7 @@ function addVotedItem(index, texture, name, link)
     if (not LCVoteFrame.CurrentVotedItem) then
         VotedItemButton_OnClick(index)
     end
+    getglobal('LootLCVoteFrameWindowDoneVoting'):Enable();
 end
 
 function VotedItemButton_OnClick(id)
@@ -935,6 +1023,14 @@ function VotedItemButton_OnClick(id)
         end
     end
     setCurrentVotedItem(id)
+end
+
+function DoneVoting_OnClick()
+    LCVoteFrame.doneVoting[LCVoteFrame.CurrentVotedItem] = true
+    getglobal('LootLCVoteFrameWindowDoneVoting'):Disable();
+    getglobal('LootLCVoteFrameWindowDoneVotingCheck'):Show();
+    SendAddonMessage("TWLCNF", "doneVoting;" .. LCVoteFrame.CurrentVotedItem, "RAID")
+    VoteFrameListScroll_Update()
 end
 
 function setCurrentVotedItem(id)
@@ -966,6 +1062,15 @@ function setCurrentVotedItem(id)
     if votedItemType == 'Cloth Cloak' then votedItemType = 'Cloak' end
 
     getglobal('LootLCVoteFrameWindowVotedItemType'):SetText(votedItemType)
+
+    if LCVoteFrame.doneVoting[id] then
+        getglobal('LootLCVoteFrameWindowDoneVoting'):Disable();
+        getglobal('LootLCVoteFrameWindowDoneVotingCheck'):Show();
+    else
+        getglobal('LootLCVoteFrameWindowDoneVoting'):Enable();
+        getglobal('LootLCVoteFrameWindowDoneVotingCheck'):Hide();
+    end
+
     VoteFrameListScroll_Update()
 end
 
@@ -1370,10 +1475,16 @@ function VoteFrameListScroll_Update()
             end
 
             -- don't lock vote buttons for now till we figure out the decent vote time
---            if not VoteCountdown.votingOpen then
---                getglobal("ContestantFrame" .. i .. "VoteButton"):Disable();
---                getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
---            end
+            --            if not VoteCountdown.votingOpen then
+            --                getglobal("ContestantFrame" .. i .. "VoteButton"):Disable();
+            --                getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
+            --            end
+
+            --lock vote buttons if doneVotting is pressed
+            if LCVoteFrame.doneVoting[LCVoteFrame.CurrentVotedItem] == true then
+                getglobal("ContestantFrame" .. i .. "VoteButton"):Disable();
+                getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
+            end
 
             if LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name] then
                 if LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name][me] then
@@ -1540,6 +1651,10 @@ function LCVoteFrame.ResetVars(show)
     getglobal('LootLCVoteFrameWindowVotedItemType'):Hide()
 
     getglobal('LootLCVoteFrameWindowVotedItemType'):Hide()
+
+    LCVoteFrame.doneVoting = {}
+    LCVoteFrame.clDoneVotingItem = {}
+    getglobal('LootLCVoteFrameWindowDoneVoting'):Disable();
 end
 
 -- comms
@@ -1644,6 +1759,25 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         end
         LCVoteFrame.itemVotes[votedItem][votedPlayer][sender] = vote
         VoteFrameListScroll_Update()
+    end
+    if string.find(t, 'doneVoting;', 1, true) then
+        if not canVote(sender) or not canVote(me) then return end
+
+        local itemEx = string.split(t, ';')
+        if not itemEx[2] then
+            twerror('bad doneVoting syntax')
+            twerror(t)
+            return false
+        end
+
+        if not tonumber(itemEx[2]) then end
+
+        if not LCVoteFrame.clDoneVotingItem[sender] then
+            LCVoteFrame.clDoneVotingItem[sender] = {}
+        end
+        LCVoteFrame.clDoneVotingItem[sender][tonumber(itemEx[2])] = true
+
+        updateLCVoters()
     end
     if string.find(t, 'voteframe=', 1, true) then
         local command = string.split(t, '=')
@@ -2221,9 +2355,21 @@ function updateLCVoters()
         end
     end
     for o, v in next, TWLC_ROSTER do
-        if (v) then nr = nr + 1
+        if v then nr = nr + 1 end
+    end
+
+    for officer, voted in next, TWLC_ROSTER do
+        if not voted then --check if he clicked done voting for this itme
+            if LCVoteFrame.clDoneVotingItem[officer] then
+                for itemIndex, doneVoting in next, LCVoteFrame.clDoneVotingItem[officer] do
+                    if itemIndex == LCVoteFrame.CurrentVotedItem and doneVoting then
+                        nr = nr + 1
+                    end
+                end
+            end
         end
     end
+
     local numOfficersInRaid = 0
     for o, v in next, TWLC_ROSTER do
         if onlineInRaid(o) then
@@ -2237,7 +2383,7 @@ function updateLCVoters()
     else
         getglobal('MLToWinnerNrOfVotes'):SetText('|cffa53737' .. nr .. '/' .. numOfficersInRaid .. ' votes')
         getglobal('WinnerStatusNrOfVotes'):SetText('|cffa53737' .. nr .. '/' .. numOfficersInRaid .. ' votes')
-        getglobal('MLToWinner'):Disable()
+        --        getglobal('MLToWinner'):Disable()
     end
 end
 
@@ -2301,6 +2447,7 @@ function twlc2isCL(name)
 end
 
 function twlc2isRL(name)
+    if not UnitInRaid('player') then return false end
     for i = 0, GetNumRaidMembers() do
         if (GetRaidRosterInfo(i)) then
             local n, r = GetRaidRosterInfo(i);
@@ -2313,6 +2460,7 @@ function twlc2isRL(name)
 end
 
 function twlc2isAssist(name)
+    if not UnitInRaid('player') then return false end
     for i = 0, GetNumRaidMembers() do
         if (GetRaidRosterInfo(i)) then
             local n, r = GetRaidRosterInfo(i);
