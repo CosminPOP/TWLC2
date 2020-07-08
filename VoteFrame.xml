@@ -652,13 +652,17 @@
     </Frame>
 
     <Frame name="LootLCVoteFrameWindow" hidden="true" toplevel="true"
-           parent="UIParent" movable="true" enableMouse="true">
+           parent="UIParent" movable="true" enableMouse="true" resizable="true">
         <Size>
             <AbsDimension x="516" y="345"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
         </Anchors>
+        <ResizeBounds>
+            <minResize x="516" y="246"/>
+            <maxResize x="516" y="456"/>
+        </ResizeBounds>
         <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
                   edgeFile="Interface\addons\TWLC2\images\border-azer"
                   tile="false">
@@ -774,6 +778,35 @@
             </Layer>
         </Layers>
         <Frames>
+
+            <Button name="TWLCResizeButton">
+                <NormalTexture file="Interface\AddOns\TWLC2\images\ResizeGrip"/>
+                <HighlightTexture file="Interface\AddOns\TWLC2\images\ResizeGrip" alphaMode="ADD"/>
+                <Size>
+                    <AbsDimension x="16" y="16"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnMouseDown>
+                            LootLCVoteFrameWindow:StartSizing("BOTTOMRIGHT")
+                            LootLCVoteFrameWindow:SetUserPlaced(true)
+                            TWLC2MainWindow_Resizing()
+                    </OnMouseDown>
+                    <OnMouseUp>
+                            LootLCVoteFrameWindow:StopMovingOrSizing()
+                            TWLC2MainWindow_Resized()
+                    </OnMouseUp>
+                    <OnClick>
+                    </OnClick>
+
+                </Scripts>
+            </Button>
 
             <Frame name="$parentNewTitleFrame" hidden="true" toplevel="true">
                 <Size>
@@ -1159,7 +1192,7 @@
 
             <Frame name="ContestantScrollListBackground">
                 <Size>
-                    <AbsDimension x="508" y="219"/>
+                    <AbsDimension x="508" y="220"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOP">
@@ -1360,6 +1393,42 @@
                     <Color r="0" g="0.88" b="0.06" a="1"/>
                 </Backdrop>
             </Frame>
+
+            <Button name="$parentDoneVoting" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+                    text="Done Voting">
+                <Size>
+                    <AbsDimension x="120" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset>
+                            <AbsDimension x="-20" y="6"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentCheck" file="Interface\addons\TWLC2\images\green-check" hidden="true">
+                            <Size>
+                                <AbsDimension x="12" y="12"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="RIGHT">
+                                    <Offset>
+                                        <AbsDimension x="-10" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnClick>
+                            DoneVoting_OnClick();
+                    </OnClick>
+
+                </Scripts>
+            </Button>
 
             <Frame name="RLWindowFrame" hidden="true">
                 <Size>
