@@ -8,7 +8,7 @@ Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 `/twlc scale [0.5-2]` - Sets main frame scale from 0.5x to 2x<Br>
 `/twlc alpha [0.2-1]` - Sets main frame opacity from 0.5 to 1<br>
 * **Done Voting** button for when you're done voting current item, or just don't wanna vote for current item<Br>
-* Ability to resize the main from from 5 to 15 visible players<br> 
+* Ability to resize the main window from 5 to 15 visible players<br> 
 <hr>
 
 
