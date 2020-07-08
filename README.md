@@ -1,6 +1,16 @@
-# TWLC2 v1.0.2.1
+# TWLC2 v1.0.2.2
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
 Addon to help with Turtle Wow BWL Loot Council<BR><BR>
+
+<hr>
+
+**New in 1.0.2.2**<br>
+`/twlc scale [0.5-2]` - Sets main frame scale from 0.5x to 2x<Br>
+`/twlc alpha [0.2-1]` - Sets main frame opacity from 0.5 to 1<br>
+* **Done Voting** button for when you're done voting current item, or just don't wanna vote for current item<Br>
+* Ability to resize the main from from 5 to 15 visible players<br> 
+<hr>
+
 
 When enabled (from the minimap button, disabled by default), and the **Raid Leader** opens boss loot frame, the addon frame will pop up
 allowing him to `broadcast` the loot to the raid.<BR>
@@ -43,6 +53,8 @@ Slashcommands[RL]:<br>
 `/twlc set ttr [sec]` - Sets the time available to players to roll in a vote tie case<Br>
 `/twlc synchistory` - Syncs loot history with other people with the addon.<Br>
 `/twlc debug` - Toggle debugging on or off<Br>
+<Br>
+
 
 
 Known bugs:
