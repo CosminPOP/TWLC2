@@ -1,10 +1,15 @@
-# TWLC2 v1.0.2.2
+# TWLC2 v1.0.2.3
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
 Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
 <hr>
 
-**New in 1.0.2.2**<br>
+**v1.0.2.3**<br>
+`/twlc autoassist` - Toggle autoassit for CL/Officers on or off<Br>
+Infinite loop fix for autoassist
+<hr>
+
+**v1.0.2.2**<br>
 `/twlc scale [0.5-2]` - Sets main frame scale from 0.5x to 2x<Br>
 `/twlc alpha [0.2-1]` - Sets main frame opacity from 0.5 to 1<br>
 * **Done Voting** button for when you're done voting current item, or just don't wanna vote for current item<Br>

@@ -1,4 +1,4 @@
-local addonVer = "1.0.2.2" --don't use letters or numbers > 10
+local addonVer = "1.0.2.3" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 function twprint(a)
@@ -60,6 +60,7 @@ LCVoteFrame.clDoneVotingItem = {}
 function TWLC2MainWindow_Resizing()
     getglobal('LootLCVoteFrameWindow'):SetAlpha(0.5)
 end
+
 function TWLC2MainWindow_Resized()
 
     local MW = getglobal('LootLCVoteFrameWindow');
@@ -69,7 +70,7 @@ function TWLC2MainWindow_Resized()
     -- 22 * 15 = 330
     -- 456 - 330 = 120 - top margin
 
-    LCVoteFrame.playersPerPage = math.floor(( MWH - 120 ) / 22)
+    LCVoteFrame.playersPerPage = math.floor((MWH - 120) / 22)
     TWLC_PPP = LCVoteFrame.playersPerPage
     MW:SetHeight(120 + LCVoteFrame.playersPerPage * 22 + 5)
     getglobal('ContestantScrollListFrame'):SetHeight(LCVoteFrame.playersPerPage * 22)
@@ -235,17 +236,17 @@ VoteCountdown:SetScript("OnUpdate", function()
                 VoteCountdown:Hide()
                 VoteCountdown.currentTime = 1
                 VoteCountdown.votingOpen = false
---                for i = 1, LCVoteFrame.playersPerPage, 1 do
---                    if getglobal('ContestantFrame' .. i .. 'VoteButton'):IsEnabled() == 1 then
-                        --dont disable them for now
---                        getglobal('ContestantFrame' .. i .. 'VoteButton'):Disable()
---                        getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
---                    end
---                end
+                --                for i = 1, LCVoteFrame.playersPerPage, 1 do
+                --                    if getglobal('ContestantFrame' .. i .. 'VoteButton'):IsEnabled() == 1 then
+                --dont disable them for now
+                --                        getglobal('ContestantFrame' .. i .. 'VoteButton'):Disable()
+                --                        getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
+                --                    end
+                --                end
 
                 getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
                 getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('')
---                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Time\'s up ! Voting closed !')
+                --                getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Time\'s up ! Voting closed !')
                 getglobal("MLToWinner"):Enable()
             end
         else
@@ -330,6 +331,15 @@ SlashCmdList["TWLC"] = function(cmd)
                 twprint('|cff69ccf0[TWLCc] |cffffffffDebug ENABLED')
             else
                 twprint('|cff69ccf0[TWLC2c] |cffffffffDebug DISABLED')
+            end
+        end
+        if cmd == 'autoassist' then
+            TWLC_AUTO_ASSIST = not TWLC_AUTO_ASSIST
+            if TWLC_DEBUG then
+                twprint('|cff69ccf0[TWLCc] |cffffffffAutoAssist ENABLED')
+                LCVoteFrame.assistTriggers = 0
+            else
+                twprint('|cff69ccf0[TWLC2c] |cffffffffAutoAssist DISABLED')
             end
         end
         if cmd == 'who' then
@@ -593,18 +603,30 @@ function GetPlayer(index)
     return LCVoteFrame.playersWhoWantItems[index]
 end
 
+LCVoteFrame.assistTriggers = 0
+
 LCVoteFrame:SetScript("OnEvent", function()
     if (event) then
         if (event == "RAID_ROSTER_UPDATE") then
             if (twlc2isRL(me)) then
                 twdebug('RAID_ROSTER_UPDATE');
-                for i = 0, GetNumRaidMembers() do
-                    if (GetRaidRosterInfo(i)) then
-                        local n, r = GetRaidRosterInfo(i);
-                        if twlc2isCL(n) and r ~= 1 and n ~= me then
-                            twdebug('PROMOTE TRIGGER');
-                            PromoteToAssistant(n)
-                            return false
+                if TWLC_AUTO_ASSIST then
+                    for i = 0, GetNumRaidMembers() do
+                        if (GetRaidRosterInfo(i)) then
+                            local n, r = GetRaidRosterInfo(i);
+                            if twlc2isCL(n) and r == 0 and n ~= me then
+                                twdebug('PROMOTE TRIGGER');
+                                LCVoteFrame.assistTriggers = LCVoteFrame.assistTriggers + 1
+                                PromoteToAssistant(n)
+                                twprint(n .. ' |cff69ccf0autopromoted|cffffffff(' .. LCVoteFrame.assistTriggers .. '/100). Type |cff69ccf0/twlc autoassist |cffffffffto disable this feature.')
+
+                                if LCVoteFrame.assistTriggers > 100 then
+                                    twerror('Autoassist trigger error (>100). Autoassist disabled.')
+                                    TWLC_AUTO_ASSIST = false
+                                end
+
+                                return false
+                            end
                         end
                     end
                 end
@@ -670,12 +692,13 @@ LCVoteFrame:SetScript("OnEvent", function()
             if not TWLC_LOOT_HISTORY then TWLC_LOOT_HISTORY = {} end
             if not TWLC_ENABLED then TWLC_ENABLED = false end
             if not TWLC_LOOT_HISTORY then TWLC_LOOT_HISTORY = {} end
-            if not TWLC_DEBUG then TWLC_DEBUG = false end
+            if TWLC_DEBUG == nil then TWLC_DEBUG = false end
             if not TWLC_TTN_FACTOR then TWLC_TTN_FACTOR = 15 end
             if not TWLC_TTV_FACTOR then TWLC_TTV_FACTOR = 15 end
             if not TWLC_SCALE then TWLC_SCALE = 1 end
             if not TWLC_PPP then TWLC_PPP = 10 end
             if not TWLC_ALPHA then TWLC_ALPHA = 1 end
+            if TWLC_AUTO_ASSIST == nil then TWLC_AUTO_ASSIST = true end
             LCVoteFrame.playersPerPage = TWLC_PPP
             getglobal('LootLCVoteFrameWindow'):SetHeight(120 + LCVoteFrame.playersPerPage * 22 + 5)
             TWLC2MainWindow_Resized()
@@ -2451,7 +2474,7 @@ function twlc2isRL(name)
     for i = 0, GetNumRaidMembers() do
         if (GetRaidRosterInfo(i)) then
             local n, r = GetRaidRosterInfo(i);
-            if (n == name and r == 2) then
+            if n == name and r == 2 then
                 return true
             end
         end
