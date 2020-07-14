@@ -1,4 +1,4 @@
-local addonVer = "1.0.2.3" --don't use letters or numbers > 10
+local addonVer = "1.0.2.4" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 function twprint(a)
@@ -56,6 +56,9 @@ LCVoteFrame.peopleWithAddon = ''
 
 LCVoteFrame.doneVoting = {} --self / item
 LCVoteFrame.clDoneVotingItem = {}
+
+LCVoteFrame.itemsToPreSend = {}
+LCVoteFrame.sentReset = false
 
 function TWLC2MainWindow_Resizing()
     getglobal('LootLCVoteFrameWindow'):SetAlpha(0.5)
@@ -157,7 +160,7 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
 
             --desynch case, players have client minimised
             for index, votedItem in next, LCVoteFrame.VotedItemsFrames do
-                for i = 1, table.getn(LCVoteFrame.playersWhoWantItems) do
+                for i = 1, tableSize(LCVoteFrame.playersWhoWantItems) do
                     if LCVoteFrame.playersWhoWantItems[i]['itemIndex'] == index then
                         if LCVoteFrame.playersWhoWantItems[i]['need'] == 'wait' then
                             changePlayerPickTo(LCVoteFrame.playersWhoWantItems[i]['name'], 'autopass', index)
@@ -499,7 +502,7 @@ end
 
 function syncRoster()
     local index = 0
-    for i = 1, table.getn(RLWindowFrame.assistFrames) do
+    for i = 1, tableSize(RLWindowFrame.assistFrames) do
         getglobal('AssistFrame' .. i .. 'AssistCheck'):Disable()
         getglobal('AssistFrame' .. i .. 'CLCheck'):Disable()
     end
@@ -740,11 +743,6 @@ LCVoteFrame:SetScript("OnEvent", function()
             if not TWLC_ENABLED then return end
             if (twlc2isRL(me)) then
 
-                --                if not UnitInRaid('player') then
-                --                    twprint('You are not in a raid.')
-                --                    return false
-                --                end
-
                 local lootmethod = GetLootMethod()
                 if (lootmethod == 'master') then
 
@@ -764,10 +762,28 @@ LCVoteFrame:SetScript("OnEvent", function()
 
                     if not blueOrEpic then return false end
 
-                    --getglobal('BroadcastLoot'):Show()
                     getglobal('BroadcastLoot'):Enable()
                     getglobal('BroadcastLoot'):SetText('Broadcast Loot (' .. TWLC_TTN_FACTOR .. 's)')
+                    LCVoteFrame.sentReset = false
                     getglobal('LootLCVoteFrameWindow'):Show()
+
+                    --pre send items for never seen
+                    for id = 0, GetNumLootItems() do
+                        if GetLootSlotInfo(id) and GetLootSlotLink(id) then
+                            local lootIcon, lootName, _, _, q = GetLootSlotInfo(id)
+
+                            local _, _, itemLink = string.find(GetLootSlotLink(id), "(item:%d+:%d+:%d+:%d+)");
+                            local itemID, _, quality = GetItemInfo(itemLink)
+                            if (quality >= 0) then
+
+                                if not LCVoteFrame.itemsToPreSend[itemID] then
+                                    LCVoteFrame.itemsToPreSend[itemID] = true
+                                    SendAddonMessage("TWLCNF", "preSend=" .. id .. "=" .. lootIcon .. "=" .. lootName .. "=" .. GetLootSlotLink(id), "RAID")
+                                end
+                            end
+                        end
+                    end
+
                 else
                     --twprint('Looting method is not master looter. (' .. lootmethod .. ')')
                     getglobal('BroadcastLoot'):Disable()
@@ -777,7 +793,6 @@ LCVoteFrame:SetScript("OnEvent", function()
         if (event == "LOOT_SLOT_CLEARED") then
         end
         if (event == "LOOT_CLOSED") then
-            --            getglobal('BroadcastLoot'):Hide()
             getglobal('BroadcastLoot'):Disable()
         end
     end
@@ -855,7 +870,7 @@ function checkAssists()
         end
     end
 
-    for i = 1, table.getn(RLWindowFrame.assistFrames), 1 do
+    for i = 1, tableSize(RLWindowFrame.assistFrames), 1 do
         RLWindowFrame.assistFrames[i]:Hide()
     end
 
@@ -874,7 +889,7 @@ function checkAssists()
         }
     end
 
-    getglobal('RLWindowFrame'):SetHeight(100 + table.getn(people) * 25)
+    getglobal('RLWindowFrame'):SetHeight(100 + tableSize(people) * 25)
 
     for i, d in next, people do
         if (not RLWindowFrame.assistFrames[i]) then
@@ -949,19 +964,24 @@ function BroadcastLoot_OnClick()
         return
     end
 
+    if not LCVoteFrame.sentReset then
+
+        SendAddonMessage("TWLCNF", 'ttnfactor=' .. TWLC_TTN_FACTOR, "RAID")
+        SendAddonMessage("TWLCNF", 'ttvfactor=' .. TWLC_TTV_FACTOR, "RAID")
+
+        TIME_TO_NEED = GetNumLootItems() * TWLC_TTN_FACTOR
+        TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
+        SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
+        TIME_TO_VOTE = GetNumLootItems() * TWLC_TTV_FACTOR
+        SendAddonMessage("TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
+        SendAddonMessage("TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
+
+        sendReset()
+        LCVoteFrame.sentReset = true
+        return false
+    end
+
     getglobal('BroadcastLoot'):Disable()
-
-    SendAddonMessage("TWLCNF", 'ttnfactor=' .. TWLC_TTN_FACTOR, "RAID")
-    SendAddonMessage("TWLCNF", 'ttvfactor=' .. TWLC_TTV_FACTOR, "RAID")
-
-    TIME_TO_NEED = GetNumLootItems() * TWLC_TTN_FACTOR
-    TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
-    SendAddonMessage("TWLCNF", 'ttn=' .. TIME_TO_NEED, "RAID")
-    TIME_TO_VOTE = GetNumLootItems() * TWLC_TTV_FACTOR
-    SendAddonMessage("TWLCNF", 'ttv=' .. TIME_TO_VOTE, "RAID")
-    SendAddonMessage("TWLCNF", 'ttr=' .. TIME_TO_ROLL, "RAID")
-
-    sendReset()
 
     SendAddonMessage("TWLCNF", "voteframe=show", "RAID")
 
@@ -1430,7 +1450,7 @@ function VoteFrameListScroll_Update()
 
     -- Scrollbar stuff
     local showScrollBar = false;
-    if (table.getn(LCVoteFrame.currentPlayersList) > LCVoteFrame.playersPerPage) then
+    if (tableSize(LCVoteFrame.currentPlayersList) > LCVoteFrame.playersPerPage) then
         showScrollBar = true;
     end
 
@@ -1574,7 +1594,7 @@ function VoteFrameListScroll_Update()
                 getglobal("ContestantFrame" .. i .. "ReplacesItem2"):Hide()
             end
 
-            if (playerIndex > table.getn(LCVoteFrame.currentPlayersList)) then
+            if (playerIndex > tableSize(LCVoteFrame.currentPlayersList)) then
                 getglobal("ContestantFrame" .. i):Hide();
             else
                 getglobal("ContestantFrame" .. i):Show();
@@ -1583,7 +1603,7 @@ function VoteFrameListScroll_Update()
     end
 
     -- ScrollFrame update
-    FauxScrollFrame_Update(getglobal("ContestantScrollListFrame"), table.getn(LCVoteFrame.currentPlayersList), LCVoteFrame.playersPerPage, 20);
+    FauxScrollFrame_Update(getglobal("ContestantScrollListFrame"), tableSize(LCVoteFrame.currentPlayersList), LCVoteFrame.playersPerPage, 20);
 end
 
 function addButtonOnEnterTooltip(frame, itemLink)
@@ -1647,7 +1667,7 @@ function LCVoteFrame.ResetVars(show)
 
     getglobal('LootLCVoteFrameWindowContestantCount'):SetText()
 
-    getglobal('BroadcastLoot'):Disable()
+--    getglobal('BroadcastLoot'):Disable()
     getglobal("WinnerStatus"):Hide()
     getglobal("MLToWinner"):Hide()
     getglobal("MLToWinner"):Disable()
@@ -1678,6 +1698,8 @@ function LCVoteFrame.ResetVars(show)
     LCVoteFrame.doneVoting = {}
     LCVoteFrame.clDoneVotingItem = {}
     getglobal('LootLCVoteFrameWindowDoneVoting'):Disable();
+
+    LCVoteFrame.itemsToPreSend = {}
 end
 
 -- comms
@@ -1887,8 +1909,8 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             return false
         end
 
-        if (table.getn(LCVoteFrame.playersWhoWantItems) ~= 0) then
-            for i = 1, table.getn(LCVoteFrame.playersWhoWantItems) do
+        if (tableSize(LCVoteFrame.playersWhoWantItems) ~= 0) then
+            for i = 1, tableSize(LCVoteFrame.playersWhoWantItems) do
                 if LCVoteFrame.playersWhoWantItems[i]['itemIndex'] == tonumber(needEx[2]) and
                         LCVoteFrame.playersWhoWantItems[i]['name'] == sender then
                     return false --exists already
@@ -1902,7 +1924,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             LCVoteFrame.waitResponses[tonumber(needEx[2])] = 1
         end
 
-        LCVoteFrame.playersWhoWantItems[table.getn(LCVoteFrame.playersWhoWantItems) + 1] = {
+        table.insert(LCVoteFrame.playersWhoWantItems, {
             ['itemIndex'] = tonumber(needEx[2]),
             ['name'] = sender,
             ['need'] = 'wait',
@@ -1910,7 +1932,17 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             ['ci2'] = needEx[4],
             ['votes'] = 0,
             ['roll'] = 0
-        }
+        })
+
+--        LCVoteFrame.playersWhoWantItems[table.getn(LCVoteFrame.playersWhoWantItems) + 1] = {
+--            ['itemIndex'] = tonumber(needEx[2]),
+--            ['name'] = sender,
+--            ['need'] = 'wait',
+--            ['ci1'] = needEx[3],
+--            ['ci2'] = needEx[4],
+--            ['votes'] = 0,
+--            ['roll'] = 0
+--        }
 
         LCVoteFrame.itemVotes[tonumber(needEx[2])] = {}
         LCVoteFrame.itemVotes[tonumber(needEx[2])][sender] = {}
@@ -2177,8 +2209,9 @@ function refreshList()
         getglobal('ContestantFrame' .. i):Hide();
     end
     for pIndex, data in next, LCVoteFrame.playersWhoWantItems do
-        if (data['itemIndex'] == LCVoteFrame.CurrentVotedItem) then
-            LCVoteFrame.currentPlayersList[table.getn(LCVoteFrame.currentPlayersList) + 1] = LCVoteFrame.playersWhoWantItems[pIndex]
+        if data['itemIndex'] == LCVoteFrame.CurrentVotedItem then
+            table.insert(LCVoteFrame.currentPlayersList, LCVoteFrame.playersWhoWantItems[pIndex])
+--            LCVoteFrame.currentPlayersList[table.getn(LCVoteFrame.currentPlayersList) + 1] = LCVoteFrame.playersWhoWantItems[pIndex]
         end
     end
 end
@@ -2206,19 +2239,6 @@ end
 
 function calculateVotes()
 
-    --    twdebug('calculateVotes()')
-    --    twdebug('listing playerslist')
-    --    local i = 0
-    --    for k, player in next, LCVoteFrame.currentPlayersList do
-    --        i = i + 1
-    --        twdebug(player['itemIndex'] .. " pindex:" .. i .. "? " .. player['name'] .. " " .. player['need'] .. " " .. player['votes'] .. " " .. player['ci1'] .. " " .. player['ci2'] .. " " .. player['roll'])
-    --    end
-    --    twdebug('-------------- listing itemVotes, CI : ' .. LCVoteFrame.CurrentVotedItem)
-    --    for k, players in next, LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem] do
-    --        for kp, voters in next, players do
-    --            twdebug(k .. ' vote from ' .. kp .. ' ' .. voters)
-    --        end
-    --    end
 
     --init votes to 0
     for pIndex in next, LCVoteFrame.currentPlayersList do
@@ -2667,6 +2687,19 @@ function SecondsToClock(seconds)
     end
 end
 
+function tableSize(table)
+    if type(table) ~= 'table' then
+        twerror('attempt to get table size of a non table (' .. type(table) .. ')')
+        twerror('not table = ' .. table)
+        return 0
+    end
+    local len = 0
+    for _ in next, table do
+        len = len + 1
+    end
+    return len
+end
+
 StaticPopupDialogs["TWLC_CONFIRM_LOOT_DISTRIBUTION"] = {
     text = "TWLC You wish to assign %s to %s.  Is this correct?",
     button1 = "yes",
@@ -2718,7 +2751,7 @@ end
 function TestNeedButton_OnClick()
 
     local testItem1 = "\124cffa335ee\124Hitem:19401:0:0:0:0:0:0:0:0\124h[Primalist's Linked Legguards]\124h\124r";
-    local testItem2 = "\124cffa335ee\124Hitem:19362:0:0:0:0:0:0:0:0\124h[Doom's Edge]\124h\124r";
+    local testItem2 = "\124cff0070dd\124Hitem:15138:0:0:0:0:0:0:0:0\124h[Onyxia Scale Cloak]\124h\124r";
     --    local testItem3 = "\124cffa335ee\124Hitem:16533:0:0:0:0:0:0:0:0\124h[Warlord's Silk Cowl]\124h\124r";
 
     local _, _, itemLink1 = string.find(testItem1, "(item:%d+:%d+:%d+:%d+)");
