@@ -1021,7 +1021,7 @@
                         </Scripts>
                     </Button>
 
-                    <Button name="DebugWindow" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
+                    <Button name="DebugWindow" framstrata="HIGH" inherits="UIPanelButtonTemplate2"
                             text="Debug Window">
                         <Size>
                             <AbsDimension x="120" y="20"/>
@@ -1041,7 +1041,7 @@
                         </Scripts>
                     </Button>
 
-                    <Frame name="TWLC2_DebugWindow" parent="UIParent" movable="true" hidden="false" enableMouse="true">
+                    <Frame name="TWLC2_DebugWindow" parent="UIParent" movable="true" hidden="true" enableMouse="true">
                         <Size>
                             <AbsDimension x="300" y="500"/>
                         </Size>
