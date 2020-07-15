@@ -567,15 +567,15 @@
                             </Anchors>
                             <Color r="0" g="0.88" b="0.06" a="1"/>
                         </Texture>
-<!--                        <Texture name="$parentTimeLeftBackground">-->
-<!--                            <Size x="90" y="20"/>-->
-<!--                            <Anchors>-->
-<!--                                <Anchor point="TOPLEFT">-->
-<!--                                    <Offset x="0" y="0"/>-->
-<!--                                </Anchor>-->
-<!--                            </Anchors>-->
-<!--                            <Color r="0" g="0.88" b="0.06" a="1"/>-->
-<!--                        </Texture>-->
+                        <!--                        <Texture name="$parentTimeLeftBackground">-->
+                        <!--                            <Size x="90" y="20"/>-->
+                        <!--                            <Anchors>-->
+                        <!--                                <Anchor point="TOPLEFT">-->
+                        <!--                                    <Offset x="0" y="0"/>-->
+                        <!--                                </Anchor>-->
+                        <!--                            </Anchors>-->
+                        <!--                            <Color r="0" g="0.88" b="0.06" a="1"/>-->
+                        <!--                        </Texture>-->
                     </Layer>
                 </Layers>
                 <Anchors>
@@ -1021,6 +1021,97 @@
                         </Scripts>
                     </Button>
 
+                    <Button name="DebugWindow" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+                            text="Debug Window">
+                        <Size>
+                            <AbsDimension x="120" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="BOTTOM">
+                                <Offset>
+                                    <AbsDimension x="0" y="10"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    DebugWindow_OnClick();
+                            </OnClick>
+
+                        </Scripts>
+                    </Button>
+
+                    <Frame name="TWLC2_DebugWindow" parent="UIParent" movable="true" hidden="false" enableMouse="true">
+                        <Size>
+                            <AbsDimension x="300" y="500"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="CENTER">
+                                <Offset>
+                                    <AbsDimension x="0" y="0"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true" edgeSize="1">
+                        </Backdrop>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parentTitle" inherits="GameFontNormal" text="TWLC2c Debug Window">
+                                    <Anchors>
+                                        <Anchor point="TOP">
+                                            <Offset>
+                                                <AbsDimension x="0" y="-9"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentText" inherits="GameFontNormal" text="debug info." justifyH="RIGHT">
+                                    <Size>
+                                        <AbsDimension x="300" y="500"/>
+                                    </Size>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT">
+                                            <Offset>
+                                                <AbsDimension x="0" y="0"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Frames>
+                            <Button name="$parentMinimizeButton" inherits="UIPanelCloseButton">
+                                <Size>
+                                    <AbsDimension x="22" y="22"/>
+                                </Size>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT">
+                                        <Offset>
+                                            <AbsDimension x="-5" y="-4"/>
+                                        </Offset>
+                                    </Anchor>
+                                </Anchors>
+                                <Scripts>
+                                    <OnClick>
+                                            DebugWindow_OnClick()
+                                    </OnClick>
+                                </Scripts>
+                            </Button>
+                        </Frames>
+                        <Scripts>
+                            <OnLoad>
+                                    this:RegisterForDrag("LeftButton")
+                                    this:SetClampedToScreen(true)
+                            </OnLoad>
+                            <OnDragStart>
+                                    this:StartMoving()
+                            </OnDragStart>
+                            <OnDragStop>
+                                    this:StopMovingOrSizing()
+                            </OnDragStop>
+                        </Scripts>
+                    </Frame>
+
                     <Button name="RLOptionsButton" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
                             text="RL Options">
                         <Size>
@@ -1041,7 +1132,8 @@
                         </Scripts>
                     </Button>
 
-                    <Button name="TestNeedFrameButton" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+                    <Button name="TestNeedFrameButton" framstrata="HIGH" inherits="UIPanelButtonTemplate2"
+                            hidden="false"
                             text="Test Need">
                         <Size>
                             <AbsDimension x="120" y="20"/>
