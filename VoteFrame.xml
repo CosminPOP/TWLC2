@@ -1021,7 +1021,7 @@
                         </Scripts>
                     </Button>
 
-                    <Button name="DebugWindow" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+                    <Button name="DebugWindow" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
                             text="Debug Window">
                         <Size>
                             <AbsDimension x="120" y="20"/>
