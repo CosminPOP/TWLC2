@@ -1154,46 +1154,82 @@ function setCurrentVotedItem(id)
         local reward1 = "\124cffa335ee\124Hitem:18406:0:0:0:0:0:0:0:0\124h[Onyxia Blood Talisman]\124h\124r"
         local _, _, itemLink1 = string.find(reward1, "(item:%d+:%d+:%d+:%d+)");
         local _, link1, _, _, _, _, _, _, tex1 = GetItemInfo(itemLink1)
-        addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward1'), link1)
-        getglobal('CurrentVotedItemQuestReward1'):SetNormalTexture(tex1)
-        getglobal('CurrentVotedItemQuestReward1'):Show()
+        if link1 then
+            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward1'), link1)
+            getglobal('CurrentVotedItemQuestReward1'):SetNormalTexture(tex1)
+            getglobal('CurrentVotedItemQuestReward1'):SetPushedTexture(tex1)
+            getglobal('CurrentVotedItemQuestReward1'):Show()
+        else
+            GameTooltip:SetHyperlink(itemLink1)
+            GameTooltip:Hide()
+        end
 
         local reward2 = "\124cffa335ee\124Hitem:18403:0:0:0:0:0:0:0:0\124h[Dragonslayer's Signet]\124h\124r"
         local _, _, itemLink2 = string.find(reward2, "(item:%d+:%d+:%d+:%d+)");
         local _, link2, _, _, _, _, _, _, tex2 = GetItemInfo(itemLink2)
-        addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward2'), link2)
-        getglobal('CurrentVotedItemQuestReward2'):SetNormalTexture(tex2)
-        getglobal('CurrentVotedItemQuestReward2'):Show()
+        if link2 then
+            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward2'), link2)
+            getglobal('CurrentVotedItemQuestReward2'):SetNormalTexture(tex2)
+            getglobal('CurrentVotedItemQuestReward2'):SetPushedTexture(tex2)
+            getglobal('CurrentVotedItemQuestReward2'):Show()
+        else
+            GameTooltip:SetHyperlink(itemLink2)
+            GameTooltip:Hide()
+        end
 
         local reward3 = "\124cffa335ee\124Hitem:18404:0:0:0:0:0:0:0:0\124h[Onyxia Tooth Pendant]\124h\124r"
         local _, _, itemLink3 = string.find(reward3, "(item:%d+:%d+:%d+:%d+)");
         local _, link3, _, _, _, _, _, _, tex3 = GetItemInfo(itemLink3)
-        addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward3'), link3)
-        getglobal('CurrentVotedItemQuestReward3'):SetNormalTexture(tex3)
-        getglobal('CurrentVotedItemQuestReward3'):Show()
+        if link3 then
+            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward3'), link3)
+            getglobal('CurrentVotedItemQuestReward3'):SetNormalTexture(tex3)
+            getglobal('CurrentVotedItemQuestReward3'):SetPushedTexture(tex3)
+            getglobal('CurrentVotedItemQuestReward3'):Show()
+        else
+            GameTooltip:SetHyperlink(itemLink3)
+            GameTooltip:Hide()
+        end
     end
 
     if name == 'Head of Nefarian' then
         local reward1 = "\124cffa335ee\124Hitem:19383:0:0:0:0:0:0:0:0\124h[Master Dragonslayer\'s Medallion]\124h\124r"
         local _, _, itemLink1 = string.find(reward1, "(item:%d+:%d+:%d+:%d+)");
         local _, link1, _, _, _, _, _, _, tex1 = GetItemInfo(itemLink1)
-        addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward1'), link1)
-        getglobal('CurrentVotedItemQuestReward1'):SetNormalTexture(tex1)
-        getglobal('CurrentVotedItemQuestReward1'):Show()
+        if link1 then
+            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward1'), link1)
+            getglobal('CurrentVotedItemQuestReward1'):SetNormalTexture(tex1)
+            getglobal('CurrentVotedItemQuestReward1'):SetPushedTexture(tex1)
+            getglobal('CurrentVotedItemQuestReward1'):Show()
+        else
+            GameTooltip:SetHyperlink(itemLink1)
+            GameTooltip:Hide()
+        end
 
         local reward2 = "\124cffa335ee\124Hitem:19366:0:0:0:0:0:0:0:0\124h[Master Dragonslayer's Orb]\124h\124r"
         local _, _, itemLink2 = string.find(reward2, "(item:%d+:%d+:%d+:%d+)");
         local _, link2, _, _, _, _, _, _, tex2 = GetItemInfo(itemLink2)
-        addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward2'), link2)
-        getglobal('CurrentVotedItemQuestReward2'):SetNormalTexture(tex2)
-        getglobal('CurrentVotedItemQuestReward2'):Show()
+        if link2 then
+            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward2'), link2)
+            getglobal('CurrentVotedItemQuestReward2'):SetNormalTexture(tex2)
+            getglobal('CurrentVotedItemQuestReward2'):SetPushedTexture(tex2)
+            getglobal('CurrentVotedItemQuestReward2'):Show()
+        else
+            GameTooltip:SetHyperlink(itemLink2)
+            GameTooltip:Hide()
+        end
 
         local reward3 = "\124cffa335ee\124Hitem:19384:0:0:0:0:0:0:0:0\124h[Master Dragonslayer's Ring]\124h\124r"
         local _, _, itemLink3 = string.find(reward3, "(item:%d+:%d+:%d+:%d+)");
         local _, link3, _, _, _, _, _, _, tex3 = GetItemInfo(itemLink3)
-        addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward3'), link3)
-        getglobal('CurrentVotedItemQuestReward3'):SetNormalTexture(tex3)
-        getglobal('CurrentVotedItemQuestReward3'):Show()
+        if link3 then
+            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward3'), link3)
+            getglobal('CurrentVotedItemQuestReward3'):SetNormalTexture(tex3)
+            getglobal('CurrentVotedItemQuestReward3'):SetPushedTexture(tex3)
+            getglobal('CurrentVotedItemQuestReward3'):Show()
+        else
+            GameTooltip:SetHyperlink(itemLink3)
+            GameTooltip:Hide()
+        end
     end
 
     if name == 'Head of Ossirian the Unscarred' then
