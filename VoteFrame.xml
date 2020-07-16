@@ -796,7 +796,7 @@
                 <FontString name="$parentVotedItemName" hidden="true" inherits="GameFontNormalLarge"
                             text="[voted item name]" justifyH="LEFT">
                     <Size>
-                        <AbsDimension x="260" y="30"/>
+                        <AbsDimension x="230" y="30"/>
                     </Size>
                     <Anchors>
                         <Anchor point="TOPLEFT">
