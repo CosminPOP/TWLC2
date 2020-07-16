@@ -1717,34 +1717,34 @@ function VoteFrameListScroll_Update()
             --              voteStatus = 'disabled'
             --            end
 
-            --lock vote buttons if doneVotting is pressed
-            if LCVoteFrame.doneVoting[LCVoteFrame.CurrentVotedItem] == true then
-                voteStatus = 'disabled'
-            end
-
             --lock vote buttons if players rolled
 --            if true then
 --                getglobal("ContestantFrame" .. i .. "VoteButton"):Disable();
 --                getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
 --            end
 
+            getglobal("ContestantFrame" .. i .. "VoteButton"):SetText('VOTE')
             if LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name] then
                 if LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name][me] then
                     if LCVoteFrame.itemVotes[LCVoteFrame.CurrentVotedItem][name][me] == '+' then
                         voteStatus = 'voted'
+                        getglobal("ContestantFrame" .. i .. "VoteButton"):SetText('unvote')
                     end
                 end
             end
 
+            --lock vote buttons if doneVotting is pressed
+            if LCVoteFrame.doneVoting[LCVoteFrame.CurrentVotedItem] == true then
+                voteStatus = 'disabled'
+            end
+
             if voteStatus == 'enabled' then
                 getglobal("ContestantFrame" .. i .. "VoteButton"):Enable();
-                getglobal("ContestantFrame" .. i .. "VoteButton"):SetText('VOTE')
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, 1)
             elseif voteStatus == 'disabled' then
                 getglobal("ContestantFrame" .. i .. "VoteButton"):Disable();
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
             elseif voteStatus == 'voted' then
-                getglobal("ContestantFrame" .. i .. "VoteButton"):SetText('unvote')
                 getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.05, 0.56, 0.23, .5)
             end
 
