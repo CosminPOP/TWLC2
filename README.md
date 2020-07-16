@@ -4,6 +4,12 @@ Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
 <hr>
 
+**v1.1.0.0 - First Major Update**<br>
+<br>
+Changed comm channel to `TWLC2`<br>
+Items for LC get sent via `preloadInVoteFrame=` in Prepare Broadcast (first step of Broadcast Loot)
+<hr>
+
 **v1.0.2.3**<br>
 `/twlc autoassist` - Toggle autoassit for CL/Officers on or off<Br>
 Infinite loop fix for autoassist
