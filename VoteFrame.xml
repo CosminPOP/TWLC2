@@ -2513,12 +2513,12 @@
                 <DisabledTexture inherits="TWLCButtonDisabled" />
                 <HighlightTexture inherits="TWLCButtonHighlight"/>
                 <Size>
-                    <AbsDimension x="140" y="30"/>
+                    <AbsDimension x="140" y="20"/>
                 </Size>
                 <Anchors>
                     <Anchor point="BOTTOM">
                         <Offset>
-                            <AbsDimension x="0" y="0"/>
+                            <AbsDimension x="0" y="5"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
