@@ -4,6 +4,14 @@ Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
 <hr>
 
+**v1.1.0.1 - Horde Sattelite**<br>
+<br>
+Added option to set a horde sattelite player that can ML and broadcast horde loot<br>
+Use `/twlc set sattelite [name]` to set it<br>
+Added icons with name tooltips for which CL voted<br>
+Added attendance data, disable for now. 
+<hr>
+
 **v1.1.0.0 - First Major Update**<br>
 <br>
 Changed comm channel to `TWLC2`<br>
