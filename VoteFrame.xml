@@ -271,9 +271,9 @@
                         <AbsDimension x="16" y="16"/>
                     </Size>
                     <Anchors>
-                        <Anchor point="LEFT">
+                        <Anchor point="RIGHT">
                             <Offset>
-                                <AbsDimension x="-45" y="0"/>
+                                <AbsDimension x="-5" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
