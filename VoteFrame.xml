@@ -4,6 +4,22 @@
 
     <GameTooltip name="LCTooltipVoteFrame" inherits="GameTooltipTemplate" parent="UIParent" hidden="true"/>
 
+    <Texture name="TWLCButtonNormal" virtual="true">
+        <Color r="0" g="0.56" b="0.27" a="0.7"/>
+    </Texture>
+
+    <Texture name="TWLCButtonPushed" virtual="true">
+        <Color r="0" g="0.56" b="0.27" a="1"/>
+    </Texture>
+
+    <Texture name="TWLCButtonDisabled" virtual="true">
+        <Color r="0.3" g="0.3" b="0.3" a="0.3"/>
+    </Texture>
+
+    <Texture name="TWLCButtonHighlight" virtual="true" alphamode="ADD">
+        <Color r="0" g="0.56" b="0.27" a="0.3"/>
+    </Texture>
+
     <Frame name="VotedItemsFrameTemplate" virtual="true" enableMouse="true">
         <Size>
             <AbsDimension x="35" y="35"/>
@@ -212,7 +228,7 @@
 
     <Frame name="ContestantFrame" virtual="true">
         <Size>
-            <AbsDimension x="498" y="20"/>
+            <AbsDimension x="590" y="20"/>
         </Size>
         <Anchors>
             <Anchor point="TOPLEFT">
@@ -228,14 +244,14 @@
         </Backdrop>
         <Layers>
             <Layer level="OVERLAY">
-                <Texture name="$parentClassIcon" hidden="false">
+                <Texture name="$parentClassIcon" hidden="false" file="Interface\AddOns\TWLC2\classes\rogue">
                     <Size>
                         <AbsDimension x="20" y="20"/>
                     </Size>
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="7" y="0"/>
+                                <AbsDimension x="3" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -255,13 +271,135 @@
                         <AbsDimension x="16" y="16"/>
                     </Size>
                     <Anchors>
-                        <Anchor point="RIGHT">
+                        <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="-15" y="0"/>
+                                <AbsDimension x="-45" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
                 </Texture>
+
+                <Texture name="$parentCLVote1" hidden="false" file="Interface\AddOns\TWLC2\classes\paladin">
+                    <Size>
+                        <AbsDimension x="18" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="424" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentCLVote2" hidden="false" file="Interface\AddOns\TWLC2\classes\paladin">
+                    <Size>
+                        <AbsDimension x="18" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="440" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentCLVote3" hidden="false" file="Interface\AddOns\TWLC2\classes\paladin">
+                    <Size>
+                        <AbsDimension x="18" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="456" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentCLVote4" hidden="false" file="Interface\AddOns\TWLC2\classes\paladin">
+                    <Size>
+                        <AbsDimension x="18" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="472" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentCLVote5" hidden="false" file="Interface\AddOns\TWLC2\classes\paladin">
+                    <Size>
+                        <AbsDimension x="18" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="488" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentCLVote6" hidden="false" file="Interface\AddOns\TWLC2\classes\paladin">
+                    <Size>
+                        <AbsDimension x="18" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="504" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentCLVote7" hidden="false" file="Interface\AddOns\TWLC2\classes\paladin">
+                    <Size>
+                        <AbsDimension x="18" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="520" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentCLVote8" hidden="false" file="Interface\AddOns\TWLC2\classes\paladin">
+                    <Size>
+                        <AbsDimension x="18" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="536" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentCLVote9" hidden="false" file="Interface\AddOns\TWLC2\classes\paladin">
+                    <Size>
+                        <AbsDimension x="18" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="552" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentCLVote10" hidden="false" file="Interface\AddOns\TWLC2\classes\paladin">
+                    <Size>
+                        <AbsDimension x="18" y="18"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="568" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+
 
                 <Texture name="$parentCLVote" hidden="true" file="Interface\GroupFrame\UI-Group-LeaderIcon">
                     <Size>
@@ -270,21 +408,22 @@
                     <Anchors>
                         <Anchor point="RIGHT">
                             <Offset>
-                                <AbsDimension x="-60" y="0"/>
+                                <AbsDimension x="30" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
                 </Texture>
 
-                <FontString name="$parentNeed" inherits="GameFontNormal" text="[need]" hidden="false">
+                <FontString name="$parentNeed" inherits="GameFontNormal" text="MS Upgrade" hidden="false">
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="125" y="0"/>
+                                <AbsDimension x="129" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
                 </FontString>
+
                 <Texture name="$parentRollWinner" hidden="true" file="Interface\Buttons\UI-GroupLoot-Dice-Up">
                     <Size>
                         <AbsDimension x="16" y="16"/>
@@ -292,11 +431,12 @@
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="284" y="-2"/>
+                                <AbsDimension x="298" y="-2"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
                 </Texture>
+
                 <Texture name="$parentRollPass" hidden="true" file="Interface\Buttons\UI-GroupLoot-Pass-Up">
                     <Size>
                         <AbsDimension x="16" y="16"/>
@@ -304,17 +444,16 @@
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="284" y="0"/>
+                                <AbsDimension x="298" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
                 </Texture>
-
                 <FontString name="$parentRoll" inherits="GameFontNormal" text="69" hidden="false">
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="300" y="0"/>
+                                <AbsDimension x="280" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -323,7 +462,7 @@
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="440" y="0"/>
+                                <AbsDimension x="400" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -337,7 +476,7 @@
                 <PushedTexture inherits=""/>
                 <HighlightTexture inherits=""/>
                 <Size>
-                    <AbsDimension x="220" y="20"/>
+                    <AbsDimension x="210" y="20"/>
                 </Size>
                 <Anchors>
                     <Anchor point="LEFT">
@@ -366,12 +505,12 @@
                 <PushedTexture inherits=""/>
                 <HighlightTexture inherits=""/>
                 <Size>
-                    <AbsDimension x="35" y="20"/>
+                    <AbsDimension x="45" y="20"/>
                 </Size>
                 <Anchors>
                     <Anchor point="LEFT">
                         <Offset>
-                            <AbsDimension x="285" y="0"/>
+                            <AbsDimension x="272" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -395,12 +534,12 @@
                 <PushedTexture inherits=""/>
                 <HighlightTexture inherits=""/>
                 <Size>
-                    <AbsDimension x="80" y="20"/>
+                    <AbsDimension x="30" y="20"/>
                 </Size>
                 <Anchors>
                     <Anchor point="LEFT">
                         <Offset>
-                            <AbsDimension x="415" y="0"/>
+                            <AbsDimension x="393" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -452,7 +591,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="220" y="0"/>
+                            <AbsDimension x="210" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -493,7 +632,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="241" y="0"/>
+                            <AbsDimension x="231" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -534,7 +673,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="262" y="0"/>
+                            <AbsDimension x="252" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -545,46 +684,33 @@
             </Button>
 
             <Button name="$parentVoteButton" inherits="UIPanelButtonTemplate" text="VOTE">
-                <NormalTexture inherits=""/>
-                <PushedTexture inherits=""/>
-                <DisabledTexture inherits=""/>
-                <HighlightTexture inherits=""/>
-                <!--                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">-->
-                <!--                    <Color r="0" g="0.88" b="0.06" a="1"/>-->
-                <!--                </Backdrop>-->
+                <NormalTexture inherits="TWLCButtonNormal"/>
+                <PushedTexture inherits="TWLCButtonPushed"/>
+                <DisabledTexture inherits="TWLCButtonDisabled" />
+                <HighlightTexture inherits="TWLCButtonHighlight"/>
                 <Size>
-                    <AbsDimension x="90" y="20"/>
+                    <AbsDimension x="70" y="20"/>
                 </Size>
-                <Layers>
-                    <Layer level="BACKGROUND">
-                        <!--                        file="I1nterface\Tooltips\UI-Tooltip-Background"-->
-                        <Texture name="$parentMainBackground">
-                            <Size x="90" y="20"/>
-                            <Anchors>
-                                <Anchor point="TOPLEFT">
-                                    <Offset x="0" y="0"/>
-                                </Anchor>
-                            </Anchors>
-                            <Color r="0" g="0.88" b="0.06" a="1"/>
-                        </Texture>
-                        <!--                        <Texture name="$parentTimeLeftBackground">-->
-                        <!--                            <Size x="90" y="20"/>-->
-                        <!--                            <Anchors>-->
-                        <!--                                <Anchor point="TOPLEFT">-->
-                        <!--                                    <Offset x="0" y="0"/>-->
-                        <!--                                </Anchor>-->
-                        <!--                            </Anchors>-->
-                        <!--                            <Color r="0" g="0.88" b="0.06" a="1"/>-->
-                        <!--                        </Texture>-->
-                    </Layer>
-                </Layers>
                 <Anchors>
-                    <Anchor point="RIGHT">
+                    <Anchor point="TOPLEFT">
                         <Offset>
-                            <AbsDimension x="-85" y="0"/>
+                            <AbsDimension x="320" y="0"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentCheck" file="Interface\addons\TWLC2\images\green-check" hidden="true">
+                            <Size>
+                                <AbsDimension x="12" y="12"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="CENTER">
+                                </Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
                 <Scripts>
                     <OnClick>
                             VoteButton_OnClick(this:GetID());
@@ -596,6 +722,157 @@
                             Contestant_OnLeave(this:GetID())
                     </OnLeave>
                 </Scripts>
+            </Button>
+
+            <Button name="$parentCLVote1Tooltip" inherits="UIPanelButtonTemplate">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="16" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="424" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentCLVote2Tooltip" inherits="UIPanelButtonTemplate">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="16" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="440" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentCLVote3Tooltip" inherits="UIPanelButtonTemplate">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="16" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="456" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentCLVote4Tooltip" inherits="UIPanelButtonTemplate">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="16" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="472" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentCLVote5Tooltip" inherits="UIPanelButtonTemplate">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="16" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="488" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentCLVote6Tooltip" inherits="UIPanelButtonTemplate">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="16" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="504" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentCLVote7Tooltip" inherits="UIPanelButtonTemplate">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="16" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="520" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentCLVote8Tooltip" inherits="UIPanelButtonTemplate">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="16" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="536" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentCLVote9Tooltip" inherits="UIPanelButtonTemplate">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="16" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="552" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentCLVote10Tooltip" inherits="UIPanelButtonTemplate">
+                <NormalTexture inherits=""/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="16" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="568" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
             </Button>
         </Frames>
         <Scripts>
@@ -695,14 +972,14 @@
     <Frame name="LootLCVoteFrameWindow" hidden="true" toplevel="true"
            parent="UIParent" movable="true" enableMouse="true" resizable="true">
         <Size>
-            <AbsDimension x="516" y="345"/>
+            <AbsDimension x="600" y="246"/>
         </Size>
         <Anchors>
             <Anchor point="CENTER"/>
         </Anchors>
         <ResizeBounds>
-            <minResize x="516" y="246"/>
-            <maxResize x="516" y="456"/>
+            <minResize x="600" y="246"/>
+            <maxResize x="600" y="456"/>
         </ResizeBounds>
         <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
                   edgeFile="Interface\addons\TWLC2\images\border-azer"
@@ -728,11 +1005,12 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentNameLabel" inherits="GameFontNormalSmall" text="Name" hidden="false">
+                <FontString name="$parentNameLabel" inherits="GameFontNormalSmall" text="Name / Attendance"
+                            hidden="false">
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="15" y="-85"/>
+                                <AbsDimension x="8" y="-85"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -750,7 +1028,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="227" y="-85"/>
+                                <AbsDimension x="216" y="-85"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -759,7 +1037,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="305" y="-85"/>
+                                <AbsDimension x="285" y="-85"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -768,7 +1046,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="445" y="-85"/>
+                                <AbsDimension x="406" y="-85"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -783,7 +1061,7 @@
                     </Anchors>
                 </FontString>
 
-                <FontString name="$parentTimeLeft" inherits="GameFontNormal" text="25s" hidden="true">
+                <FontString name="$parentTimeLeft" inherits="GameFontNormal" text="" hidden="true">
                     <Anchors>
                         <Anchor point="BOTTOMLEFT">
                             <Offset>
@@ -807,7 +1085,7 @@
                     </Anchors>
                 </FontString>
                 <FontString name="$parentVotedItemType" hidden="true" inherits="GameFontNormal"
-                            text="[vo2ted item type]">
+                            text="[voted item type]">
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
@@ -957,7 +1235,7 @@
             <Frame name="RLExtraFrame" hidden="true" toplevel="true"
                    parent="LootLCVoteFrameWindow" movable="false" enableMouse="true">
                 <Size>
-                    <AbsDimension x="516" y="60"/>
+                    <AbsDimension x="600" y="60"/>
                 </Size>
                 <Anchors>
                     <Anchor point="BOTTOM">
@@ -981,10 +1259,14 @@
                 </Backdrop>
                 <Frames>
 
-                    <Button name="BroadcastLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+                    <Button name="BroadcastLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
                             text="Broadcast Loot">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
-                            <AbsDimension x="140" y="20"/>
+                            <AbsDimension x="180" y="20"/>
                         </Size>
                         <Anchors>
                             <Anchor point="TOPLEFT">
@@ -1001,8 +1283,60 @@
                         </Scripts>
                     </Button>
 
-                    <Button name="ResetClose" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+                    <Button name="SaveAttendance" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="true"
+                            text="Save Attendance">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
+                        <Size>
+                            <AbsDimension x="180" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="20" y="9"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    SaveAttendance_OnClick();
+                            </OnClick>
+
+                        </Scripts>
+                    </Button>
+
+                    <Button name="ScanHordeLoot" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
+                            text="Get Horde Loot">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
+                        <Size>
+                            <AbsDimension x="180" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="20" y="9"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    ScanHordeLoot_OnClick();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+
+                    <Button name="ResetClose" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
                             text="Reset and close">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="120" y="20"/>
                         </Size>
@@ -1021,15 +1355,19 @@
                         </Scripts>
                     </Button>
 
-                    <Button name="DebugWindow" framstrata="HIGH" inherits="UIPanelButtonTemplate2"
+                    <Button name="DebugWindow" framstrata="HIGH" inherits="UIPanelButtonTemplate"
                             text="Debug Window">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="120" y="20"/>
                         </Size>
                         <Anchors>
                             <Anchor point="BOTTOM">
                                 <Offset>
-                                    <AbsDimension x="0" y="10"/>
+                                    <AbsDimension x="0" y="9"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -1043,7 +1381,7 @@
 
                     <Frame name="TWLC2_DebugWindow" parent="UIParent" movable="true" hidden="true" enableMouse="true">
                         <Size>
-                            <AbsDimension x="300" y="500"/>
+                            <AbsDimension x="300" y="700"/>
                         </Size>
                         <Anchors>
                             <Anchor point="CENTER">
@@ -1065,9 +1403,10 @@
                                         </Anchor>
                                     </Anchors>
                                 </FontString>
-                                <FontString name="$parentText" inherits="GameFontNormal" text="debug info." justifyH="RIGHT">
+                                <FontString name="$parentText" inherits="GameFontNormalSmall" text="debug info."
+                                            justifyH="RIGHT">
                                     <Size>
-                                        <AbsDimension x="300" y="500"/>
+                                        <AbsDimension x="300" y="700"/>
                                     </Size>
                                     <Anchors>
                                         <Anchor point="TOPLEFT">
@@ -1112,8 +1451,12 @@
                         </Scripts>
                     </Frame>
 
-                    <Button name="RLOptionsButton" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="true"
+                    <Button name="RLOptionsButton" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="true"
                             text="RL Options">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="120" y="20"/>
                         </Size>
@@ -1132,16 +1475,20 @@
                         </Scripts>
                     </Button>
 
-                    <Button name="TestNeedFrameButton" framstrata="HIGH" inherits="UIPanelButtonTemplate2"
+                    <Button name="TestNeedFrameButton" framstrata="HIGH" inherits="UIPanelButtonTemplate"
                             hidden="false"
                             text="Test Need">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="120" y="20"/>
                         </Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT">
                                 <Offset>
-                                    <AbsDimension x="-20" y="10"/>
+                                    <AbsDimension x="-20" y="9"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -1155,7 +1502,11 @@
                 </Frames>
             </Frame>
 
-            <Button name="MLToWinner" inherits="UIPanelButtonTemplate2" hidden="true" text="ML to Winner">
+            <Button name="MLToWinner" inherits="UIPanelButtonTemplate" hidden="true" text="ML to Winner">
+                <NormalTexture inherits="TWLCButtonNormal"/>
+                <PushedTexture inherits="TWLCButtonPushed"/>
+                <DisabledTexture inherits="TWLCButtonDisabled" />
+                <HighlightTexture inherits="TWLCButtonHighlight"/>
                 <Size>
                     <AbsDimension x="200" y="24"/>
                 </Size>
@@ -1237,7 +1588,7 @@
 
             <Frame name="$parentTitleBar" hidden="false">
                 <Size>
-                    <AbsDimension x="505" y="1"/>
+                    <AbsDimension x="590" y="1"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPLEFT">
@@ -1247,9 +1598,6 @@
                     </Anchor>
                 </Anchors>
                 <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-                    <!--                    <BackgroundInsets>-->
-                    <!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
-                    <!--                    </BackgroundInsets>-->
                 </Backdrop>
             </Frame>
 
@@ -1490,7 +1838,7 @@
 
             <Frame name="ContestantScrollListBackground">
                 <Size>
-                    <AbsDimension x="508" y="220"/>
+                    <AbsDimension x="590" y="220"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOP">
@@ -1512,7 +1860,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="LootLCVoteFrameWindow">
                         <Offset>
-                            <AbsDimension x="9" y="-100"/>
+                            <AbsDimension x="5" y="-100"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1660,7 +2008,7 @@
 
             <ScrollFrame name="ContestantScrollListFrame" hidden="true" inherits="FauxScrollFrameTemplate">
                 <Size>
-                    <AbsDimension x="460" y="220"/>
+                    <AbsDimension x="590" y="220"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeTo="LootLCVoteFrameWindow" relativePoint="TOPRIGHT">
@@ -1678,7 +2026,7 @@
 
             <Frame name="$parentTimeLeftBar" framestrata="BACKGROUND">
                 <Size>
-                    <AbsDimension x="508" y="22"/>
+                    <AbsDimension x="592" y="22"/>
                 </Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT">
@@ -1692,8 +2040,12 @@
                 </Backdrop>
             </Frame>
 
-            <Button name="$parentDoneVoting" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+            <Button name="$parentDoneVoting" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
                     text="Done Voting">
+                <NormalTexture inherits="TWLCButtonNormal"/>
+                <PushedTexture inherits="TWLCButtonPushed"/>
+                <DisabledTexture inherits="TWLCButtonDisabled" />
+                <HighlightTexture inherits="TWLCButtonHighlight"/>
                 <Size>
                     <AbsDimension x="120" y="20"/>
                 </Size>
@@ -1711,9 +2063,9 @@
                                 <AbsDimension x="12" y="12"/>
                             </Size>
                             <Anchors>
-                                <Anchor point="RIGHT">
+                                <Anchor point="LEFT">
                                     <Offset>
-                                        <AbsDimension x="-10" y="0"/>
+                                        <AbsDimension x="10" y="0"/>
                                     </Offset>
                                 </Anchor>
                             </Anchors>
@@ -1812,7 +2164,11 @@
                         </Scripts>
                     </Button>
 
-                    <Button name="$parentSyncLootHistory" inherits="UIPanelButtonTemplate2" text="Sync Loot History">
+                    <Button name="$parentSyncLootHistory" inherits="UIPanelButtonTemplate" text="Sync Loot History">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="220" y="20"/>
                         </Size>
@@ -2034,8 +2390,12 @@
                 </Scripts>
             </Button>
 
-            <Button name="$parentRefreshWho" framstrata="HIGH" inherits="UIPanelButtonTemplate2" hidden="false"
+            <Button name="$parentRefreshWho" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
                     text="Refresh">
+                <NormalTexture inherits="TWLCButtonNormal"/>
+                <PushedTexture inherits="TWLCButtonPushed"/>
+                <DisabledTexture inherits="TWLCButtonDisabled" />
+                <HighlightTexture inherits="TWLCButtonHighlight"/>
                 <Size>
                     <AbsDimension x="140" y="20"/>
                 </Size>
@@ -2049,6 +2409,122 @@
                 <Scripts>
                     <OnClick>
                             RefreshWho_OnClick();
+                    </OnClick>
+
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                    this:RegisterForDrag("LeftButton");
+                    this:SetMovable(1);
+                    this:SetUserPlaced(true);
+            </OnLoad>
+            <OnDragStart>
+                    this:StartMoving();
+                    this.isMoving = true;
+            </OnDragStart>
+            <OnDragStop>
+                    this:StopMovingOrSizing();
+                    this.isMoving = false;
+            </OnDragStop>
+        </Scripts>
+    </Frame>
+
+    <Frame name="SaveAttendanceDialog" hidden="true" toplevel="true" parent="UIParent" movable="true"
+           enableMouse="true">
+        <Size>
+            <AbsDimension x="200" y="80"/>
+        </Size>
+        <Anchors>
+            <Anchor point="CENTER">
+                <Offset>
+                    <AbsDimension x="0" y="0"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+                  edgeFile="Interface\addons\TWLC2\images\border-azer"
+                  tile="false">
+            <EdgeSize>
+                <AbsValue val="16"/>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="1"/>
+            </TileSize>
+            <BackgroundInsets>
+                <AbsInset left="5" right="5" top="5" bottom="5"/>
+            </BackgroundInsets>
+        </Backdrop>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentTitle" text="Save attendance ?" inherits="GameFontNormal">
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-5"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentBoss" text="Chromaggus" inherits="GameFontNormal">
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-20"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentLastSave" text="Last Save : " inherits="GameFontNormalSmall">
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-40"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+                <Size>
+                    <AbsDimension x="22" y="22"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            closeAttendanceSaveWindow();
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parentYES" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
+                    text="YES">
+                <NormalTexture inherits="TWLCButtonNormal"/>
+                <PushedTexture inherits="TWLCButtonPushed"/>
+                <DisabledTexture inherits="TWLCButtonDisabled" />
+                <HighlightTexture inherits="TWLCButtonHighlight"/>
+                <Size>
+                    <AbsDimension x="140" y="30"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="0" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            SaveAttendance_OnClick()
                     </OnClick>
 
                 </Scripts>
