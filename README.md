@@ -4,7 +4,7 @@ Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
 <hr>
 
-**v1.1.0.2* *<br>
+**v1.1.0.2**<br>
 <br>
 Fixes not being able to vote if not everyone in raid had the TWLC2c addon 
 
