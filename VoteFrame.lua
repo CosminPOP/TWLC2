@@ -1,4 +1,4 @@
-local addonVer = "1.1.0.1" --don't use letters or numbers > 10
+local addonVer = "1.1.0.2" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 local TWLC2_CHANNEL = 'TWLC2'
@@ -757,7 +757,6 @@ LCVoteFrame:SetScript("OnEvent", function()
                 getglobal('RLOptionsButton'):Show()
                 getglobal('RLExtraFrame'):Show()
                 getglobal('MLToWinner'):Show()
-                getglobal('MLToWinner'):Disable()
                 getglobal('ResetClose'):Show()
                 checkAssists()
             else
@@ -1851,8 +1850,8 @@ function VoteFrameListScroll_Update()
             if LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo ~= '' or
                     LCVoteFrame.numPlayersThatWant == 1 or
                     LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].rolled or
-                    not LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone or
-                    not VoteCountdown.votingOpen or
+--                    not LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone or
+--                    not VoteCountdown.votingOpen or
                     roll ~= 0 then
                 canVote = false
             end
