@@ -1,6 +1,12 @@
-# TWLC2 v1.1.0.1
+# TWLC2 v1.1.0.2
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
 Addon to help with Turtle Wow BWL Loot Council<BR><BR>
+
+<hr>
+
+**v1.1.0.2* *<br>
+<br>
+Fixes not being able to vote if not everyone in raid had the TWLC2c addon 
 
 <hr>
 
