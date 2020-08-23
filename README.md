@@ -7,7 +7,7 @@ Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 **v1.1.0.3**<br>
 <br>
 Added option to auto ML Hourglass Sand to a raid member.<br>
-Use `/twlc set santcollector [name]` to set a collector and <Br>
+Use `/twlc set sandcollector [name]` to set a collector and <Br>
 `/twlc set sand on/off` to toggle auto ML.<br> 
 Added option to ML an item to a disenchanter.<br>
 Use `/twlc set disenchanter/enchanter [name]`.<Br>
