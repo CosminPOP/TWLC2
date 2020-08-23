@@ -1538,7 +1538,7 @@
                 </Scripts>
             </Button>
 
-            <Button name="MLToEnchanter" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
+            <Button name="MLToEnchanter" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="true"
                     text="">
                 <NormalTexture name="$parentNormalTexture" file="Interface\Icons\spell_holy_removecurse">
                     <Size>
