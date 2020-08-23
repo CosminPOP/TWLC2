@@ -1,7 +1,18 @@
-# TWLC2 v1.1.0.2
+# TWLC2 v1.1.0.3
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
 Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
+<hr>
+
+**v1.1.0.3**<br>
+<br>
+Added option to auto ML Hourglass Sand to a raid member.<br>
+Use `/twlc set santcollector [name]` to set a collector and <Br>
+`/twlc set sand on/off` to toggle auto ML.<br> 
+Added option to ML an item to a disenchanter.<br>
+Use `/twlc set disenchanter/enchanter [name]`.<Br>
+`/twlc search [query]` now works for items too. Example: <br>
+`/twlc search nefarian` will output people who got items with text 'nefarian' in item name (ex: Head of Nefarian)
 <hr>
 
 **v1.1.0.2**<br>
