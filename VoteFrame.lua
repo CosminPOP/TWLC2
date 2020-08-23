@@ -1,4 +1,4 @@
-local addonVer = "1.1.0.2" --don't use letters or numbers > 10
+local addonVer = "1.1.0.3" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 local TWLC2_CHANNEL = 'TWLC2'
@@ -453,9 +453,51 @@ SlashCmdList["TWLC"] = function(cmd)
         end
         if string.sub(cmd, 1, 3) == 'set' then
             local setEx = string.split(cmd, ' ')
-            if (setEx[2] and setEx[3]) then
-                if (twlc2isRL(me)) then
-                    if (setEx[2] == 'sattelite') then
+            if setEx[2] and setEx[3] then
+                if twlc2isRL(me) then
+                    if setEx[2] == 'sandcollector' then
+                        if setEx[3] == '' or tonumber(setEx[3]) then
+                            twprint('Incorrect syntax. Use /twlc set sandcollector [name]')
+                            return false
+                        end
+                        TWLC_SAND_COLLECTOR = setEx[3]
+                        local sandCollectorClassColor = classColors[getPlayerClass(TWLC_SAND_COLLECTOR)].c
+                        twprint('TWLC_SAND_COLLECTOR - set to ' .. sandCollectorClassColor .. TWLC_SAND_COLLECTOR)
+                        if TWLC_AUTO_ML_SAND then
+                            twprint('Auto ML Sand is |cff69ccf0ON')
+                        else
+                            twprint('Auto ML Sand is |cff69ccf0OFF')
+                        end
+                    end
+                    if setEx[2] == 'sand' then
+
+                        if setEx[3] == '' or tonumber(setEx[3]) then
+                            twprint('Incorrect syntax. Use /twlc set sand on/off')
+                            return false
+                        end
+
+                        if TWLC_SAND_COLLECTOR == '' then
+                            twprint('Sand Collector not set. Use /twlc set sandcollector [name] first')
+                        else
+                            if setEx[3] == 'on' then
+                                TWLC_AUTO_ML_SAND = true
+                                twprint('Auto ML Sand is |cff69ccf0ON')
+                            else
+                                TWLC_AUTO_ML_SAND = false
+                                twprint('Auto ML Sand is |cff69ccf0OFF')
+                            end
+                        end
+                    end
+                    if setEx[2] == 'disenchanter' or setEx[2] == 'enchanter' then
+                        if setEx[3] == '' or tonumber(setEx[3]) then
+                            twprint('Incorrect syntax. Use /twlc set disenchanter/enchanter [name]')
+                            return false
+                        end
+                        TWLC_DESENCHANTER = setEx[3]
+                        local deClassColor = classColors[getPlayerClass(TWLC_DESENCHANTER)].c
+                        twprint('TWLC_DESENCHANTER - set to ' .. deClassColor .. TWLC_DESENCHANTER)
+                    end
+                    if setEx[2] == 'sattelite' then
                         if setEx[3] == '' or tonumber(setEx[3]) then
                             twprint('Incorrect syntax. Use /twlc set sattelite [name]')
                             return false
@@ -465,7 +507,7 @@ SlashCmdList["TWLC"] = function(cmd)
                         getglobal("ScanHordeLoot"):SetText('Get Horde Loot (' .. sateliteClassColor .. TWLC_HORDE_SATTELITE .. FONT_COLOR_CODE_CLOSE .. ')')
                         twprint('TWLC_HORDE_SATTELITE - set to ' .. sateliteClassColor .. TWLC_HORDE_SATTELITE)
                     end
-                    if (setEx[2] == 'ttn') then
+                    if setEx[2] == 'ttn' then --not used since we got factors now
                         if setEx[3] == '' or not tonumber(setEx[3]) then
                             twprint('Incorrect syntax. Use /twlc set ttn [time in seconds]')
                             return false
@@ -475,7 +517,7 @@ SlashCmdList["TWLC"] = function(cmd)
                         twprint('TIME_TO_NEED - set to ' .. TIME_TO_NEED .. 's')
                         SendAddonMessage(TWLC2_CHANNEL, 'ttn=' .. TIME_TO_NEED, "RAID")
                     end
-                    if (setEx[2] == 'ttv') then
+                    if setEx[2] == 'ttv' then --not used since we got factors now
                         if setEx[3] == '' or not tonumber(setEx[3]) then
                             twprint('Incorrect syntax. Use /twlc set ttv [time in seconds]')
                             return false
@@ -485,7 +527,7 @@ SlashCmdList["TWLC"] = function(cmd)
                         twprint('TIME_TO_VOTE - set to ' .. TIME_TO_VOTE .. 's')
                         SendAddonMessage(TWLC2_CHANNEL, 'ttv=' .. TIME_TO_VOTE, "RAID")
                     end
-                    if (setEx[2] == 'ttr') then
+                    if setEx[2] == 'ttr' then
                         if setEx[3] == '' or not tonumber(setEx[3]) then
                             twprint('Incorrect syntax. Use /twlc set ttr [time in seconds]')
                             return false
@@ -495,7 +537,7 @@ SlashCmdList["TWLC"] = function(cmd)
                         SendAddonMessage(TWLC2_CHANNEL, 'ttr=' .. TIME_TO_ROLL, "RAID")
                     end
                     --factors
-                    if (setEx[2] == 'ttnfactor') then
+                    if setEx[2] == 'ttnfactor' then
                         if setEx[3] == '' or not tonumber(setEx[3]) then
                             twprint('Incorrect syntax. Use /twlc set ttnfactor [time in seconds]')
                             return false
@@ -505,7 +547,7 @@ SlashCmdList["TWLC"] = function(cmd)
                         twprint('TWLC_TTN_FACTOR - set to ' .. TWLC_TTN_FACTOR .. 's')
                         SendAddonMessage(TWLC2_CHANNEL, 'ttnfactor=' .. TWLC_TTN_FACTOR, "RAID")
                     end
-                    if (setEx[2] == 'ttvfactor') then
+                    if setEx[2] == 'ttvfactor' then
                         if setEx[3] == '' or not tonumber(setEx[3]) then
                             twprint('Incorrect syntax. Use /twlc set ttvfactor [time in seconds]')
                             return false
@@ -523,6 +565,7 @@ SlashCmdList["TWLC"] = function(cmd)
                 twprint('/twlc set ttvfactor <time> - sets TWLC_TTV_FACTOR (current value: numItems * ' .. TWLC_TTV_FACTOR .. 's)')
                 twprint('/twlc set ttr <time> - sets TIME_TO_ROLL (current value: ' .. TIME_TO_ROLL .. 's)')
                 twprint('/twlc set sattelite <name> - sets TWLC_HORDE_SATTELITE (current value: ' .. TWLC_HORDE_SATTELITE .. ')')
+                twprint('/twlc set enchanter/disenchanter <name> - sets TWLC_DESENCHANTER (current value: ' .. TWLC_DESENCHANTER .. ')')
             end
         end
         if cmd == 'list' then
@@ -568,8 +611,8 @@ SlashCmdList["TWLC"] = function(cmd)
                     end
                 end
 
-                twprint('Listing ' .. cmdEx[2] .. '\'s loot history:')
                 if numItems > 0 then
+                    twprint('Listing ' .. cmdEx[2] .. '\'s loot history:')
                     for lootTime, item in pairsByKeysReverse(TWLC_LOOT_HISTORY) do
                         if string.lower(cmdEx[2]) == string.lower(item['player']) then
                             twprint(item['item'] .. ' - ' .. date("%d/%m", lootTime))
@@ -577,6 +620,12 @@ SlashCmdList["TWLC"] = function(cmd)
                     end
                 else
                     twprint('- no recorded items -')
+                end
+
+                for lootTime, item in pairsByKeysReverse(TWLC_LOOT_HISTORY) do
+                    if string.find(string.lower(item['item']), string.lower(cmdEx[2])) then
+                        twprint(item['player'] .. " - " .. item['item'] .. " " .. date("%d/%m", lootTime))
+                    end
                 end
 
             else
@@ -712,6 +761,9 @@ function syncRoster()
         ChatThrottleLib:SendAddonMessage("BULK", TWLC2_CHANNEL, "syncRoster=" .. name, "RAID")
     end
     ChatThrottleLib:SendAddonMessage("BULK", TWLC2_CHANNEL, "syncRoster=end", "RAID")
+
+    getglobal('RLWindowFrameOfficer'):SetText('Officer('..index..')')
+
     if (twlc2isRL(me)) then checkAssists() end
 end
 
@@ -823,7 +875,9 @@ LCVoteFrame:SetScript("OnEvent", function()
             if TWLC_AUTO_ASSIST == nil then TWLC_AUTO_ASSIST = true end
             if not TWLC_ATTENDANCE then TWLC_ATTENDANCE = {} end
             if not TWLC_HORDE_SATTELITE then TWLC_HORDE_SATTELITE = '' end
-
+            if not TWLC_DESENCHANTER then TWLC_DESENCHANTER = '' end
+            if not TWLC_SAND_COLLECTOR then TWLC_SAND_COLLECTOR = '' end
+            if TWLC_AUTO_ML_SAND == nil then TWLC_AUTO_ML_SAND = false end
 
             if TWLC_HORDE_SATTELITE ~= '' then
                 local sateliteClassColor = classColors[getPlayerClass(TWLC_HORDE_SATTELITE)].c
@@ -894,6 +948,22 @@ LCVoteFrame:SetScript("OnEvent", function()
                             local _, _, quality = GetItemInfo(itemLink)
                             if quality >= 3 and lootName ~= 'Elementium Ore' and lootName ~= 'Nexus Crystal' then
                                 blueOrEpic = true
+                            end
+                            --auto ML sand
+                            if lootName == 'Hourglass Sand' and TWLC_AUTO_ML_SAND and TWLC_SAND_COLLECTOR ~= '' then
+                                local collectorIndex = -1
+                                for j = 1, 40 do
+                                    if GetMasterLootCandidate(j) == TWLC_SAND_COLLECTOR then
+                                        twdebug('found: sand candidate' .. GetMasterLootCandidate(j) .. ' ==  ' .. TWLC_SAND_COLLECTOR)
+                                        collectorIndex = j
+                                        break
+                                    end
+                                end
+                                if collectorIndex ~= -1 then
+                                    GiveMasterLoot(id, collectorIndex)
+                                else
+                                    twprint('Sand collector '..TWLC_SAND_COLLECTOR..' not in raid and auto ml sand is ON. Ignoring.')
+                                end
                             end
                         end
                     end
@@ -1773,8 +1843,8 @@ function VoteFrameListScroll_Update()
     else
         getglobal('LootLCVoteFrameWindowContestantCount'):SetText('Waiting picks ' ..
                 LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] .. '/' ..
-                LCVoteFrame.receivedResponses)
-        --                GetNumOnlineRaidMembers())
+--                LCVoteFrame.receivedResponses)
+                        GetNumOnlineRaidMembers())
         LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone = false
         getglobal('LootLCVoteFrameWindowTimeLeftBar'):Show()
     end
@@ -3204,6 +3274,37 @@ function MLToWinner_OnClick()
     end
 end
 
+function MLToDesenchanter()
+    if TWLC_DESENCHANTER == '' then
+        twprint('Desenchanter not set. Uset /twlc set enchanter/disenchanter [name] to set it.')
+        return false;
+    end
+
+    local foundInRaid = false
+
+    for i = 0, GetNumRaidMembers() do
+        if GetRaidRosterInfo(i) then
+            local n, _, _, _, _, _, z = GetRaidRosterInfo(i);
+            if n == TWLC_DESENCHANTER then
+                foundInRaid = true
+            end
+        end
+    end
+    if not foundInRaid then
+        twprint('Desenchanter ' .. TWLC_DESENCHANTER .. ' is not in raid. Use /twlc set enchanter/disenchanter [name] to set a different one.')
+        return false;
+    end
+    for i = 0, GetNumRaidMembers() do
+        if GetRaidRosterInfo(i) then
+            local n, _, _, _, _, _, z = GetRaidRosterInfo(i);
+            if n == TWLC_DESENCHANTER and z == 'Offline' then
+                twprint('Desenchanter ' .. TWLC_DESENCHANTER .. ' is offline. Use /twlc set enchanter/disenchanter [name] to set a different one.')
+                return false;
+            end
+        end
+    end
+    awardPlayer(TWLC_DESENCHANTER, tableSize(LCVoteFrame.hordeLoot) > 0, LCVoteFrame.CurrentVotedItem, true)
+end
 
 function Contestant_OnEnter(id)
     local playerOffset = FauxScrollFrame_GetOffset(getglobal("ContestantScrollListFrame"));
@@ -3352,7 +3453,7 @@ function awardWithConfirmation(playerName)
     end
 end
 
-function awardPlayer(playerName, sendToSattelite, cvi)
+function awardPlayer(playerName, sendToSattelite, cvi, disenchant)
 
     if not playerName or playerName == '' then
         twerror('AwardPlayer: playerName is nil.')
@@ -3399,7 +3500,12 @@ function awardPlayer(playerName, sendToSattelite, cvi)
 
             local itemIndex, name, need, votes, ci1, ci2, ci3, roll = getPlayerInfo(GetMasterLootCandidate(unitIndex));
 
-            SendChatMessage(GetMasterLootCandidate(unitIndex) .. ' was awarded with ' .. link .. ' for ' .. needs[need].text .. '!', "RAID")
+            if disenchant then
+                SendChatMessage(GetMasterLootCandidate(unitIndex) .. ' was awarded with ' .. link .. ' for Dissenchant!', "RAID")
+            else
+                SendChatMessage(GetMasterLootCandidate(unitIndex) .. ' was awarded with ' .. link .. ' for ' .. needs[need].text .. '!', "RAID")
+            end
+
             LCVoteFrame.VotedItemsFrames[cvi].awardedTo = playerName
             LCVoteFrame.updateVotedItemsFrames()
 
