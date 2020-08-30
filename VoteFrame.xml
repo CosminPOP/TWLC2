@@ -4,6 +4,36 @@
 
     <GameTooltip name="LCTooltipVoteFrame" inherits="GameTooltipTemplate" parent="UIParent" hidden="true"/>
 
+    <Button name="CLVotedButton" inherits="UIPanelButtonTemplate" text="" virtual="true">
+        <NormalTexture file="Interface\AddOns\TWLC2\classes\rogue"/>
+        <PushedTexture file="Interface\AddOns\TWLC2\classes\rogue"/>
+        <HighlightTexture file="Interface\AddOns\TWLC2\classes\rogue" alphaMode="Add"/>
+        <Size>
+            <AbsDimension x="24" y="24"/>
+        </Size>
+        <Anchors>
+            <Anchor point="LEFT">
+                <Offset>
+                    <AbsDimension x="0" y="0"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Scripts>
+            <OnLoad>
+--                    this:RegisterForClicks("LeftButtonUp", "RightButtonDown");
+            </OnLoad>
+            <OnClick>
+--                    ContestantClick(this:GetID())
+            </OnClick>
+            <OnEnter>
+--                    Contestant_OnEnter(this:GetID())
+            </OnEnter>
+            <OnLeave>
+--                    Contestant_OnLeave()
+            </OnLeave>
+        </Scripts>
+    </Button>
+
     <Texture name="TWLCButtonNormal" virtual="true">
         <Color r="0" g="0.56" b="0.27" a="0.7"/>
     </Texture>
@@ -1074,7 +1104,7 @@
                 <FontString name="$parentVotedItemName" hidden="true" inherits="GameFontNormalLarge"
                             text="[voted item name]" justifyH="LEFT">
                     <Size>
-                        <AbsDimension x="230" y="30"/>
+                        <AbsDimension x="270" y="30"/>
                     </Size>
                     <Anchors>
                         <Anchor point="TOPLEFT">
@@ -1540,7 +1570,7 @@
 
             <Button name="MLToEnchanter" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="true"
                     text="">
-                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\spell_holy_removecurse">
+                <NormalTexture name="$parentNormalTexture" file="Interface\addons\TWLC2\images\de\ui-grouploot-de-up">
                     <Size>
                         <AbsDimension x="24" y="24"/>
                     </Size>
@@ -1552,7 +1582,7 @@
                         </Anchor>
                     </Anchors>
                 </NormalTexture>
-                <PushedTexture name="$parentPushedTexture" file="Interface\Icons\spell_holy_removecurse"
+                <PushedTexture name="$parentPushedTexture" file="Interface\addons\TWLC2\images\de\ui-grouploot-de-down"
                                alphaMode="ADD">
                     <Size>
                         <AbsDimension x="24" y="24"/>
@@ -1565,7 +1595,7 @@
                         </Anchor>
                     </Anchors>
                 </PushedTexture>
-                <HighlightTexture name="$parentPushedTexture" file="Interface\Icons\spell_holy_removecurse" alphaMode="ADD">
+                <HighlightTexture name="$parentHighlightTexture" file="Interface\addons\TWLC2\images\de\ui-grouploot-de-highlight" alphaMode="ADD">
                     <Size>
                         <AbsDimension x="24" y="24"/>
                     </Size>
@@ -1623,6 +1653,23 @@
                     </Layer>
                 </Layers>
             </Button>
+
+            <Frame name="CLThatVotedList">
+                <Size>
+                    <AbsDimension x="200" y="24"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-20" y="-60"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Frames>
+                </Frames>
+            </Frame>
+
+
 
             <Button name="$parentMinimizeButton" inherits="UIPanelCloseButton">
                 <Size>
