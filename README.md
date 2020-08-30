@@ -1,7 +1,17 @@
-# TWLC2 v1.1.0.3
+# TWLC2 v1.1.0.4
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
 Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
+<hr>
+
+**v1.1.0.4**<br>
+<br>
+Voting window, for officers, will pop up only after everyone in the raid has picked (or the pick time ended).<Br>
+The disenchant button has a new icon, and tooltip.<Br>
+CL tooltips have class colors.<Br>
+New display of which officers voted instead of number.<Br>
+Removed all time factors, time to pick is now fixed based on nr of itmes, 25, 30, 35, 45, 60.<Br>
+Time to vote is also fixed based on the number of items, 45/60/80/100/120.
 <hr>
 
 **v1.1.0.3**<br>
