@@ -1,7 +1,19 @@
-# TWLC2 v1.1.0.4
+# TWLC2 v1.1.0.5
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
 Addon to help with Turtle Wow BWL Loot Council<BR><BR>
 
+<hr>
+If you like my work consider buying me a coffee !<br> 
+https://ko-fi.com/xerron <br>
+https://paypal.me/xerroner <br>
+<hr>
+
+**v1.1.0.5**<br>
+<br>
+New color theme, blue.<br>
+Added token rewards for AQ items.<br>
+Fix for can't vote issue.<br>
+Window will stay closed if closed from X button if others are voting.<br>
 <hr>
 
 **v1.1.0.4**<br>
