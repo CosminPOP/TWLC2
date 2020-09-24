@@ -1,4 +1,4 @@
-local addonVer = "1.1.0.4" --don't use letters or numbers > 10
+local addonVer = "1.1.0.5" --don't use letters or numbers > 10
 local me = UnitName('player')
 
 local TWLC2_CHANNEL = 'TWLC2'
@@ -6,7 +6,9 @@ local TWLC2c_CHANNEL = 'TWLCNF'
 
 --some config
 local config = {
-    ['attendance'] = false
+    ['attendance'] = false,
+    ['AutoML'] = false,
+    ['AutoMLItems'] = {}
 }
 
 function twprint(a)
@@ -215,7 +217,7 @@ function TWLC2MainWindow_Resized()
     TWLC_PPP = LCVoteFrame.playersPerPage
     MW:SetHeight(120 + LCVoteFrame.playersPerPage * 22 + 5)
     getglobal('ContestantScrollListFrame'):SetHeight(LCVoteFrame.playersPerPage * 22)
-    getglobal('ContestantScrollListBackground'):SetHeight(LCVoteFrame.playersPerPage * 22)
+    getglobal('ContestantScrollListBackground'):SetHeight(LCVoteFrame.playersPerPage * 22 + 3)
 
     MW:SetAlpha(TWLC_ALPHA)
 
@@ -354,6 +356,7 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
                 end
             end
 
+            LCVoteFrame.showWindow() -- moved from VoteFrameListScroll_Update()
 
             VoteFrameListScroll_Update()
 
@@ -391,21 +394,18 @@ VoteCountdown:SetScript("OnUpdate", function()
                 else
                     getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('Please VOTE ! ' .. SecondsToClock(secondsLeftToVote))
                 end
-            end
 
-            for i = 1, LCVoteFrame.playersPerPage, 1 do
-                if getglobal('ContestantFrame' .. i .. 'VoteButton'):IsEnabled() == 1 then
-                    local w = math.floor(((VoteCountdown.countDownFrom - VoteCountdown.currentTime) / VoteCountdown.countDownFrom) * 1000)
-                    w = w / 1000
+                local w = math.floor(((VoteCountdown.countDownFrom - VoteCountdown.currentTime) / VoteCountdown.countDownFrom) * 1000)
+                w = w / 1000
 
-                    if (w > 0 and w <= 1) then
-                        getglobal('LootLCVoteFrameWindowTimeLeftBar'):Show()
-                        getglobal('LootLCVoteFrameWindowTimeLeftBar'):SetWidth(592 * w)
-                    else
-                        getglobal('LootLCVoteFrameWindowTimeLeftBar'):Hide()
-                    end
+                if (w > 0 and w <= 1) then
+                    getglobal('LootLCVoteFrameWindowTimeLeftBar'):Show()
+                    getglobal('LootLCVoteFrameWindowTimeLeftBar'):SetWidth(592 * w)
+                else
+                    getglobal('LootLCVoteFrameWindowTimeLeftBar'):Hide()
                 end
             end
+
             VoteCountdown:Hide()
             if (VoteCountdown.currentTime < VoteCountdown.countDownFrom + plus) then
                 --still tick
@@ -856,10 +856,8 @@ LCVoteFrame:SetScript("OnEvent", function()
             if TWLC_HORDE_SATTELITE ~= '' then
                 local sateliteClassColor = classColors[getPlayerClass(TWLC_HORDE_SATTELITE)].c
                 getglobal("ScanHordeLoot"):SetText('Get Horde Loot (' .. sateliteClassColor .. TWLC_HORDE_SATTELITE .. FONT_COLOR_CODE_CLOSE .. ')')
-                --                getglobal("ScanHordeLoot"):Enable()
             else
                 getglobal("ScanHordeLoot"):SetText('- horde sattelite not set-')
-                --                getglobal("ScanHordeLoot"):Disable()
             end
 
             if config['attendance'] then
@@ -878,7 +876,6 @@ LCVoteFrame:SetScript("OnEvent", function()
             VoteCountdown.countDownFrom = TIME_TO_VOTE
 
             getglobal('LootLCVoteFrameWindowTitle'):SetText('Turtle WoW Loot Council2 v' .. addonVer)
-            getglobal('LootLCVoteFrameWindowNewTitleFrameTitle'):SetText('Turtle WoW Loot Council2 v' .. addonVer)
 
             getglobal('BroadcastLoot'):Disable()
             getglobal('LootLCVoteFrameWindowDoneVoting'):Disable();
@@ -887,7 +884,6 @@ LCVoteFrame:SetScript("OnEvent", function()
                 getglobal('RLOptionsButton'):Show()
                 getglobal('ResetClose'):Show()
                 getglobal('RLExtraFrame'):Show()
-                getglobal('MLToEnchanter'):Show()
                 local DEButton = getglobal("MLToEnchanter")
 
                 DEButton:SetScript("OnEnter", function(self)
@@ -907,7 +903,6 @@ LCVoteFrame:SetScript("OnEvent", function()
                 getglobal('RLOptionsButton'):Hide()
                 getglobal('ResetClose'):Hide()
                 getglobal('RLExtraFrame'):Hide()
-                getglobal('MLToEnchanter'):Hide()
             end
 
             local backdrop = {
@@ -1153,7 +1148,9 @@ function LCVoteFrame.closeWindow()
 end
 
 function LCVoteFrame.showWindow()
-    getglobal('LootLCVoteFrameWindow'):Show()
+    if not getglobal('LootLCVoteFrameWindow'):IsVisible() then
+        getglobal('LootLCVoteFrameWindow'):Show()
+    end
 end
 
 function ResetClose_OnClick()
@@ -1359,144 +1356,233 @@ function setCurrentVotedItem(id)
     getglobal('CurrentVotedItemQuestReward2'):Hide()
     getglobal('CurrentVotedItemQuestReward3'):Hide()
     getglobal('CurrentVotedItemQuestReward4'):Hide()
+    getglobal('CurrentVotedItemQuestReward5'):Hide()
+    getglobal('CurrentVotedItemQuestReward6'):Hide()
+    getglobal('CurrentVotedItemQuestReward7'):Hide()
+    getglobal('CurrentVotedItemQuestReward8'):Hide()
+    getglobal('CurrentVotedItemQuestReward9'):Hide()
+    getglobal('CurrentVotedItemQuestReward10'):Hide()
+
+    local reward1 = ''
+    local reward2 = ''
+    local reward3 = ''
+    local reward4 = ''
+    local reward5 = ''
+    local reward6 = ''
+    local reward7 = ''
+    local reward8 = ''
+    local reward9 = ''
+    local reward10 = ''
+
+    local showDe = true
 
     if name == 'Head of Onyxia' then
-        local reward1 = "\124cffa335ee\124Hitem:18406:0:0:0:0:0:0:0:0\124h[Onyxia Blood Talisman]\124h\124r"
-        local _, _, itemLink1 = string.find(reward1, "(item:%d+:%d+:%d+:%d+)");
-        local _, link1, _, _, _, _, _, _, tex1 = GetItemInfo(itemLink1)
-        if link1 then
-            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward1'), link1)
-            getglobal('CurrentVotedItemQuestReward1'):SetNormalTexture(tex1)
-            getglobal('CurrentVotedItemQuestReward1'):SetPushedTexture(tex1)
-            getglobal('CurrentVotedItemQuestReward1'):Show()
-        else
-            GameTooltip:SetHyperlink(itemLink1)
-            GameTooltip:Hide()
-        end
-
-        local reward2 = "\124cffa335ee\124Hitem:18403:0:0:0:0:0:0:0:0\124h[Dragonslayer's Signet]\124h\124r"
-        local _, _, itemLink2 = string.find(reward2, "(item:%d+:%d+:%d+:%d+)");
-        local _, link2, _, _, _, _, _, _, tex2 = GetItemInfo(itemLink2)
-        if link2 then
-            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward2'), link2)
-            getglobal('CurrentVotedItemQuestReward2'):SetNormalTexture(tex2)
-            getglobal('CurrentVotedItemQuestReward2'):SetPushedTexture(tex2)
-            getglobal('CurrentVotedItemQuestReward2'):Show()
-        else
-            GameTooltip:SetHyperlink(itemLink2)
-            GameTooltip:Hide()
-        end
-
-        local reward3 = "\124cffa335ee\124Hitem:18404:0:0:0:0:0:0:0:0\124h[Onyxia Tooth Pendant]\124h\124r"
-        local _, _, itemLink3 = string.find(reward3, "(item:%d+:%d+:%d+:%d+)");
-        local _, link3, _, _, _, _, _, _, tex3 = GetItemInfo(itemLink3)
-        if link3 then
-            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward3'), link3)
-            getglobal('CurrentVotedItemQuestReward3'):SetNormalTexture(tex3)
-            getglobal('CurrentVotedItemQuestReward3'):SetPushedTexture(tex3)
-            getglobal('CurrentVotedItemQuestReward3'):Show()
-        else
-            GameTooltip:SetHyperlink(itemLink3)
-            GameTooltip:Hide()
-        end
+        reward1 = "\124cffa335ee\124Hitem:18406:0:0:0:0:0:0:0:0\124h[Onyxia Blood Talisman]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:18403:0:0:0:0:0:0:0:0\124h[Dragonslayer's Signet]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:18404:0:0:0:0:0:0:0:0\124h[Onyxia Tooth Pendant]\124h\124r"
+        showDe = false
     end
 
     if name == 'Head of Nefarian' then
-        local reward1 = "\124cffa335ee\124Hitem:19383:0:0:0:0:0:0:0:0\124h[Master Dragonslayer\'s Medallion]\124h\124r"
-        local _, _, itemLink1 = string.find(reward1, "(item:%d+:%d+:%d+:%d+)");
-        local _, link1, _, _, _, _, _, _, tex1 = GetItemInfo(itemLink1)
-        if link1 then
-            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward1'), link1)
-            getglobal('CurrentVotedItemQuestReward1'):SetNormalTexture(tex1)
-            getglobal('CurrentVotedItemQuestReward1'):SetPushedTexture(tex1)
-            getglobal('CurrentVotedItemQuestReward1'):Show()
-        else
-            GameTooltip:SetHyperlink(itemLink1)
-            GameTooltip:Hide()
-        end
-
-        local reward2 = "\124cffa335ee\124Hitem:19366:0:0:0:0:0:0:0:0\124h[Master Dragonslayer's Orb]\124h\124r"
-        local _, _, itemLink2 = string.find(reward2, "(item:%d+:%d+:%d+:%d+)");
-        local _, link2, _, _, _, _, _, _, tex2 = GetItemInfo(itemLink2)
-        if link2 then
-            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward2'), link2)
-            getglobal('CurrentVotedItemQuestReward2'):SetNormalTexture(tex2)
-            getglobal('CurrentVotedItemQuestReward2'):SetPushedTexture(tex2)
-            getglobal('CurrentVotedItemQuestReward2'):Show()
-        else
-            GameTooltip:SetHyperlink(itemLink2)
-            GameTooltip:Hide()
-        end
-
-        local reward3 = "\124cffa335ee\124Hitem:19384:0:0:0:0:0:0:0:0\124h[Master Dragonslayer's Ring]\124h\124r"
-        local _, _, itemLink3 = string.find(reward3, "(item:%d+:%d+:%d+:%d+)");
-        local _, link3, _, _, _, _, _, _, tex3 = GetItemInfo(itemLink3)
-        if link3 then
-            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward3'), link3)
-            getglobal('CurrentVotedItemQuestReward3'):SetNormalTexture(tex3)
-            getglobal('CurrentVotedItemQuestReward3'):SetPushedTexture(tex3)
-            getglobal('CurrentVotedItemQuestReward3'):Show()
-        else
-            GameTooltip:SetHyperlink(itemLink3)
-            GameTooltip:Hide()
-        end
+        reward1 = "\124cffa335ee\124Hitem:19383:0:0:0:0:0:0:0:0\124h[Master Dragonslayer\'s Medallion]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:19366:0:0:0:0:0:0:0:0\124h[Master Dragonslayer's Orb]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:19384:0:0:0:0:0:0:0:0\124h[Master Dragonslayer's Ring]\124h\124r"
+        showDe = false
     end
 
     if name == 'Head of Ossirian the Unscarred' then
-        local reward1 = "\124cffa335ee\124Hitem:21504:0:0:0:0:0:0:0:0\124h[Charm of the Shifting Sands]\124h\124r"
-        local _, _, itemLink1 = string.find(reward1, "(item:%d+:%d+:%d+:%d+)");
-        local _, link1, _, _, _, _, _, _, tex1 = GetItemInfo(itemLink1)
-        if link1 then
-            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward1'), link1)
-            getglobal('CurrentVotedItemQuestReward1'):SetNormalTexture(tex1)
-            getglobal('CurrentVotedItemQuestReward1'):SetPushedTexture(tex1)
-            getglobal('CurrentVotedItemQuestReward1'):Show()
-        else
-            GameTooltip:SetHyperlink(itemLink1)
-            GameTooltip:Hide()
-        end
-
-        local reward2 = "\124cffa335ee\124Hitem:21507:0:0:0:0:0:0:0:0\124h[Amulet of the Shifting Sands]\124h\124r"
-        local _, _, itemLink2 = string.find(reward2, "(item:%d+:%d+:%d+:%d+)");
-        local _, link2, _, _, _, _, _, _, tex2 = GetItemInfo(itemLink2)
-        if link2 then
-            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward2'), link2)
-            getglobal('CurrentVotedItemQuestReward2'):SetNormalTexture(tex2)
-            getglobal('CurrentVotedItemQuestReward2'):SetPushedTexture(tex2)
-            getglobal('CurrentVotedItemQuestReward2'):Show()
-        else
-            GameTooltip:SetHyperlink(itemLink2)
-            GameTooltip:Hide()
-        end
-
-        local reward3 = "\124cffa335ee\124Hitem:21505:0:0:0:0:0:0:0:0\124h[Choker of the Shifting Sands]\124h\124r"
-        local _, _, itemLink3 = string.find(reward3, "(item:%d+:%d+:%d+:%d+)");
-        local _, link3, _, _, _, _, _, _, tex3 = GetItemInfo(itemLink3)
-        if link3 then
-            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward3'), link3)
-            getglobal('CurrentVotedItemQuestReward3'):SetNormalTexture(tex3)
-            getglobal('CurrentVotedItemQuestReward3'):SetPushedTexture(tex3)
-            getglobal('CurrentVotedItemQuestReward3'):Show()
-        else
-            GameTooltip:SetHyperlink(itemLink3)
-            GameTooltip:Hide()
-        end
-
-        local reward4 = "\124cffa335ee\124Hitem:21506:0:0:0:0:0:0:0:0\124h[Pendant of the Shifting Sands]\124h\124r"
-        local _, _, itemLink4 = string.find(reward4, "(item:%d+:%d+:%d+:%d+)");
-        local _, link4, _, _, _, _, _, _, tex4 = GetItemInfo(itemLink4)
-        if link4 then
-            addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward4'), link4)
-            getglobal('CurrentVotedItemQuestReward4'):SetNormalTexture(tex4)
-            getglobal('CurrentVotedItemQuestReward4'):SetPushedTexture(tex4)
-            getglobal('CurrentVotedItemQuestReward4'):Show()
-        else
-            GameTooltip:SetHyperlink(itemLink4)
-            GameTooltip:Hide()
-        end
+        reward1 = "\124cffa335ee\124Hitem:21504:0:0:0:0:0:0:0:0\124h[Charm of the Shifting Sands]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:21507:0:0:0:0:0:0:0:0\124h[Amulet of the Shifting Sands]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:21505:0:0:0:0:0:0:0:0\124h[Choker of the Shifting Sands]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:21506:0:0:0:0:0:0:0:0\124h[Pendant of the Shifting Sands]\124h\124r"
+        showDe = false
     end
 
+    --AQ20 blue tokens
+    if name == 'Qiraji Martial Drape' then
+        -- Warrior, Rogue, Priest, Mage
+        reward1 = '\124cff0070dd\124Hitem:21406:0:0:0:0:0:0:0:0\124h[Cloak of Veiled Shadows]\124h\124r'
+        reward2 = '\124cff0070dd\124Hitem:21394:0:0:0:0:0:0:0:0\124h[Drape of Unyielding Strength]\124h\124r'
+        reward3 = '\124cff0070dd\124Hitem:21415:0:0:0:0:0:0:0:0\124h[Drape of Vaulted Secrets]\124h\124r'
+        reward4 = '\124cff0070dd\124Hitem:21412:0:0:0:0:0:0:0:0\124h[Shroud of Infinite Wisdom]\124h\124r'
+        showDe = false
+    end
+    if name == 'Qiraji Regal Drape' then
+        -- Paladin, Hunter, Shaman, Warlock, Druid
+        reward1 = '\124cff0070dd\124Hitem:21397:0:0:0:0:0:0:0:0\124h[Cape of Eternal Justice]\124h\124r'
+        reward2 = '\124cff0070dd\124Hitem:21409:0:0:0:0:0:0:0:0\124h[Cloak of Unending Life]\124h\124r'
+        reward3 = '\124cff0070dd\124Hitem:21400:0:0:0:0:0:0:0:0\124h[Cloak of the Gathering Storm]\124h\124r'
+        reward4 = '\124cff0070dd\124Hitem:21403:0:0:0:0:0:0:0:0\124h[Cloak of the Unseen Path]\124h\124r'
+        reward5 = '\124cff0070dd\124Hitem:21418:0:0:0:0:0:0:0:0\124h[Shroud of Unspoken Names]\124h\124r'
+        showDe = false
+    end
+
+    if name == 'Qiraji Ceremonial Ring' then
+        --Hunter, Rogue, Priest, Warlock
+        reward1 = '\124cff0070dd\124Hitem:21405:0:0:0:0:0:0:0:0\124h[Band of Veiled Shadows]\124h\124r'
+        reward2 = '\124cff0070dd\124Hitem:21411:0:0:0:0:0:0:0:0\124h[Ring of Infinite Wisdom]\124h\124r'
+        reward3 = '\124cff0070dd\124Hitem:21417:0:0:0:0:0:0:0:0\124h[Ring of Unspoken Names]\124h\124r'
+        reward4 = '\124cff0070dd\124Hitem:21402:0:0:0:0:0:0:0:0\124h[Signet of the Unseen Path]\124h\124r'
+        showDe = false
+    end
+
+    if name == 'Qiraji Magisterial Ring' then
+        --Warrior, Paladin, Shaman, Mage, Druid
+        reward1 = '\124cff0070dd\124Hitem:21408:0:0:0:0:0:0:0:0\124h[Band of Unending Life]\124h\124r'
+        reward2 = '\124cff0070dd\124Hitem:21414:0:0:0:0:0:0:0:0\124h[Band of Vaulted Secrets]\124h\124r'
+        reward3 = '\124cff0070dd\124Hitem:21396:0:0:0:0:0:0:0:0\124h[Ring of Eternal Justice]\124h\124r'
+        reward4 = '\124cff0070dd\124Hitem:21399:0:0:0:0:0:0:0:0\124h[Ring of the Gathering Storm]\124h\124r'
+        reward5 = '\124cff0070dd\124Hitem:21393:0:0:0:0:0:0:0:0\124h[Signet of Unyielding Strength]\124h\124r'
+        showDe = false
+    end
+
+    -- AQ20 Epic Tokens
+    if name == 'Qiraji Ornate Hilt' then
+        --Priest, Mage, Warlock, Druid
+        reward1 = '\124cffa335ee\124Hitem:21413:0:0:0:0:0:0:0:0\124h[Blade of Vaulted Secrets]\124h\124r'
+        reward2 = '\124cffa335ee\124Hitem:21410:0:0:0:0:0:0:0:0\124h[Gavel of Infinite Wisdom]\124h\124r'
+        reward3 = '\124cffa335ee\124Hitem:21416:0:0:0:0:0:0:0:0\124h[Kris of Unspoken Names]\124h\124r'
+        reward4 = '\124cffa335ee\124Hitem:21407:0:0:0:0:0:0:0:0\124h[Mace of Unending Life]\124h\124r'
+        showDe = false
+    end
+
+    if name == 'Qiraji Spiked Hilt' then
+        --Warrior, Paladin, Hunter, Rogue, Shaman
+        reward1 = '\124cffa335ee\124Hitem:21395:0:0:0:0:0:0:0:0\124h[Blade of Eternal Justice]\124h\124r'
+        reward2 = '\124cffa335ee\124Hitem:21404:0:0:0:0:0:0:0:0\124h[Dagger of Veiled Shadows]\124h\124r'
+        reward3 = '\124cffa335ee\124Hitem:21398:0:0:0:0:0:0:0:0\124h[Hammer of the Gathering Storm]\124h\124r'
+        reward4 = '\124cffa335ee\124Hitem:21401:0:0:0:0:0:0:0:0\124h[Scythe of the Unseen Path]\124h\124r'
+        reward5 = '\124cffa335ee\124Hitem:21392:0:0:0:0:0:0:0:0\124h[Sickle of Unyielding Strength]\124h\124r'
+        showDe = false
+    end
+
+    -- AQ40 epic tokens
+    if name == 'Imperial Qiraji Regalia' then
+        reward1 = '\124cffa335ee\124Hitem:21273:0:0:0:0:0:0:0:0\124h[Blessed Qiraji Acolyte Staff]\124h\124r'
+        reward2 = '\124cffa335ee\124Hitem:21275:0:0:0:0:0:0:0:0\124h[Blessed Qiraji Augur Staff]\124h\124r'
+        reward3 = '\124cffa335ee\124Hitem:21268:0:0:0:0:0:0:0:0\124h[Blessed Qiraji War Hammer]\124h\124r'
+        showDe = false
+    end
+
+    if name == 'Imperial Qiraji Armaments' then
+        reward1 = '\124cffa335ee\124Hitem:21242:0:0:0:0:0:0:0:0\124h[Blessed Qiraji War Axe]\124h\124r'
+        reward2 = '\124cffa335ee\124Hitem:21272:0:0:0:0:0:0:0:0\124h[Blessed Qiraji Musket]\124h\124r'
+        reward3 = '\124cffa335ee\124Hitem:21244:0:0:0:0:0:0:0:0\124h[Blessed Qiraji Pugio]\124h\124r'
+        reward4 = '\124cffa335ee\124Hitem:21269:0:0:0:0:0:0:0:0\124h[Blessed Qiraji Bulwark]\124h\124r'
+        showDe = false
+    end
+
+    -- TIER 2.5
+    if name == 'Qiraji Bindings of Command' then
+        --Warrior, Hunter, Rogue, Priest
+        reward1 = "\124cffa335ee\124Hitem:21333:0:0:0:0:0:0:0:0\124h[Conqueror's Greaves]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:21330:0:0:0:0:0:0:0:0\124h[Conqueror's Spaulders]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:21359:0:0:0:0:0:0:0:0\124h[Deathdealer's Boots]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:21361:0:0:0:0:0:0:0:0\124h[Deathdealer's Spaulders]\124h\124r"
+        reward5 = "\124cffa335ee\124Hitem:21349:0:0:0:0:0:0:0:0\124h[Footwraps of the Oracle]\124h\124r"
+        reward6 = "\124cffa335ee\124Hitem:21350:0:0:0:0:0:0:0:0\124h[Mantle of the Oracle]\124h\124r"
+        reward7 = "\124cffa335ee\124Hitem:21365:0:0:0:0:0:0:0:0\124h[Striker's Footguards]\124h\124r"
+        reward8 = "\124cffa335ee\124Hitem:21367:0:0:0:0:0:0:0:0\124h[Striker's Pauldrons]\124h\124r"
+        showDe = false
+    end
+
+    if name == 'Qiraji Bindings of Dominance' then
+        --Paladin, Shaman, Mage, Warlock, Druid
+        reward1 = "\124cffa335ee\124Hitem:21388:0:0:0:0:0:0:0:0\124h[Avenger's Greaves]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:21391:0:0:0:0:0:0:0:0\124h[Avenger's Pauldrons]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:21338:0:0:0:0:0:0:0:0\124h[Doomcaller's Footwraps]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:21335:0:0:0:0:0:0:0:0\124h[Doomcaller's Mantle]\124h\124r"
+        reward5 = "\124cffa335ee\124Hitem:21344:0:0:0:0:0:0:0:0\124h[Enigma Boots]\124h\124r"
+        reward6 = "\124cffa335ee\124Hitem:21345:0:0:0:0:0:0:0:0\124h[Enigma Shoulderpads]\124h\124r"
+        reward7 = "\124cffa335ee\124Hitem:21355:0:0:0:0:0:0:0:0\124h[Genesis Boots]\124h\124r"
+        reward8 = "\124cffa335ee\124Hitem:21354:0:0:0:0:0:0:0:0\124h[Genesis Shoulderpads]\124h\124r"
+        reward9 = "\124cffa335ee\124Hitem:21373:0:0:0:0:0:0:0:0\124h[Stormcaller's Footguards]\124h\124r"
+        reward10 = "\124cffa335ee\124Hitem:21376:0:0:0:0:0:0:0:0\124h[Stormcaller's Pauldrons]\124h\124r"
+        showDe = false
+    end
+
+    if name == "Vek'lor's Diadem" then
+        --Paladin, Hunter, Rogue, Shaman, Druid
+        reward1 = "\124cffa335ee\124Hitem:21387:0:0:0:0:0:0:0:0\124h[Avenger's Crown]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:21360:0:0:0:0:0:0:0:0\124h[Deathdealer's Helm]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:21353:0:0:0:0:0:0:0:0\124h[Genesis Helm]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:21372:0:0:0:0:0:0:0:0\124h[Stormcaller's Diadem]\124h\124r"
+        reward5 = "\124cffa335ee\124Hitem:21366:0:0:0:0:0:0:0:0\124h[Striker's Diadem]\124h\124r"
+        showDe = false
+    end
+
+    if name == "Vek'nilash's Circlet" then
+        --Warrior, Priest, Mage, Warlock
+        reward1 = "\124cffa335ee\124Hitem:21329:0:0:0:0:0:0:0:0\124h[Conqueror's Crown]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:21337:0:0:0:0:0:0:0:0\124h[Doomcaller's Circlet]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:21347:0:0:0:0:0:0:0:0\124h[Enigma Circlet]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:21348:0:0:0:0:0:0:0:0\124h[Tiara of the Oracle]\124h\124r"
+        showDe = false
+    end
+
+    if name == "Ouro's Intact Hide" then
+        --Warrior, Rogue, Priest, Mage
+        reward1 = "\124cffa335ee\124Hitem:21332:0:0:0:0:0:0:0:0\124h[Conqueror's Legguards]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:21362:0:0:0:0:0:0:0:0\124h[Deathdealer's Leggings]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:21346:0:0:0:0:0:0:0:0\124h[Enigma Leggings]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:21352:0:0:0:0:0:0:0:0\124h[Trousers of the Oracle]\124h\124r"
+        showDe = false
+    end
+
+    if name == "Skin of the Great Sandworm" then
+        --Paladin, Hunter, Shaman, Warlock, Druid
+        reward1 = "\124cffa335ee\124Hitem:21390:0:0:0:0:0:0:0:0\124h[Avenger's Legguards]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:21336:0:0:0:0:0:0:0:0\124h[Doomcaller's Trousers]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:21356:0:0:0:0:0:0:0:0\124h[Genesis Trousers]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:21375:0:0:0:0:0:0:0:0\124h[Stormcaller's Leggings]\124h\124r"
+        reward5 = "\124cffa335ee\124Hitem:21368:0:0:0:0:0:0:0:0\124h[Striker's Leggings]\124h\124r"
+        showDe = false
+    end
+
+    if name == "Carapace of the Old God" then
+        --Warrior, Paladin, Hunter, Rogue, Shaman
+        reward1 = "\124cffa335ee\124Hitem:21389:0:0:0:0:0:0:0:0\124h[Avenger's Breastplate]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:21331:0:0:0:0:0:0:0:0\124h[Conqueror's Breastplate]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:21364:0:0:0:0:0:0:0:0\124h[Deathdealer's Vest]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:21374:0:0:0:0:0:0:0:0\124h[Stormcaller's Hauberk]\124h\124r"
+        reward5 = "\124cffa335ee\124Hitem:21370:0:0:0:0:0:0:0:0\124h[Striker's Hauberk]\124h\124r"
+        showDe = false
+    end
+
+    if name == "Husk of the Old God" then
+        --Priest, Mage, Warlock, Druid
+        reward1 = "\124cffa335ee\124Hitem:21334:0:0:0:0:0:0:0:0\124h[Doomcaller's Robes]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:21343:0:0:0:0:0:0:0:0\124h[Enigma Robes]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:21357:0:0:0:0:0:0:0:0\124h[Genesis Vest]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:21351:0:0:0:0:0:0:0:0\124h[Vestments of the Oracle]\124h\124r"
+        showDe = false
+    end
+
+    if name == "Eye of C'Thun" then
+        reward1 = "\124cffa335ee\124Hitem:21712:0:0:0:0:0:0:0:0\124h[Amulet of the Fallen God]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:21710:0:0:0:0:0:0:0:0\124h[Cloak of the Fallen God]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:21709:0:0:0:0:0:0:0:0\124h[Ring of the Fallen God]\124h\124r"
+        showDe = false
+    end
+
+    if reward1 ~= '' then SetTokenRewardLink(reward1, 1) end
+    if reward2 ~= '' then SetTokenRewardLink(reward2, 2) end
+    if reward3 ~= '' then SetTokenRewardLink(reward3, 3) end
+    if reward4 ~= '' then SetTokenRewardLink(reward4, 4) end
+    if reward5 ~= '' then SetTokenRewardLink(reward5, 5) end
+    if reward6 ~= '' then SetTokenRewardLink(reward6, 6) end
+    if reward7 ~= '' then SetTokenRewardLink(reward7, 7) end
+    if reward8 ~= '' then SetTokenRewardLink(reward8, 8) end
+    if reward9 ~= '' then SetTokenRewardLink(reward9, 9) end
+    if reward10 ~= '' then SetTokenRewardLink(reward10, 10) end
+
     getglobal('LootLCVoteFrameWindowVotedItemType'):SetText(votedItemType)
+
+    if showDe then
+        getglobal('MLToEnchanter'):Show()
+    else
+        getglobal('MLToEnchanter'):Hide()
+    end
 
     VoteFrameListScroll_Update()
 end
@@ -1834,7 +1920,7 @@ function VoteFrameListScroll_Update()
         LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone = true
         getglobal('LootLCVoteFrameWindowTimeLeftBar'):Hide()
         -- show window when everyone picked
-        LCVoteFrame.showWindow()
+        --LCVoteFrame.showWindow() --moved to TWLCCountDownFRAME OnUpdate, Momo request.
     else
         getglobal('LootLCVoteFrameWindowContestantCount'):SetText('Waiting picks ' ..
                 LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] .. '/' ..
@@ -1874,7 +1960,7 @@ function VoteFrameListScroll_Update()
             local class = getPlayerClass(name)
             local color = classColors[class]
             --'enabled' --enabled, disabled, voted
-            local canVote = false
+            local canVote = true
             local voted = false
 
             getglobal("ContestantFrame" .. i .. "Name"):SetText(color.c .. name .. ' ' .. GetPlayerAttendance(name));
@@ -1902,39 +1988,25 @@ function VoteFrameListScroll_Update()
                 getglobal("ContestantFrame" .. i .. "Votes"):SetText('|cff1fba1f' .. votes);
             end
 
-            if LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == GetNumOnlineRaidMembers()
-                    and LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo == '' then
-                canVote = true
-            end
+            --            if LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == GetNumOnlineRaidMembers()
+            --                    and LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo == '' then
+            --                canVote = true
+            --            end
 
             --enable voting if all players picked
             if LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == GetNumOnlineRaidMembers() then
                 VoteCountdown.votingOpen = true
             end
 
-            if LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo ~= '' or
-                    LCVoteFrame.numPlayersThatWant == 1 or
-                    LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].rolled or
-                    --                    not LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone or
-                    --                    not VoteCountdown.votingOpen or
-                    roll ~= 0 then
+            --                    not LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone or
+            --                    not VoteCountdown.votingOpen or
+            if LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo ~= '' or --not awarded
+                    LCVoteFrame.numPlayersThatWant == 1 or --only one player wants
+                    LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].rolled or --item being rolled
+                    roll ~= 0 or --waiting rolls
+                    LCVoteFrame.doneVoting[LCVoteFrame.CurrentVotedItem] == true then --doneVoting is pressed
                 canVote = false
             end
-            --            if LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == LCVoteFrame.waitResponses[LCVoteFrame.CurrentVotedItem]
-            --                    and LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo == '' then
-            --                voteStatus = 'enabled'
-            --            end
-
-            -- don't lock vote buttons for now till we figure out the decent vote time
-            --            if not VoteCountdown.votingOpen then
-            --              voteStatus = 'disabled'
-            --            end
-
-            --lock vote buttons if players rolled
-            --            if true then
-            --                getglobal("ContestantFrame" .. i .. "VoteButton"):Disable();
-            --                getglobal('ContestantFrame' .. i .. 'VoteButtonMainBackground'):SetTexture(0.4, 0.4, 0.4, .4)
-            --            end
 
             getglobal("ContestantFrame" .. i .. "VoteButton"):SetText('VOTE')
             getglobal("ContestantFrame" .. i .. "VoteButtonCheck"):Hide()
@@ -1944,11 +2016,6 @@ function VoteFrameListScroll_Update()
                         voted = true
                     end
                 end
-            end
-
-            --lock vote buttons if doneVoting is pressed
-            if LCVoteFrame.doneVoting[LCVoteFrame.CurrentVotedItem] == true then
-                canVote = false
             end
 
             if canVote then
@@ -2174,7 +2241,6 @@ function addButtonOnEnterTooltip(frame, itemLink)
 end
 
 function LCVoteFrame.updateVotedItemsFrames()
-    --setCurrentVotedItem(LCVoteFrame.CurrentVotedItem)
     for index, v in next, LCVoteFrame.VotedItemsFrames do
         getglobal('VotedItem' .. index .. 'VotedItemButtonCheck'):Hide()
         if (LCVoteFrame.VotedItemsFrames[index].awardedTo ~= '') then
@@ -2206,7 +2272,7 @@ function LCVoteFrame.ResetVars(show)
     LCVoteFrame.selectedPlayer = {}
 
     getglobal('LootLCVoteFrameWindowTitle'):SetText('Turtle WoW Loot Council2 v' .. addonVer)
-
+    getglobal('LootLCVoteFrameWindowVotesLabel'):SetText('Votes');
     getglobal('LootLCVoteFrameWindowContestantCount'):SetText()
 
     --    getglobal('BroadcastLoot'):Disable()
@@ -2238,6 +2304,12 @@ function LCVoteFrame.ResetVars(show)
     getglobal('CurrentVotedItemQuestReward2'):Hide()
     getglobal('CurrentVotedItemQuestReward3'):Hide()
     getglobal('CurrentVotedItemQuestReward4'):Hide()
+    getglobal('CurrentVotedItemQuestReward5'):Hide()
+    getglobal('CurrentVotedItemQuestReward6'):Hide()
+    getglobal('CurrentVotedItemQuestReward7'):Hide()
+    getglobal('CurrentVotedItemQuestReward8'):Hide()
+    getglobal('CurrentVotedItemQuestReward9'):Hide()
+    getglobal('CurrentVotedItemQuestReward10'):Hide()
 
     getglobal('LootLCVoteFrameWindowVotedItemType'):Hide()
 
@@ -2253,6 +2325,8 @@ function LCVoteFrame.ResetVars(show)
     getglobal('TWLC2_DebugWindowText'):SetText('')
 
     LCVoteFrame.numItems = 0
+
+    getglobal('MLToEnchanter'):Hide()
 end
 
 -- comms
@@ -2832,7 +2906,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     --using playerWon instead, to let other CL know who got loot
     if string.find(t, 'playerWon#', 1, true) then
         if not canVote(sender) then return end
-        local wonData = string.split(t, "#") --youWon#unitIndex#link#votedItem
+        local wonData = string.split(t, "#") --playerWon#unitName#link#votedItem
 
         if not wonData[2] or not wonData[3] or not wonData[4] then
             twerror('bad playerWon syntax')
@@ -2860,7 +2934,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
         end
 
         TIME_TO_NEED = tonumber(ttn[2]) --might be useless ?
-        SetDynTTN(GetNumLootItems(), true)
+        --        SetDynTTN(GetNumLootItems(), true)
         TWLCCountDownFRAME.countDownFrom = TIME_TO_NEED
     end
     if string.sub(t, 1, 4) == 'ttv=' then
@@ -3144,9 +3218,9 @@ function calculateWinner()
             --no tie
             LCVoteFrame.voteTiePlayers = ''
             if (LCVoteFrame.currentItemWinner ~= '') then
-                if not VoteCountdown.votingOpen then
-                    getglobal("MLToWinner"):Enable();
-                end
+                --                if not VoteCountdown.votingOpen then
+                getglobal("MLToWinner"):Enable();
+                --                end
                 local color = classColors[getPlayerClass(LCVoteFrame.currentItemWinner)]
                 getglobal("MLToWinner"):SetText('Award ' .. color.c .. LCVoteFrame.currentItemWinner);
                 getglobal("WinnerStatus"):SetText('Winner: ' .. color.c .. LCVoteFrame.currentItemWinner);
@@ -3173,7 +3247,7 @@ function updateLCVoters()
             for officer, voted in next, TWLC_ROSTER do
                 if voter == officer and vote == '+' then
                     TWLC_ROSTER[officer] = true
---                    UpdateCLVotedButtons(officer, '+')
+                    --                    UpdateCLVotedButtons(officer, '+')
                 end
             end
         end
@@ -3200,13 +3274,18 @@ function updateLCVoters()
             numOfficersInRaid = numOfficersInRaid + 1
         end
     end
-    if (nr == numOfficersInRaid) then
+
+    if nr == numOfficersInRaid then
         getglobal('MLToWinnerNrOfVotes'):SetText('|cff1fba1fEveryone voted!')
         getglobal('WinnerStatusNrOfVotes'):SetText('|cff1fba1fEveryone voted!')
         getglobal('MLToWinner'):Enable()
+        getglobal('LootLCVoteFrameWindowVotesLabel'):SetText('Votes |cff1fba1f' .. nr .. '/' .. numOfficersInRaid);
+    elseif nr >= math.floor(numOfficersInRaid / 2) then
+        getglobal('LootLCVoteFrameWindowVotesLabel'):SetText('Votes |cfffff569' .. nr .. '/' .. numOfficersInRaid);
     else
         getglobal('MLToWinnerNrOfVotes'):SetText('|cffa53737' .. nr .. '/' .. numOfficersInRaid .. ' votes')
         getglobal('WinnerStatusNrOfVotes'):SetText('|cffa53737' .. nr .. '/' .. numOfficersInRaid .. ' votes')
+        getglobal('LootLCVoteFrameWindowVotesLabel'):SetText('Votes |cffa53737' .. nr .. '/' .. numOfficersInRaid);
     end
 end
 
@@ -3722,17 +3801,17 @@ function UpdateCLVotedButtons(cl, voteStatus)
             end
         end
 
---        if cl and voteStatus then
---            if cl == name then
---                if voteStatus == '+' then
---                    getglobal('CLVotedButton' .. index):SetAlpha(1)
---                else
---                    getglobal('CLVotedButton' .. index):SetAlpha(0.3)
---                end
---            end
---        else
---            getglobal('CLVotedButton' .. index):SetAlpha(0.3)
---        end
+        --        if cl and voteStatus then
+        --            if cl == name then
+        --                if voteStatus == '+' then
+        --                    getglobal('CLVotedButton' .. index):SetAlpha(1)
+        --                else
+        --                    getglobal('CLVotedButton' .. index):SetAlpha(0.3)
+        --                end
+        --            end
+        --        else
+        --            getglobal('CLVotedButton' .. index):SetAlpha(0.3)
+        --        end
     end
     getglobal('MLToWinnerNrOfVotes'):Hide()
     getglobal('WinnerStatusNrOfVotes'):Hide()
@@ -3919,5 +3998,20 @@ function TestNeedButton_OnClick()
         GameTooltip:Hide()
 
         twerror(testItem1 .. ' or ' .. testItem2 .. ' was not seen before, try again...')
+    end
+end
+
+function SetTokenRewardLink(reward, index)
+
+    local _, _, itemLink = string.find(reward, "(item:%d+:%d+:%d+:%d+)");
+    local _, link, _, _, _, _, _, _, tex = GetItemInfo(itemLink)
+    if link then
+        addButtonOnEnterTooltip(getglobal('CurrentVotedItemQuestReward' .. index), link)
+        getglobal('CurrentVotedItemQuestReward' .. index):SetNormalTexture(tex)
+        getglobal('CurrentVotedItemQuestReward' .. index):SetPushedTexture(tex)
+        getglobal('CurrentVotedItemQuestReward' .. index):Show()
+    else
+        GameTooltip:SetHyperlink(itemLink)
+        GameTooltip:Hide()
     end
 end
