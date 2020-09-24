@@ -20,26 +20,26 @@
         </Anchors>
         <Scripts>
             <OnLoad>
---                    this:RegisterForClicks("LeftButtonUp", "RightButtonDown");
+                    --                    this:RegisterForClicks("LeftButtonUp", "RightButtonDown");
             </OnLoad>
             <OnClick>
---                    ContestantClick(this:GetID())
+                    --                    ContestantClick(this:GetID())
             </OnClick>
             <OnEnter>
---                    Contestant_OnEnter(this:GetID())
+                    --                    Contestant_OnEnter(this:GetID())
             </OnEnter>
             <OnLeave>
---                    Contestant_OnLeave()
+                    --                    Contestant_OnLeave()
             </OnLeave>
         </Scripts>
     </Button>
 
-    <Texture name="TWLCButtonNormal" virtual="true">
-        <Color r="0" g="0.56" b="0.27" a="0.7"/>
+    <Texture name="TWLCButtonNormal" virtual="true" file="Interface\addons\TWLC2\images\gradbluedark">
+        <!--        <Color r="1" g="0" b="0" a="0"/>-->
     </Texture>
 
-    <Texture name="TWLCButtonPushed" virtual="true">
-        <Color r="0" g="0.56" b="0.27" a="1"/>
+    <Texture name="TWLCButtonPushed" virtual="true" file="Interface\addons\TWLC2\images\gradbluedark">
+        <!--        <Color r="0" g="0.56" b="0.27" a="1"/>-->
     </Texture>
 
     <Texture name="TWLCButtonDisabled" virtual="true">
@@ -47,7 +47,8 @@
     </Texture>
 
     <Texture name="TWLCButtonHighlight" virtual="true" alphamode="ADD">
-        <Color r="0" g="0.56" b="0.27" a="0.3"/>
+        <!--        <Color r="0" g="0.56" b="0.27" a="0.3"/>-->
+        <Color r="1" g="1" b="1" a=".2"/>
     </Texture>
 
     <Frame name="VotedItemsFrameTemplate" virtual="true" enableMouse="true">
@@ -716,7 +717,7 @@
             <Button name="$parentVoteButton" inherits="UIPanelButtonTemplate" text="VOTE">
                 <NormalTexture inherits="TWLCButtonNormal"/>
                 <PushedTexture inherits="TWLCButtonPushed"/>
-                <DisabledTexture inherits="TWLCButtonDisabled" />
+                <DisabledTexture inherits="TWLCButtonDisabled"/>
                 <HighlightTexture inherits="TWLCButtonHighlight"/>
                 <Size>
                     <AbsDimension x="70" y="20"/>
@@ -1015,7 +1016,7 @@
                   edgeFile="Interface\addons\TWLC2\images\border-azer"
                   tile="false">
             <EdgeSize>
-                <AbsValue val="16"/>
+                <AbsValue val="20"/>
             </EdgeSize>
             <TileSize>
                 <AbsValue val="1"/>
@@ -1157,46 +1158,38 @@
                 </Scripts>
             </Button>
 
-            <Frame name="$parentNewTitleFrame" hidden="true" toplevel="true">
+            <Frame name="$parentTitleBackground" hidden="false" framestrata="BACKGROUND">
                 <Size>
-                    <AbsDimension x="400" y="22"/>
+                    <AbsDimension x="590" y="22"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOP">
                         <Offset>
-                            <AbsDimension x="0" y="17"/>
+                            <AbsDimension x="0" y="-2"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
-                <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-                          edgeFile="Interface\addons\TWLC2\images\border-azer"
+                <Backdrop bgFile="Interface\addons\TWLC2\images\gradblue"
                           tile="false">
-                    <EdgeSize>
-                        <AbsValue val="16"/>
-                    </EdgeSize>
-                    <TileSize>
-                        <AbsValue val="1"/>
-                    </TileSize>
-                    <BackgroundInsets>
-                        <AbsInset left="5" right="5" top="5" bottom="5"/>
-                    </BackgroundInsets>
+                    <!--                    <Color r="0" g="1" b="0"/>-->
                 </Backdrop>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString name="$parentTitle" text="Title" inherits="GameFontNormal">
-                            <Anchors>
-                                <Anchor point="TOP">
-                                    <Offset>
-                                        <AbsDimension x="0" y="-5"/>
-                                    </Offset>
-                                </Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-                <Frames>
+            </Frame>
 
-                </Frames>
+            <Frame name="$parentHeaderBackground" hidden="false" framestrata="BACKGROUND">
+                <Size>
+                    <AbsDimension x="594" y="12"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOP">
+                        <Offset>
+                            <AbsDimension x="0" y="-84"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop bgFile="Interface\addons\TWLC2\images\gradblue"
+                          tile="false">
+                    <!--                    <Color r="0" g="1" b="0" a="0.5"/>-->
+                </Backdrop>
             </Frame>
 
             <Button name="TWLC2_Minimap" movable="true" parent="UIParent" enableMouse="true" toplevel="true"
@@ -1293,7 +1286,7 @@
                             text="Broadcast Loot">
                         <NormalTexture inherits="TWLCButtonNormal"/>
                         <PushedTexture inherits="TWLCButtonPushed"/>
-                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
                         <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="180" y="20"/>
@@ -1317,7 +1310,7 @@
                             text="Save Attendance">
                         <NormalTexture inherits="TWLCButtonNormal"/>
                         <PushedTexture inherits="TWLCButtonPushed"/>
-                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
                         <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="180" y="20"/>
@@ -1341,7 +1334,7 @@
                             text="Get Horde Loot">
                         <NormalTexture inherits="TWLCButtonNormal"/>
                         <PushedTexture inherits="TWLCButtonPushed"/>
-                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
                         <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="180" y="20"/>
@@ -1365,7 +1358,7 @@
                             text="Reset and close">
                         <NormalTexture inherits="TWLCButtonNormal"/>
                         <PushedTexture inherits="TWLCButtonPushed"/>
-                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
                         <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="120" y="20"/>
@@ -1389,7 +1382,7 @@
                             text="Debug Window">
                         <NormalTexture inherits="TWLCButtonNormal"/>
                         <PushedTexture inherits="TWLCButtonPushed"/>
-                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
                         <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="120" y="20"/>
@@ -1485,7 +1478,7 @@
                             text="RL Options">
                         <NormalTexture inherits="TWLCButtonNormal"/>
                         <PushedTexture inherits="TWLCButtonPushed"/>
-                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
                         <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="120" y="20"/>
@@ -1510,7 +1503,7 @@
                             text="Test Need">
                         <NormalTexture inherits="TWLCButtonNormal"/>
                         <PushedTexture inherits="TWLCButtonPushed"/>
-                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
                         <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="120" y="20"/>
@@ -1535,7 +1528,7 @@
             <Button name="MLToWinner" inherits="UIPanelButtonTemplate" hidden="true" text="ML to Winner">
                 <NormalTexture inherits="TWLCButtonNormal"/>
                 <PushedTexture inherits="TWLCButtonPushed"/>
-                <DisabledTexture inherits="TWLCButtonDisabled" />
+                <DisabledTexture inherits="TWLCButtonDisabled"/>
                 <HighlightTexture inherits="TWLCButtonHighlight"/>
                 <Size>
                     <AbsDimension x="200" y="24"/>
@@ -1595,7 +1588,8 @@
                         </Anchor>
                     </Anchors>
                 </PushedTexture>
-                <HighlightTexture name="$parentHighlightTexture" file="Interface\addons\TWLC2\images\de\ui-grouploot-de-highlight" alphaMode="ADD">
+                <HighlightTexture name="$parentHighlightTexture"
+                                  file="Interface\addons\TWLC2\images\de\ui-grouploot-de-highlight" alphaMode="ADD">
                     <Size>
                         <AbsDimension x="24" y="24"/>
                     </Size>
@@ -1669,8 +1663,6 @@
                 </Frames>
             </Frame>
 
-
-
             <Button name="$parentMinimizeButton" inherits="UIPanelCloseButton">
                 <Size>
                     <AbsDimension x="22" y="22"/>
@@ -1688,21 +1680,6 @@
                     </OnClick>
                 </Scripts>
             </Button>
-
-            <Frame name="$parentTitleBar" hidden="false">
-                <Size>
-                    <AbsDimension x="590" y="1"/>
-                </Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT">
-                        <Offset>
-                            <AbsDimension x="5" y="-25"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-                </Backdrop>
-            </Frame>
 
             <Frame name="VotedItemsFrame">
                 <Size>
@@ -1938,6 +1915,252 @@
                     </OnClick>
                 </Scripts>
             </Button>
+            <Button name="CurrentVotedItemQuestReward5" hidden="true" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="CurrentVotedItemQuestReward4">
+                        <Offset>
+                            <AbsDimension x="22" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="CurrentVotedItemQuestReward6" hidden="true" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="CurrentVotedItemQuestReward5">
+                        <Offset>
+                            <AbsDimension x="22" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="CurrentVotedItemQuestReward7" hidden="true" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="CurrentVotedItemQuestReward6">
+                        <Offset>
+                            <AbsDimension x="22" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="CurrentVotedItemQuestReward8" hidden="true" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="CurrentVotedItemQuestReward7">
+                        <Offset>
+                            <AbsDimension x="22" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="CurrentVotedItemQuestReward9" hidden="true" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="CurrentVotedItemQuestReward8">
+                        <Offset>
+                            <AbsDimension x="22" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
+            <Button name="CurrentVotedItemQuestReward10" hidden="true" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </NormalTexture>
+                <PushedTexture name="$parentNormalTexture" file="Interface\Icons\inv_staff_20">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="0" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </PushedTexture>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="CurrentVotedItemQuestReward9">
+                        <Offset>
+                            <AbsDimension x="22" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                    </OnClick>
+                </Scripts>
+            </Button>
 
             <Frame name="ContestantScrollListBackground">
                 <Size>
@@ -1946,7 +2169,7 @@
                 <Anchors>
                     <Anchor point="TOP">
                         <Offset>
-                            <AbsDimension x="0" y="-99"/>
+                            <AbsDimension x="0" y="-96"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -2138,8 +2361,8 @@
                         </Offset>
                     </Anchor>
                 </Anchors>
-                <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-                    <Color r="0" g="0.88" b="0.06" a="1"/>
+                <Backdrop bgFile="Interface\addons\TWLC2\images\gradbluedark" tile="true">
+                    <!--                    <Color r="0" g="0.88" b="0.06" a="1"/>-->
                 </Backdrop>
             </Frame>
 
@@ -2147,7 +2370,7 @@
                     text="Done Voting">
                 <NormalTexture inherits="TWLCButtonNormal"/>
                 <PushedTexture inherits="TWLCButtonPushed"/>
-                <DisabledTexture inherits="TWLCButtonDisabled" />
+                <DisabledTexture inherits="TWLCButtonDisabled"/>
                 <HighlightTexture inherits="TWLCButtonHighlight"/>
                 <Size>
                     <AbsDimension x="120" y="20"/>
@@ -2270,7 +2493,7 @@
                     <Button name="$parentSyncLootHistory" inherits="UIPanelButtonTemplate" text="Sync Loot History">
                         <NormalTexture inherits="TWLCButtonNormal"/>
                         <PushedTexture inherits="TWLCButtonPushed"/>
-                        <DisabledTexture inherits="TWLCButtonDisabled" />
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
                         <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
                             <AbsDimension x="220" y="20"/>
@@ -2497,7 +2720,7 @@
                     text="Refresh">
                 <NormalTexture inherits="TWLCButtonNormal"/>
                 <PushedTexture inherits="TWLCButtonPushed"/>
-                <DisabledTexture inherits="TWLCButtonDisabled" />
+                <DisabledTexture inherits="TWLCButtonDisabled"/>
                 <HighlightTexture inherits="TWLCButtonHighlight"/>
                 <Size>
                     <AbsDimension x="140" y="20"/>
@@ -2613,7 +2836,7 @@
                     text="YES">
                 <NormalTexture inherits="TWLCButtonNormal"/>
                 <PushedTexture inherits="TWLCButtonPushed"/>
-                <DisabledTexture inherits="TWLCButtonDisabled" />
+                <DisabledTexture inherits="TWLCButtonDisabled"/>
                 <HighlightTexture inherits="TWLCButtonHighlight"/>
                 <Size>
                     <AbsDimension x="140" y="20"/>
