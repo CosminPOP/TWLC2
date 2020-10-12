@@ -1079,7 +1079,7 @@
         </Scripts>
     </Frame>
 
-    <Frame name="LootLCVoteFrameWindow" hidden="false" toplevel="true"
+    <Frame name="LootLCVoteFrameWindow" hidden="true" toplevel="true"
            parent="UIParent" movable="true" enableMouse="true" resizable="true">
         <Size>
             <AbsDimension x="600" y="246"/>
