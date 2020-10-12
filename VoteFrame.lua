@@ -4377,7 +4377,7 @@ function collectRaidBuffs()
             end
         end
     end
-    twdebug('Scanned ' .. tableSize(LCVoteFrame.RaidBuffs) .. ' players with ' .. buffNr .. ' buffs.')
+    twprint('Scanned |cff69ccf0' .. tableSize(LCVoteFrame.RaidBuffs) .. ' |cffffffffplayers. Found |cff69ccf0' .. buffNr .. ' |cffffffffconsumable buffs.')
 end
 
 function getConsumablesScore(name, colored)
