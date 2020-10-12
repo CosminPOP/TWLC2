@@ -167,7 +167,7 @@
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="15" y="0"/>
+                                <AbsDimension x="20" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -179,7 +179,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="0" y="-4"/>
+                                <AbsDimension x="5" y="-4"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -191,7 +191,7 @@
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="0" y="-4"/>
+                                <AbsDimension x="5" y="-4"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -291,7 +291,25 @@
                     <Anchors>
                         <Anchor point="LEFT">
                             <Offset>
-                                <AbsDimension x="30" y="0"/>
+                                <AbsDimension x="25" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentBS" inherits="GameFontNormal" text="23" hidden="false">
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="115" y="0"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentNeed" inherits="GameFontNormal" text="MS Upgrade" hidden="false">
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset>
+                                <AbsDimension x="150" y="0"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -431,7 +449,6 @@
                     </Anchors>
                 </Texture>
 
-
                 <Texture name="$parentCLVote" hidden="true" file="Interface\GroupFrame\UI-Group-LeaderIcon">
                     <Size>
                         <AbsDimension x="16" y="16"/>
@@ -444,16 +461,6 @@
                         </Anchor>
                     </Anchors>
                 </Texture>
-
-                <FontString name="$parentNeed" inherits="GameFontNormal" text="MS Upgrade" hidden="false">
-                    <Anchors>
-                        <Anchor point="LEFT">
-                            <Offset>
-                                <AbsDimension x="129" y="0"/>
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
 
                 <Texture name="$parentRollWinner" hidden="true" file="Interface\Buttons\UI-GroupLoot-Dice-Up">
                     <Size>
@@ -1000,7 +1007,79 @@
         </Scripts>
     </Frame>
 
-    <Frame name="LootLCVoteFrameWindow" hidden="true" toplevel="true"
+    <Frame name="ConsumableItemTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="184" y="21"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="8" y="-40"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true" edgeSize="1">
+            <Color a=".3"/>
+        </Backdrop>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="$parentScore" inherits="GameFontNormal" text="3" hidden="false">
+                    <Anchors>
+                        <Anchor point="RIGHT">
+                            <Offset>
+                                <AbsDimension x="-5" y="-1"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+
+            <Button name="$parentItem" inherits="UIPanelButtonTemplate" text="">
+                <NormalTexture file="Interface\Icons\inv_staff_20"/>
+                <PushedTexture inherits=""/>
+                <HighlightTexture inherits=""/>
+                <Size>
+                    <AbsDimension x="20" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset>
+                            <AbsDimension x="-3" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentName" justifyH="LEFT" inherits="GameFontNormal"
+                                    text="[longest item name ever ever ever ever ever ever]" hidden="false">
+                            <Anchors>
+                                <Anchor point="LEFT">
+                                    <Offset>
+                                        <AbsDimension x="23" y="0"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                            <Size>
+                                <AbsDimension x="133" y="20"/>
+                            </Size>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnEnter>
+            </OnEnter>
+            <OnLeave>
+            </OnLeave>
+        </Scripts>
+    </Frame>
+
+    <Frame name="LootLCVoteFrameWindow" hidden="false" toplevel="true"
            parent="UIParent" movable="true" enableMouse="true" resizable="true">
         <Size>
             <AbsDimension x="600" y="246"/>
@@ -1046,11 +1125,21 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
+                <FontString name="$parentBuffsLabel" inherits="GameFontNormalSmall" text="Buffs"
+                            hidden="false">
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="120" y="-85"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
                 <FontString name="$parentPickLabel" inherits="GameFontNormalSmall" text="Pick" hidden="false">
                     <Anchors>
                         <Anchor point="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="135" y="-85"/>
+                                <AbsDimension x="155" y="-85"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -1258,12 +1347,12 @@
             <Frame name="RLExtraFrame" hidden="true" toplevel="true"
                    parent="LootLCVoteFrameWindow" movable="false" enableMouse="true">
                 <Size>
-                    <AbsDimension x="600" y="60"/>
+                    <AbsDimension x="600" y="90"/>
                 </Size>
                 <Anchors>
                     <Anchor point="BOTTOM">
                         <Offset>
-                            <AbsDimension x="0" y="-60"/>
+                            <AbsDimension x="0" y="-90"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1340,15 +1429,38 @@
                             <AbsDimension x="180" y="20"/>
                         </Size>
                         <Anchors>
-                            <Anchor point="BOTTOMLEFT">
+                            <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="20" y="9"/>
+                                    <AbsDimension x="20" y="-32"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
                         <Scripts>
                             <OnClick>
                                     ScanHordeLoot_OnClick();
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <Button name="SaveAttendance" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
+                            text="Save Attendance">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
+                        <Size>
+                            <AbsDimension x="180" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="20" y="-54"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    SaveAttendance_OnClick()
                             </OnClick>
                         </Scripts>
                     </Button>
@@ -1378,6 +1490,30 @@
                         </Scripts>
                     </Button>
 
+                    <Button name="ScanConsumables" framstrata="HIGH" inherits="UIPanelButtonTemplate" hidden="false"
+                            text="Scan Consumables">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
+                        <Size>
+                            <AbsDimension x="120" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOP">
+                                <Offset>
+                                    <AbsDimension x="0" y="-32"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    ScanConsumables_OnClick();
+                            </OnClick>
+
+                        </Scripts>
+                    </Button>
+
                     <Button name="DebugWindow" framstrata="HIGH" inherits="UIPanelButtonTemplate"
                             text="Debug Window">
                         <NormalTexture inherits="TWLCButtonNormal"/>
@@ -1388,9 +1524,9 @@
                             <AbsDimension x="120" y="20"/>
                         </Size>
                         <Anchors>
-                            <Anchor point="BOTTOM">
+                            <Anchor point="TOP">
                                 <Offset>
-                                    <AbsDimension x="0" y="9"/>
+                                    <AbsDimension x="0" y="-54"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -1509,9 +1645,9 @@
                             <AbsDimension x="120" y="20"/>
                         </Size>
                         <Anchors>
-                            <Anchor point="BOTTOMRIGHT">
+                            <Anchor point="TOPRIGHT">
                                 <Offset>
-                                    <AbsDimension x="-20" y="9"/>
+                                    <AbsDimension x="-20" y="-54"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -2421,7 +2557,7 @@
                           edgeFile="Interface\addons\TWLC2\images\border-azer"
                           tile="false">
                     <EdgeSize>
-                        <AbsValue val="16"/>
+                        <AbsValue val="20"/>
                     </EdgeSize>
                     <TileSize>
                         <AbsValue val="1"/>
@@ -2432,11 +2568,11 @@
                 </Backdrop>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentTitle" inherits="GameFontNormal" text="RL Options">
+                        <FontString name="$parentTitle" inherits="GameFontNormal" text="Raid Leader Options">
                             <Anchors>
                                 <Anchor point="TOP">
                                     <Offset>
-                                        <AbsDimension x="0" y="-10"/>
+                                        <AbsDimension x="0" y="-9"/>
                                     </Offset>
                                 </Anchor>
                             </Anchors>
@@ -2445,7 +2581,7 @@
                             <Anchors>
                                 <Anchor point="TOPLEFT">
                                     <Offset>
-                                        <AbsDimension x="12" y="-70"/>
+                                        <AbsDimension x="12" y="-80"/>
                                     </Offset>
                                 </Anchor>
                             </Anchors>
@@ -2454,7 +2590,7 @@
                             <Anchors>
                                 <Anchor point="TOPLEFT">
                                     <Offset>
-                                        <AbsDimension x="145" y="-70"/>
+                                        <AbsDimension x="145" y="-80"/>
                                     </Offset>
                                 </Anchor>
                             </Anchors>
@@ -2463,7 +2599,16 @@
                             <Anchors>
                                 <Anchor point="TOPLEFT">
                                     <Offset>
-                                        <AbsDimension x="230" y="-70"/>
+                                        <AbsDimension x="230" y="-80"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentNeedButtonsDesc" inherits="GameFontNormal" text="Need buttons">
+                            <Anchors>
+                                <Anchor point="TOPLEFT">
+                                    <Offset>
+                                        <AbsDimension x="10" y="-70"/>
                                     </Offset>
                                 </Anchor>
                             </Anchors>
@@ -2490,6 +2635,23 @@
                         </Scripts>
                     </Button>
 
+                    <Frame name="$parentTitleBackground" hidden="false" framestrata="BACKGROUND">
+                        <Size>
+                            <AbsDimension x="292" y="22"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOP">
+                                <Offset>
+                                    <AbsDimension x="0" y="-3"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Backdrop bgFile="Interface\addons\TWLC2\images\gradblue"
+                                  tile="false">
+                            <!--                    <Color r="0" g="1" b="0"/>-->
+                        </Backdrop>
+                    </Frame>
+
                     <Button name="$parentSyncLootHistory" inherits="UIPanelButtonTemplate" text="Sync Loot History">
                         <NormalTexture inherits="TWLCButtonNormal"/>
                         <PushedTexture inherits="TWLCButtonPushed"/>
@@ -2501,7 +2663,7 @@
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="10" y="-35"/>
+                                    <AbsDimension x="10" y="-80"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -2513,29 +2675,220 @@
                         </Scripts>
                     </Button>
 
-                    <Frame name="$parentTitleBar">
+                    <Button name="$parentTab1" inherits="UIPanelButtonTemplate" text="Officers">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
-                            <AbsDimension x="286" y="1"/>
+                            <AbsDimension x="80" y="20"/>
                         </Size>
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="6" y="-25"/>
+                                    <AbsDimension x="10" y="-40"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
-                        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-                            <!--                    <BackgroundInsets>-->
-                            <!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
-                            <!--                    </BackgroundInsets>-->
-                        </Backdrop>
-                    </Frame>
+                        <Scripts>
+                            <OnClick>
+                                    RLOptions_ChangeTab(1);
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button name="$parentTab2" inherits="UIPanelButtonTemplate" text="Need Buttons">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
+                        <Size>
+                            <AbsDimension x="80" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="100" y="-40"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    RLOptions_ChangeTab(2);
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button name="$parentTab3" inherits="UIPanelButtonTemplate" text="Loot History">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
+                        <Size>
+                            <AbsDimension x="100" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="190" y="-40"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    RLOptions_ChangeTab(3);
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+                    <CheckButton name="$parentBISButton">
+                        <Size>
+                            <AbsDimension x="20" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="10" y="-85"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parentText" inherits="GameFontNormal" text="|cffa335eeBIS">
+                                    <Anchors>
+                                        <Anchor point="LEFT">
+                                            <Offset>
+                                                <AbsDimension x="20" y="0"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>
+                                    saveNeedButton('BIS', this:GetChecked())
+                            </OnClick>
+                        </Scripts>
+                        <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+                        <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+                        <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+                        <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+                        <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+                    </CheckButton>
+
+                    <CheckButton name="$parentMSButton">
+                        <Size>
+                            <AbsDimension x="20" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="60" y="-85"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parentText" inherits="GameFontNormal" text="|cff0070ddMS">
+                                    <Anchors>
+                                        <Anchor point="LEFT">
+                                            <Offset>
+                                                <AbsDimension x="20" y="0"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>
+                                    saveNeedButton('MS', this:GetChecked())
+                            </OnClick>
+                        </Scripts>
+                        <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+                        <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+                        <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+                        <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+                        <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+                    </CheckButton>
+
+                    <CheckButton name="$parentOSButton">
+                        <Size>
+                            <AbsDimension x="20" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="110" y="-85"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parentText" inherits="GameFontNormal" text="|cffe79e08OS">
+                                    <Anchors>
+                                        <Anchor point="LEFT">
+                                            <Offset>
+                                                <AbsDimension x="20" y="0"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>
+                                    saveNeedButton('OS', this:GetChecked())
+                            </OnClick>
+                        </Scripts>
+                        <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+                        <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+                        <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+                        <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+                        <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+                    </CheckButton>
+
+                    <CheckButton name="$parentXMOGButton">
+                        <Size>
+                            <AbsDimension x="20" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="160" y="-85"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parentText" inherits="GameFontNormal" text="|cffb518ffXMOG">
+                                    <Anchors>
+                                        <Anchor point="LEFT">
+                                            <Offset>
+                                                <AbsDimension x="20" y="0"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnClick>
+                                    saveNeedButton('XMOG', this:GetChecked())
+                            </OnClick>
+                        </Scripts>
+                        <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+                        <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+                        <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+                        <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+                        <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+                    </CheckButton>
+
                 </Frames>
             </Frame>
 
-            <Frame name="TWLCLootHistoryFrame" hidden="true">
+            <Frame name="TWLCRaiderDetailsFrame" hidden="true">
                 <Size>
-                    <AbsDimension x="220" y="345"/>
+                    <AbsDimension x="220" y="335"/>
                 </Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT">
@@ -2548,7 +2901,7 @@
                           edgeFile="Interface\addons\TWLC2\images\border-azer"
                           tile="false">
                     <EdgeSize>
-                        <AbsValue val="16"/>
+                        <AbsValue val="20"/>
                     </EdgeSize>
                     <TileSize>
                         <AbsValue val="1"/>
@@ -2559,11 +2912,29 @@
                 </Backdrop>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentTitle" inherits="GameFontNormal" text="Loot History">
+                        <FontString name="TWLCRaiderDetailsFrameTitle" inherits="GameFontNormal" text="Raiders details">
                             <Anchors>
                                 <Anchor point="TOP">
                                     <Offset>
-                                        <AbsDimension x="0" y="-10"/>
+                                        <AbsDimension x="0" y="-9"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="TWLCLootHistoryTitle" inherits="GameFontNormal" text="Loot History">
+                            <Anchors>
+                                <Anchor point="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-60"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="TWLCConsumablesTitle" inherits="GameFontNormal" text="Consumables">
+                            <Anchors>
+                                <Anchor point="TOP">
+                                    <Offset>
+                                        <AbsDimension x="0" y="-60"/>
                                     </Offset>
                                 </Anchor>
                             </Anchors>
@@ -2571,21 +2942,20 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Frame name="$parentTitleBar">
+                    <Frame name="$parentTitleBackground" hidden="false" framestrata="BACKGROUND">
                         <Size>
-                            <AbsDimension x="206" y="1"/>
+                            <AbsDimension x="212" y="22"/>
                         </Size>
                         <Anchors>
-                            <Anchor point="TOPLEFT">
+                            <Anchor point="TOP">
                                 <Offset>
-                                    <AbsDimension x="6" y="-25"/>
+                                    <AbsDimension x="0" y="-3"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
-                        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-                            <!--                    <BackgroundInsets>-->
-                            <!--                        <AbsInset left="5" right="5" top="0" bottom="0"/>-->
-                            <!--                    </BackgroundInsets>-->
+                        <Backdrop bgFile="Interface\addons\TWLC2\images\gradblue"
+                                  tile="false">
+                            <!--                    <Color r="0" g="1" b="0"/>-->
                         </Backdrop>
                     </Frame>
 
@@ -2602,20 +2972,64 @@
                         </Anchors>
                         <Scripts>
                             <OnClick>
-                                    LootHistoryClose()
+                                    RaiderDetailsClose()
                             </OnClick>
                         </Scripts>
                     </Button>
 
 
-                    <ScrollFrame name="$parentScrollFrame" hidden="true" inherits="FauxScrollFrameTemplate">
+                    <Button name="$parentTab1" inherits="UIPanelButtonTemplate" text="Consumables">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
                         <Size>
-                            <AbsDimension x="190" y="305"/>
+                            <AbsDimension x="80" y="20"/>
                         </Size>
                         <Anchors>
                             <Anchor point="TOPLEFT">
                                 <Offset>
-                                    <AbsDimension x="0" y="-28"/>
+                                    <AbsDimension x="10" y="-30"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    RaiderDetails_ChangeTab(1);
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                    <Button name="$parentTab2" inherits="UIPanelButtonTemplate" text="Loot History">
+                        <NormalTexture inherits="TWLCButtonNormal"/>
+                        <PushedTexture inherits="TWLCButtonPushed"/>
+                        <DisabledTexture inherits="TWLCButtonDisabled"/>
+                        <HighlightTexture inherits="TWLCButtonHighlight"/>
+                        <Size>
+                            <AbsDimension x="80" y="20"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="100" y="-30"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>
+                                    RaiderDetails_ChangeTab(2);
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+
+
+                    <ScrollFrame name="TWLCLootHistoryFrameScrollFrame" hidden="true" inherits="FauxScrollFrameTemplate">
+                        <Size>
+                            <AbsDimension x="190" y="235"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="-84"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
@@ -2623,9 +3037,24 @@
                             <OnVerticalScroll>
                                 FauxScrollFrame_OnVerticalScroll(22, LootHistory_Update);
                             </OnVerticalScroll>
-                            <OnShow>
-                                    --                                    AtlasScrollBar_Update()
-                            </OnShow>
+                        </Scripts>
+                    </ScrollFrame>
+
+                    <ScrollFrame name="TWLCConsumablesListScrollFrame" hidden="true" inherits="FauxScrollFrameTemplate">
+                        <Size>
+                            <AbsDimension x="190" y="235"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="-84"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnVerticalScroll>
+                                FauxScrollFrame_OnVerticalScroll(22, ConsumablesList_Update);
+                            </OnVerticalScroll>
                         </Scripts>
                     </ScrollFrame>
 
