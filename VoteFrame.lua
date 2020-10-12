@@ -1,15 +1,8 @@
-local addonVer = "1.1.0.5" --don't use letters or numbers > 10
+local addonVer = "1.1.0.6" --don't use letters or numbers > 10
 local me = UnitName('player')
-
 local TWLC2_CHANNEL = 'TWLC2'
 local TWLC2c_CHANNEL = 'TWLCNF'
 
---some config
-local config = {
-    ['attendance'] = false,
-    ['AutoML'] = false,
-    ['AutoMLItems'] = {}
-}
 
 function twprint(a)
     if a == nil then
@@ -38,6 +31,7 @@ end
 
 local RLWindowFrame = CreateFrame("Frame")
 RLWindowFrame.assistFrames = {}
+RLWindowFrame.currentTab = 1
 
 local LCVoteFrame = CreateFrame("Frame", "LCVoteFrame")
 
@@ -72,6 +66,7 @@ LCVoteFrame.lootHistoryMinRarity = 3
 LCVoteFrame.selectedPlayer = {}
 
 LCVoteFrame.lootHistoryFrames = {}
+LCVoteFrame.consumablesListFrames = {}
 LCVoteFrame.peopleWithAddon = ''
 
 LCVoteFrame.doneVoting = {} --self / item
@@ -87,6 +82,7 @@ LCVoteFrame.LOOT_OPENED = false
 LCVoteFrame.hordeLoot = {}
 
 LCVoteFrame.CLVotedFrames = {}
+LCVoteFrame.RaidBuffs = {}
 
 --r, g, b, hex = GetItemQualityColor(quality)
 local classColors = {
@@ -113,6 +109,7 @@ local needs = {
     ["bis"] = { r = 0.67, g = 0.83, b = 0.45, c = "|cffa335ee", text = 'BIS' },
     ["ms"] = { r = 0.67, g = 0.83, b = 0.45, c = "|cff0070dd", text = 'MS Upgrade' },
     ["os"] = { r = 0.67, g = 0.83, b = 0.45, c = "|cffe79e08", text = 'Offspec' },
+    ["xmog"] = { r = 0.67, g = 0.83, b = 0.45, c = "|cffb518ff", text = 'Transmog' },
     ["pass"] = { r = 0.67, g = 0.83, b = 0.45, c = "|cff696969", text = 'pass' },
     ["autopass"] = { r = 0.67, g = 0.83, b = 0.45, c = "|cff696969", text = 'auto pass' },
     ["wait"] = { r = 0.67, g = 0.83, b = 0.45, c = "|cff999999", text = 'Waiting pick...' },
@@ -292,8 +289,6 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
 
             getglobal('MLToWinner'):Enable()
 
-            VoteCountdown.votingOpen = true
-
             --set all to auto pass - disabled for when wait= is not there
             --            for index, votedItem in next, LCVoteFrame.VotedItemsFrames do
             --                for i = 1, tableSize(LCVoteFrame.playersWhoWantItems) do
@@ -356,6 +351,7 @@ TWLCCountDownFRAME:SetScript("OnUpdate", function()
                 end
             end
 
+            VoteCountdown.votingOpen = true
             LCVoteFrame.showWindow() -- moved from VoteFrameListScroll_Update()
 
             VoteFrameListScroll_Update()
@@ -372,7 +368,7 @@ end)
 
 VoteCountdown:Hide()
 VoteCountdown.currentTime = 1
-VoteCountdown.votingOpen = true
+VoteCountdown.votingOpen = false
 VoteCountdown:SetScript("OnShow", function()
     this.startTime = GetTime();
 end)
@@ -416,7 +412,7 @@ VoteCountdown:SetScript("OnUpdate", function()
                 --end
                 VoteCountdown:Hide()
                 VoteCountdown.currentTime = 1
-                VoteCountdown.votingOpen = false
+--                VoteCountdown.votingOpen = false
 
                 getglobal('LootLCVoteFrameWindowTimeLeft'):Show()
                 getglobal('LootLCVoteFrameWindowTimeLeft'):SetText('')
@@ -434,6 +430,14 @@ end)
 SLASH_TWLC1 = "/twlc"
 SlashCmdList["TWLC"] = function(cmd)
     if cmd then
+--        if string.sub(cmd, 1, 10) == 'attendance' then
+--            TWLC_CONFIG['attendance'] = not TWLC_CONFIG['attendance']
+--            if TWLC_CONFIG['attendance'] then
+--                twprint('Attendance on')
+--            else
+--                twprint('Attendance off')
+--            end
+--        end
         if string.sub(cmd, 1, 3) == 'add' then
             local setEx = string.split(cmd, ' ')
             if setEx[2] then
@@ -835,6 +839,20 @@ LCVoteFrame:SetScript("OnEvent", function()
         end
         if event == "ADDON_LOADED" and arg1 == 'TWLC2' then
 
+            if not TWLC_CONFIG then
+                TWLC_CONFIG = {
+                    ['attendance'] = false,
+                    ['AutoML'] = false,
+                    ['AutoMLItems'] = {},
+                    ['NeedButtons'] = {
+                        ['BIS'] = false,
+                        ['MS'] = true,
+                        ['OS'] = true,
+                        ['XMOG'] = true
+                    }
+                }
+            end
+
             if not TIME_TO_NEED then TIME_TO_NEED = 30 end
             if not TIME_TO_VOTE then TIME_TO_VOTE = 30 end
             if not TIME_TO_ROLL then TIME_TO_ROLL = 30 end
@@ -860,8 +878,8 @@ LCVoteFrame:SetScript("OnEvent", function()
                 getglobal("ScanHordeLoot"):SetText('- horde sattelite not set-')
             end
 
-            if config['attendance'] then
-                getglobal('LootLCVoteFrameWindowNameLabel'):SetText('Name / Attendance')
+            if TWLC_CONFIG['attendance'] then
+                getglobal('LootLCVoteFrameWindowNameLabel'):SetText('Name/Attendance')
             else
                 getglobal('LootLCVoteFrameWindowNameLabel'):SetText('Name')
             end
@@ -915,6 +933,15 @@ LCVoteFrame:SetScript("OnEvent", function()
             --            getglobal('LootLCVoteFrameWindow'):SetBackdrop(backdrop);
             --            getglobal('LootLCVoteFrameWindow'):SetBackdropColor(0, 0, 0, .7);
             --            getglobal('LootLCVoteFrameWindow'):SetBackdropBorderColor(0, 0, 0, 1);
+
+            --load consumables tooltips
+            for i, consumable in pairsByKeys(LCVoteFrame.consumables) do
+                if consumable.itemLink ~= '' then
+                    local _, _, itemLink = string.find(consumable.itemLink, "(item:%d+:%d+:%d+:%d+)");
+                    GameTooltip:SetHyperlink(itemLink)
+                    GameTooltip:Hide()
+                end
+            end
         end
         if event == "LOOT_OPENED" then
             LCVoteFrame.LOOT_OPENED = true
@@ -994,7 +1021,7 @@ LCVoteFrame:SetScript("OnEvent", function()
             LCVoteFrame.LOOT_OPENED = false
             getglobal('BroadcastLoot'):Disable()
         end
-        if event == "PLAYER_TARGET_CHANGED" and config['attendance'] then
+        if event == "PLAYER_TARGET_CHANGED" and TWLC_CONFIG['attendance'] then
             if not UnitName('target') or UnitIsPlayer('target') or not twlc2isRL(me) then
                 return false
             end
@@ -1036,8 +1063,8 @@ function toggleRLOptionsFrame()
     if getglobal('RLWindowFrame'):IsVisible() then
         getglobal('RLWindowFrame'):Hide()
     else
-        if getglobal('TWLCLootHistoryFrame'):IsVisible() then
-            LootHistoryClose()
+        if getglobal('TWLCRaiderDetailsFrame'):IsVisible() then
+            RaiderDetailsClose()
         end
 
         local totalItems = 0
@@ -1049,7 +1076,8 @@ function toggleRLOptionsFrame()
         getglobal('RLWindowFrameSyncLootHistory'):SetText('Sync Loot History (' .. totalItems .. ' entries)')
 
         getglobal('RLWindowFrame'):Show()
-        checkAssists()
+
+        RLOptions_ChangeTab(1)
     end
 end
 
@@ -1085,7 +1113,7 @@ function checkAssists()
         i = i + 1
 
         people[i] = {
-            y = -60 - 25 * i,
+            y = -60 - 25 * i - 10,
             color = classColors[getPlayerClass(name)].c,
             name = name,
             assist = twlc2isRLorAssist(name),
@@ -1093,7 +1121,7 @@ function checkAssists()
         }
     end
 
-    getglobal('RLWindowFrame'):SetHeight(100 + tableSize(people) * 25)
+    getglobal('RLWindowFrame'):SetHeight(110 + tableSize(people) * 25)
 
     for i, d in next, people do
         if not RLWindowFrame.assistFrames[i] then
@@ -1130,6 +1158,15 @@ function checkAssists()
             getglobal('AssistFrame' .. i .. 'AssistCheck'):Disable()
         end
     end
+
+    getglobal('RLWindowFrameBISButton'):SetChecked(TWLC_CONFIG['NeedButtons']['BIS']);
+    getglobal('RLWindowFrameMSButton'):SetChecked(TWLC_CONFIG['NeedButtons']['MS']);
+    getglobal('RLWindowFrameOSButton'):SetChecked(TWLC_CONFIG['NeedButtons']['OS']);
+    getglobal('RLWindowFrameXMOGButton'):SetChecked(TWLC_CONFIG['NeedButtons']['XMOG']);
+end
+
+function saveNeedButton(button, value)
+    TWLC_CONFIG['NeedButtons'][button] = value;
 end
 
 function sendReset()
@@ -1144,7 +1181,7 @@ end
 
 function LCVoteFrame.closeWindow()
     getglobal('LootLCVoteFrameWindow'):Hide()
-    getglobal('TWLCLootHistoryFrame'):Hide()
+    getglobal('TWLCRaiderDetailsFrame'):Hide()
 end
 
 function LCVoteFrame.showWindow()
@@ -1206,6 +1243,15 @@ function BroadcastLoot_OnClick()
         SendAddonMessage(TWLC2_CHANNEL, 'ttv=' .. TIME_TO_VOTE, "RAID")
         SendAddonMessage(TWLC2_CHANNEL, 'ttr=' .. TIME_TO_ROLL, "RAID")
 
+        -- send button configuration to CLs
+        local buttons = ''
+        if TWLC_CONFIG['NeedButtons']['BIS'] then buttons = buttons .. 'b' end
+        if TWLC_CONFIG['NeedButtons']['MS'] then buttons = buttons .. 'm' end
+        if TWLC_CONFIG['NeedButtons']['OS'] then buttons = buttons .. 'o' end
+        if TWLC_CONFIG['NeedButtons']['XMOG'] then buttons = buttons .. 'x' end
+
+        SendAddonMessage(TWLC2_CHANNEL, 'NeedButtons=' .. buttons, "RAID")
+
         sendReset()
 
         for id = 0, GetNumLootItems() do
@@ -1223,6 +1269,9 @@ function BroadcastLoot_OnClick()
 
         syncRoster()
         LCVoteFrame.sentReset = true
+
+        getglobal('BroadcastLoot'):SetText('Broadcast Loot ('..TIME_TO_NEED..')')
+
         return false
     end
 
@@ -1241,9 +1290,14 @@ function BroadcastLoot_OnClick()
 
             local _, _, itemLink = string.find(GetLootSlotLink(id), "(item:%d+:%d+:%d+:%d+)");
             local _, _, quality = GetItemInfo(itemLink)
-            if (quality >= 0) then
+            if quality >= 0 then
+                local buttons = ''
+                if TWLC_CONFIG['NeedButtons']['BIS'] then buttons = buttons .. 'b' end
+                if TWLC_CONFIG['NeedButtons']['MS'] then buttons = buttons .. 'm' end
+                if TWLC_CONFIG['NeedButtons']['OS'] then buttons = buttons .. 'o' end
+                if TWLC_CONFIG['NeedButtons']['XMOG'] then buttons = buttons .. 'x' end
                 --send to twneed
-                ChatThrottleLib:SendAddonMessage("ALERT", TWLC2c_CHANNEL, "loot=" .. id .. "=" .. lootIcon .. "=" .. lootName .. "=" .. GetLootSlotLink(id) .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
+                ChatThrottleLib:SendAddonMessage("ALERT", TWLC2c_CHANNEL, "loot=" .. id .. "=" .. lootIcon .. "=" .. lootName .. "=" .. GetLootSlotLink(id) .. "=" .. TWLCCountDownFRAME.countDownFrom .. "=" .. buttons, "RAID")
                 numLootItems = numLootItems + 1
             end
         end
@@ -1597,7 +1651,7 @@ function getPlayerInfo(playerIndexOrName)
         end
     end
     local player = LCVoteFrame.currentPlayersList[playerIndexOrName]
-    if (player) then
+    if player then
         return player['itemIndex'], player['name'], player['need'], player['votes'], player['ci1'], player['ci2'], player['ci3'], player['roll'], playerIndexOrName
     else
         return false
@@ -1686,6 +1740,19 @@ function buildContestantMenu()
     end
     UIDropDownMenu_AddButton(changeToOS);
 
+    local changeToXMOG = {}
+    changeToXMOG.text = "Change to " .. needs['xmog'].c .. needs['xmog'].text
+    changeToXMOG.disabled = getglobal("ContestantFrame" .. id).need == 'xmog'
+    changeToXMOG.isTitle = false
+    changeToXMOG.notCheckable = true
+    changeToXMOG.tooltipTitle = 'Change choice'
+    changeToXMOG.tooltipText = 'Change contestant\'s choice to ' .. needs['xmog'].c .. needs['xmog'].text
+    changeToXMOG.justifyH = 'LEFT'
+    changeToXMOG.func = function()
+        changePlayerPickTo(getglobal("ContestantFrame" .. id).name, 'xmog', LCVoteFrame.CurrentVotedItem)
+    end
+    UIDropDownMenu_AddButton(changeToXMOG);
+
     UIDropDownMenu_AddButton(separator);
 
     local close = {};
@@ -1735,22 +1802,21 @@ function ContestantClick(id)
         return true
     end
 
-    if (getglobal('TWLCLootHistoryFrame'):IsVisible() and LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] == getglobal("ContestantFrame" .. id).name) then
-        LootHistoryClose()
+    if (getglobal('TWLCRaiderDetailsFrame'):IsVisible() and LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] == getglobal("ContestantFrame" .. id).name) then
+        RaiderDetailsClose()
     else
-
         LCVoteFrame.HistoryId = id
-
-        if getglobal('RLWindowFrame'):IsVisible() then
-            getglobal('RLWindowFrame'):Hide()
+        local historyPlayerName = getglobal("ContestantFrame" .. id).name
+        local totalItems = 0
+        for lootTime, item in next, TWLC_LOOT_HISTORY do
+            if historyPlayerName == item['player'] then
+                totalItems = totalItems + 1
+            end
         end
-
-        --hide prevs
-        for index in next, LCVoteFrame.lootHistoryFrames do
-            LCVoteFrame.lootHistoryFrames[index]:Hide()
-        end
-
-        LootHistory_Update()
+        getglobal('TWLCLootHistoryTitle'):SetText(totalItems .. " items looted")
+        getglobal('TWLCRaiderDetailsFrameTitle'):SetText(classColors[getPlayerClass(historyPlayerName)].c .. historyPlayerName .. classColors['priest'].c .. "'s Details")
+        getglobal('TWLCConsumablesTitle'):SetText('Score ' .. getConsumablesScore(historyPlayerName, true))
+        RaiderDetails_ChangeTab(1);
     end
 end
 
@@ -1765,7 +1831,7 @@ function LootHistory_Update()
 
     local historyPlayerName = getglobal("ContestantFrame" .. id).name
     for lootTime, item in next, TWLC_LOOT_HISTORY do
-        if (historyPlayerName == item['player']) then
+        if historyPlayerName == item['player'] then
             totalItems = totalItems + 1
         end
     end
@@ -1782,13 +1848,13 @@ function LootHistory_Update()
 
                 index = index + 1
 
-                if index > itemOffset and index <= itemOffset + 14 then
+                if index > itemOffset and index <= itemOffset + 11 then
 
                     if not LCVoteFrame.lootHistoryFrames[index] then
-                        LCVoteFrame.lootHistoryFrames[index] = CreateFrame('Frame', 'HistoryItem' .. index, getglobal("TWLCLootHistoryFrame"), 'HistoryItemTemplate')
+                        LCVoteFrame.lootHistoryFrames[index] = CreateFrame('Frame', 'HistoryItem' .. index, getglobal("TWLCRaiderDetailsFrame"), 'HistoryItemTemplate')
                     end
 
-                    LCVoteFrame.lootHistoryFrames[index]:SetPoint("TOPLEFT", getglobal("TWLCLootHistoryFrame"), "TOPLEFT", 10, -8 - 22 * (index - itemOffset))
+                    LCVoteFrame.lootHistoryFrames[index]:SetPoint("TOPLEFT", getglobal("TWLCRaiderDetailsFrame"), "TOPLEFT", 10, -8 - 22 * (index - itemOffset) - 50)
                     LCVoteFrame.lootHistoryFrames[index]:Show()
 
                     local today = ''
@@ -1809,18 +1875,107 @@ function LootHistory_Update()
         end
     end
 
-    getglobal('TWLCLootHistoryFrameTitle'):SetText(classColors[getPlayerClass(historyPlayerName)].c .. historyPlayerName .. classColors['priest'].c .. " Loot History (" .. totalItems .. ")")
-    getglobal('TWLCLootHistoryFrame'):Show()
+    getglobal('TWLCRaiderDetailsFrame'):Show()
 
     -- ScrollFrame update
-    FauxScrollFrame_Update(getglobal("TWLCLootHistoryFrameScrollFrame"), totalItems, 14, 22);
+    FauxScrollFrame_Update(getglobal("TWLCLootHistoryFrameScrollFrame"), totalItems, 11, 22);
 end
 
-function LootHistoryClose()
+
+function ConsumablesList_Update()
+    local itemOffset = FauxScrollFrame_GetOffset(getglobal("TWLCConsumablesListScrollFrame"));
+
+    local id = LCVoteFrame.HistoryId
+
+    LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] = getglobal("ContestantFrame" .. id).name
+
+    local totalItems = tableSize(LCVoteFrame.consumables)
+
+    local consumabePlayerName = getglobal("ContestantFrame" .. id).name
+
+    for index in next, LCVoteFrame.consumablesListFrames do
+        LCVoteFrame.consumablesListFrames[index]:Hide()
+    end
+
+    local index = 0
+    for i, consumable in pairsByKeys(LCVoteFrame.consumables) do
+
+        index = index + 1
+
+        if index > itemOffset and index <= itemOffset + 11 then
+
+            if not LCVoteFrame.consumablesListFrames[index] then
+                LCVoteFrame.consumablesListFrames[index] = CreateFrame('Frame', 'Consumable' .. index, getglobal("TWLCRaiderDetailsFrame"), 'ConsumableItemTemplate')
+            end
+
+            LCVoteFrame.consumablesListFrames[index]:SetPoint("TOPLEFT", getglobal("TWLCRaiderDetailsFrame"), "TOPLEFT", 10, -8 - 22 * (index - itemOffset) - 50)
+            LCVoteFrame.consumablesListFrames[index]:Show()
+
+            if consumable.itemLink ~= '' then
+
+                local _, _, itemLink = string.find(consumable.itemLink, "(item:%d+:%d+:%d+:%d+)");
+                local name, il, quality, _, _, _, _, _, tex = GetItemInfo(itemLink)
+
+                local has = '|cff696969'
+                for plIndex, buffs in next, LCVoteFrame.RaidBuffs do
+                    if buffs.name == consumabePlayerName then
+                        for j, buff in next, buffs.buffs do
+                            if buff.itemName == name then
+                                has = '|cffabd473'
+                            end
+                        end
+                    end
+                end
+
+                getglobal("Consumable" .. index .. 'Score'):SetText(has .. consumable.score)
+                getglobal("Consumable" .. index .. 'Item'):SetNormalTexture(tex)
+                getglobal("Consumable" .. index .. 'Item'):SetPushedTexture(tex)
+                if has == '|cff696969' then
+                    SetDesaturation(getglobal("Consumable" .. index .. 'Item'):GetNormalTexture(), 1)
+                else
+                    SetDesaturation(getglobal("Consumable" .. index .. 'Item'):GetNormalTexture(), 0)
+                end
+                addButtonOnEnterTooltip(getglobal("Consumable" .. index .. "Item"), consumable.itemLink)
+                getglobal("Consumable" .. index .. 'ItemName'):SetText(has .. name)
+            else
+                local has = '|cff696969'
+                local tex = 'Interface\\Icons\\inv_misc_questionmark'
+                for plIndex, buffs in next, LCVoteFrame.RaidBuffs do
+                    if buffs.name == consumabePlayerName then
+                        for j, buff in next, buffs.buffs do
+                            if buff.buffName == consumable.name then
+                                tex = buff.buffTexture
+                                has = '|cffabd473'
+                            end
+                        end
+                    end
+                end
+                getglobal("Consumable" .. index .. 'Score'):SetText(has .. consumable.score)
+                getglobal("Consumable" .. index .. 'Item'):SetNormalTexture(tex)
+                getglobal("Consumable" .. index .. 'Item'):SetPushedTexture(tex)
+                if has == '|cff696969' then
+                    SetDesaturation(getglobal("Consumable" .. index .. 'Item'):GetNormalTexture(), 1)
+                else
+                    SetDesaturation(getglobal("Consumable" .. index .. 'Item'):GetNormalTexture(), 0)
+                end
+
+                getglobal("Consumable" .. index .. 'ItemName'):SetText(has .. consumable.name)
+            end
+        end
+    end
+
+
+    getglobal('TWLCRaiderDetailsFrame'):Show()
+
+    -- ScrollFrame update
+    FauxScrollFrame_Update(getglobal("TWLCConsumablesListScrollFrame"), totalItems, 11, 22);
+end
+
+function RaiderDetailsClose()
     if LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] then
         LCVoteFrame.selectedPlayer[LCVoteFrame.CurrentVotedItem] = ''
     end
-    getglobal('TWLCLootHistoryFrame'):Hide()
+    getglobal('TWLCRaiderDetailsFrame'):Hide()
     VoteFrameListScroll_Update()
 end
 
@@ -1905,12 +2060,13 @@ function VoteFrameListScroll_Update()
 
     if LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == GetNumOnlineRaidMembers() then
 
-        local bis, ms, os, pass = 0, 0, 0, 0
+        local bis, ms, os, pass, xmog = 0, 0, 0, 0, 0
         for _, pwwi in next, LCVoteFrame.playersWhoWantItems do
             if pwwi['itemIndex'] == LCVoteFrame.CurrentVotedItem then
                 if pwwi['need'] == 'bis' then bis = bis + 1 end
                 if pwwi['need'] == 'ms' then ms = ms + 1 end
                 if pwwi['need'] == 'os' then os = os + 1 end
+                if pwwi['need'] == 'xmog' then xmog = xmog + 1 end
                 if pwwi['need'] == 'pass' or pwwi['need'] == 'autopass' then pass = pass + 1 end
             end
         end
@@ -1964,6 +2120,7 @@ function VoteFrameListScroll_Update()
             local voted = false
 
             getglobal("ContestantFrame" .. i .. "Name"):SetText(color.c .. name .. ' ' .. GetPlayerAttendance(name));
+            getglobal("ContestantFrame" .. i .. "BS"):SetText(getConsumablesScore(name, true)); -- buffscore
             getglobal("ContestantFrame" .. i .. "Need"):SetText(needs[need].c .. needs[need].text);
             if (roll > 0) then
                 getglobal("ContestantFrame" .. i .. "Roll"):SetText(roll);
@@ -1988,15 +2145,11 @@ function VoteFrameListScroll_Update()
                 getglobal("ContestantFrame" .. i .. "Votes"):SetText('|cff1fba1f' .. votes);
             end
 
-            --            if LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == GetNumOnlineRaidMembers()
-            --                    and LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].awardedTo == '' then
-            --                canVote = true
-            --            end
 
             --enable voting if all players picked
-            if LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == GetNumOnlineRaidMembers() then
-                VoteCountdown.votingOpen = true
-            end
+--            if LCVoteFrame.pickResponses[LCVoteFrame.CurrentVotedItem] == GetNumOnlineRaidMembers() then
+--                VoteCountdown.votingOpen = true
+--            end
 
             --                    not LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].pickedByEveryone or
             --                    not VoteCountdown.votingOpen or
@@ -2005,6 +2158,10 @@ function VoteFrameListScroll_Update()
                     LCVoteFrame.VotedItemsFrames[LCVoteFrame.CurrentVotedItem].rolled or --item being rolled
                     roll ~= 0 or --waiting rolls
                     LCVoteFrame.doneVoting[LCVoteFrame.CurrentVotedItem] == true then --doneVoting is pressed
+                canVote = false
+            end
+
+            if not VoteCountdown.votingOpen then
                 canVote = false
             end
 
@@ -2039,7 +2196,7 @@ function VoteFrameListScroll_Update()
                 end
             end
 
-            if config['attendance'] then
+            if TWLC_CONFIG['attendance'] then
                 local attendanceTooltipButton = getglobal("ContestantFrame" .. i .. "RightClickMenuButton1")
 
                 attendanceTooltipButton:SetScript("OnEnter", function(self)
@@ -2341,6 +2498,23 @@ end)
 
 function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     twdebug(sender .. ' says: ' .. t)
+    if string.find(t, 'scanConsumables=now') then
+        if not canVote(me) then return false end
+        if not twlc2isRL(sender) then return false end
+        collectRaidBuffs()
+    end
+    if string.find(t, 'NeedButtons=', 1, true) then
+        if not canVote(me) then return false end
+        if not twlc2isRL(sender) then return false end
+
+        local buttons = string.split(t, '=')
+        if not buttons[2] then return false end
+
+        TWLC_CONFIG['NeedButtons']['BIS'] = string.find(buttons[2], 'b', 1, true) ~= nil
+        TWLC_CONFIG['NeedButtons']['MS'] = string.find(buttons[2], 'm', 1, true) ~= nil
+        TWLC_CONFIG['NeedButtons']['OS'] = string.find(buttons[2], 'o', 1, true) ~= nil
+        TWLC_CONFIG['NeedButtons']['XMOG'] = string.find(buttons[2], 'x', 1, true) ~= nil
+    end
     if string.find(t, 'boss&', 1, true) then
         if not canVote(me) then return false end
         if not twlc2isRL(sender) then return false end
@@ -2465,7 +2639,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
             end
         end
     end
-    if string.find(t, 'SaveAttendance=', 1, true) and config['attendance'] then
+    if string.find(t, 'SaveAttendance=', 1, true) and TWLC_CONFIG['attendance'] then
         if not twlc2isRL(sender) then return false end
 
         local att = string.split(t, '=')
@@ -2792,6 +2966,7 @@ function LCVoteFrameComms:handleSync(pre, t, ch, sender)
     if string.sub(t, 1, 4) == 'bis='
             or string.sub(t, 1, 3) == 'ms='
             or string.sub(t, 1, 3) == 'os='
+            or string.sub(t, 1, 5) == 'xmog='
             or string.sub(t, 1, 5) == 'pass='
             or string.sub(t, 1, 9) == 'autopass=' then
 
@@ -3042,6 +3217,12 @@ function refreshList()
         end
     end
     for index, d in next, tempTable do
+        if d['need'] == 'xmog' then
+            j = j + 1
+            LCVoteFrame.playersWhoWantItems[j] = d
+        end
+    end
+    for index, d in next, tempTable do
         if d['need'] == 'pass' then
             j = j + 1
             LCVoteFrame.playersWhoWantItems[j] = d
@@ -3175,8 +3356,8 @@ function calculateWinner()
         for i, d in next, LCVoteFrame.currentPlayersList do
             if d['itemIndex'] == LCVoteFrame.CurrentVotedItem then
 
-                -- calc winner if only one exists with bis, ms, os
-                if d['need'] == 'bis' or d['need'] == 'ms' or d['need'] == 'os' then
+                -- calc winner if only one exists with bis, ms, os, xmog
+                if d['need'] == 'bis' or d['need'] == 'ms' or d['need'] == 'os' or d['need'] == 'xmog' then
                     LCVoteFrame.numPlayersThatWant = LCVoteFrame.numPlayersThatWant + 1
                     LCVoteFrame.namePlayersThatWants = d['name']
                 end
@@ -3545,11 +3726,11 @@ function awardPlayer(playerName, sendToSattelite, cvi, disenchant)
 
         if foundItemIndexInLootFrame then
 
-            SendAddonMessage(TWLC2_CHANNEL, "playerWon#" .. GetMasterLootCandidate(unitIndex) .. "#" .. link .. "#" .. cvi, "RAID")
+            local itemIndex, name, need, votes, ci1, ci2, ci3, roll = getPlayerInfo(GetMasterLootCandidate(unitIndex));
+
+            SendAddonMessage(TWLC2_CHANNEL, "playerWon#" .. GetMasterLootCandidate(unitIndex) .. "#" .. link .. "#" .. cvi .. "#" .. need, "RAID")
 
             GiveMasterLoot(itemIndex, unitIndex);
-
-            local itemIndex, name, need, votes, ci1, ci2, ci3, roll = getPlayerInfo(GetMasterLootCandidate(unitIndex));
 
             if disenchant then
                 SendChatMessage(GetMasterLootCandidate(unitIndex) .. ' was awarded with ' .. link .. ' for Dissenchant!', "RAID")
@@ -3710,7 +3891,7 @@ function SaveAttendanceBoss(boss, raidDate, zone, raidTime)
 end
 
 function GetPlayerAttendance(name)
-    if not config['attendance'] then return '' end
+    if not TWLC_CONFIG['attendance'] then return '' end
     local totalRaids = 0
     local attendedRaids = 0
     --zone check
@@ -3737,10 +3918,10 @@ function GetPlayerAttendance(name)
     local attendance = math.floor(attendedRaids * 100 / totalRaids)
     local color = '|cff0be700'
     if attendance < 70 and attendance >= 40 then
-        local color = '|cffffb400'
+        color = '|cffffb400'
     end
     if attendance < 40 then
-        local color = '|cffc80500'
+        color = '|cffc80500'
     end
     return color .. attendance .. '%'
 end
@@ -3839,7 +4020,7 @@ function SetDynTTV(numItems)
 end
 
 function GetPlayerAttendanceText(name)
-    if not config['attendance'] then return '' end
+    if not TWLC_CONFIG['attendance'] then return '' end
     if not TWLC_ATTENDANCE[GetZoneText()] then
         return ''
     end
@@ -3931,6 +4112,118 @@ StaticPopupDialogs["TWLC_CONFIRM_LOOT_DISTRIBUTION"].OnAccept = function(data)
     --    twdebug('GiveMasterLoot(' .. LCVoteFrame.CurrentVotedItem .. ', ' .. data .. ');')
 end
 
+function RaiderDetails_ChangeTab(tab)
+    if tab == 1 then
+        getglobal('TWLCRaiderDetailsFrameTab1'):SetText(FONT_COLOR_CODE_CLOSE .. 'Consumables')
+        getglobal('TWLCRaiderDetailsFrameTab2'):SetText('|cff696969Loot History')
+
+        getglobal('TWLCLootHistoryFrameScrollFrame'):Hide()
+        getglobal('TWLCConsumablesListScrollFrame'):Show()
+
+        for index in next, LCVoteFrame.lootHistoryFrames do
+            LCVoteFrame.lootHistoryFrames[index]:Hide()
+        end
+
+        for index in next, LCVoteFrame.consumablesListFrames do
+            LCVoteFrame.consumablesListFrames[index]:Hide()
+        end
+
+        getglobal('TWLCConsumablesTitle'):Show()
+        getglobal('TWLCLootHistoryTitle'):Hide()
+
+
+
+        ConsumablesList_Update()
+    end
+    if tab == 2 then
+        getglobal('TWLCRaiderDetailsFrameTab1'):SetText('|cff696969Consumables')
+        getglobal('TWLCRaiderDetailsFrameTab2'):SetText(FONT_COLOR_CODE_CLOSE .. 'Loot History')
+
+        getglobal('TWLCLootHistoryFrameScrollFrame'):Show()
+        getglobal('TWLCConsumablesListScrollFrame'):Hide()
+
+        getglobal('TWLCConsumablesTitle'):Hide()
+        getglobal('TWLCLootHistoryTitle'):Show()
+
+        if getglobal('RLWindowFrame'):IsVisible() then
+            getglobal('RLWindowFrame'):Hide()
+        end
+
+        for index in next, LCVoteFrame.lootHistoryFrames do
+            LCVoteFrame.lootHistoryFrames[index]:Hide()
+        end
+
+        for index in next, LCVoteFrame.consumablesListFrames do
+            LCVoteFrame.consumablesListFrames[index]:Hide()
+        end
+
+        LootHistory_Update()
+    end
+
+    getglobal('TWLCRaiderDetailsFrame'):Show()
+end
+
+function RLOptions_ChangeTab(tab)
+
+    if tab == 1 then
+        getglobal('RLWindowFrameTab1'):SetText(FONT_COLOR_CODE_CLOSE .. 'Officers')
+        getglobal('RLWindowFrameTab2'):SetText('|cff696969Need Buttons')
+        getglobal('RLWindowFrameTab3'):SetText('|cff696969Loot History')
+
+        getglobal('RLWindowFrameBISButton'):Hide()
+        getglobal('RLWindowFrameMSButton'):Hide()
+        getglobal('RLWindowFrameOSButton'):Hide()
+        getglobal('RLWindowFrameXMOGButton'):Hide()
+        getglobal('TWLCRaiderDetailsFrame'):Hide()
+        getglobal('RLWindowFrameSyncLootHistory'):Hide()
+        getglobal('RLWindowFrameNeedButtonsDesc'):Hide()
+        getglobal('RLWindowFrameNameTitle'):Show()
+        getglobal('RLWindowFrameAssist'):Show()
+        getglobal('RLWindowFrameOfficer'):Show()
+        for i = 1, tableSize(RLWindowFrame.assistFrames), 1 do
+            RLWindowFrame.assistFrames[i]:Hide()
+        end
+        checkAssists()
+    end
+    if tab == 2 then
+        getglobal('RLWindowFrameTab1'):SetText('|cff696969Officers')
+        getglobal('RLWindowFrameTab2'):SetText(FONT_COLOR_CODE_CLOSE .. 'Need Buttons')
+        getglobal('RLWindowFrameTab3'):SetText('|cff696969Loot History')
+
+        getglobal('RLWindowFrameBISButton'):Show()
+        getglobal('RLWindowFrameMSButton'):Show()
+        getglobal('RLWindowFrameOSButton'):Show()
+        getglobal('RLWindowFrameXMOGButton'):Show()
+        getglobal('TWLCRaiderDetailsFrame'):Hide()
+        getglobal('RLWindowFrameSyncLootHistory'):Hide()
+        getglobal('RLWindowFrameNeedButtonsDesc'):Show()
+        getglobal('RLWindowFrameNameTitle'):Hide()
+        getglobal('RLWindowFrameAssist'):Hide()
+        getglobal('RLWindowFrameOfficer'):Hide()
+        for i = 1, tableSize(RLWindowFrame.assistFrames), 1 do
+            RLWindowFrame.assistFrames[i]:Hide()
+        end
+    end
+    if tab == 3 then
+        getglobal('RLWindowFrameTab1'):SetText('|cff696969Officers')
+        getglobal('RLWindowFrameTab2'):SetText('|cff696969Need Buttons')
+        getglobal('RLWindowFrameTab3'):SetText(FONT_COLOR_CODE_CLOSE .. 'Loot History')
+
+        getglobal('RLWindowFrameBISButton'):Hide()
+        getglobal('RLWindowFrameMSButton'):Hide()
+        getglobal('RLWindowFrameOSButton'):Hide()
+        getglobal('RLWindowFrameXMOGButton'):Hide()
+        getglobal('TWLCRaiderDetailsFrame'):Hide()
+        getglobal('RLWindowFrameSyncLootHistory'):Show()
+        getglobal('RLWindowFrameNeedButtonsDesc'):Hide()
+        getglobal('RLWindowFrameNameTitle'):Hide()
+        getglobal('RLWindowFrameAssist'):Hide()
+        getglobal('RLWindowFrameOfficer'):Hide()
+        for i = 1, tableSize(RLWindowFrame.assistFrames), 1 do
+            RLWindowFrame.assistFrames[i]:Hide()
+        end
+    end
+end
 
 StaticPopupDialogs["EXAMPLE_HELLOWORLD"] = {
     text = "Do you want to greet the world today?",
@@ -3947,6 +4240,8 @@ StaticPopupDialogs["EXAMPLE_HELLOWORLD"] = {
 
 
 function TestNeedButton_OnClick()
+
+    collectRaidBuffs() --dev todo remove
 
     local testItem1 = "\124cffa335ee\124Hitem:19003:0:0:0:0:0:0:0:0\124h[Head of Nefarian]\124h\124r";
     local testItem2 = "\124cff0070dd\124Hitem:15138:0:0:0:0:0:0:0:0\124h[Onyxia Scale Cloak]\124h\124r";
@@ -3981,8 +4276,14 @@ function TestNeedButton_OnClick()
         ChatThrottleLib:SendAddonMessage("ALERT", TWLC2_CHANNEL, "preloadInVoteFrame=1=" .. lootIcon1 .. "=" .. lootName1 .. "=" .. testItem1, "RAID")
         ChatThrottleLib:SendAddonMessage("ALERT", TWLC2_CHANNEL, "preloadInVoteFrame=2=" .. lootIcon2 .. "=" .. lootName2 .. "=" .. testItem2, "RAID")
 
-        ChatThrottleLib:SendAddonMessage("ALERT", TWLC2c_CHANNEL, "loot=1=" .. lootIcon1 .. "=" .. lootName1 .. "=" .. testItem1 .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
-        ChatThrottleLib:SendAddonMessage("ALERT", TWLC2c_CHANNEL, "loot=2=" .. lootIcon2 .. "=" .. lootName2 .. "=" .. testItem2 .. "=" .. TWLCCountDownFRAME.countDownFrom, "RAID")
+        local buttons = ''
+        if TWLC_CONFIG['NeedButtons']['BIS'] then buttons = buttons .. 'b' end
+        if TWLC_CONFIG['NeedButtons']['MS'] then buttons = buttons .. 'm' end
+        if TWLC_CONFIG['NeedButtons']['OS'] then buttons = buttons .. 'o' end
+        if TWLC_CONFIG['NeedButtons']['XMOG'] then buttons = buttons .. 'x' end
+
+        ChatThrottleLib:SendAddonMessage("ALERT", TWLC2c_CHANNEL, "loot=1=" .. lootIcon1 .. "=" .. lootName1 .. "=" .. testItem1 .. "=" .. TWLCCountDownFRAME.countDownFrom .. "=" .. buttons, "RAID")
+        ChatThrottleLib:SendAddonMessage("ALERT", TWLC2c_CHANNEL, "loot=2=" .. lootIcon2 .. "=" .. lootName2 .. "=" .. testItem2 .. "=" .. TWLCCountDownFRAME.countDownFrom .. "=" .. buttons, "RAID")
 
         ChatThrottleLib:SendAddonMessage("ALERT", TWLC2c_CHANNEL, "doneSending=2=items", "RAID")
 
@@ -4015,3 +4316,166 @@ function SetTokenRewardLink(reward, index)
         GameTooltip:Hide()
     end
 end
+
+function getUnitBuff(unit, i)
+
+    LCTooltipVoteFrame:SetOwner(LCTooltipVoteFrame, "ANCHOR_NONE");
+    NeedFrameTooltipTextLeft1:SetText("");
+    LCTooltipVoteFrame:SetUnitBuff(unit, i);
+
+    if LCTooltipVoteFrameTextLeft1:GetText() then
+        return trim(LCTooltipVoteFrameTextLeft1:GetText()), UnitBuff(unit, i)
+    else
+        return false, ''
+    end
+end
+
+function ScanConsumables_OnClick()
+    SendAddonMessage(TWLC2_CHANNEL, 'scanConsumables=now', "RAID")
+end
+
+function collectRaidBuffs()
+    LCVoteFrame.RaidBuffs = {}
+    local buffNr = 0
+    for i = 0, GetNumRaidMembers() do
+        if GetRaidRosterInfo(i) then
+            local n, _, _, _, _, _, z = GetRaidRosterInfo(i);
+            local score = 0
+            local consumables = {}
+            if z ~= 'Offline' then
+                for j = 0, 32 do
+                    local buffName, buffTexture = getUnitBuff('raid' .. i, j)
+                    if buffName then
+                        local itemName
+--                        twdebug('found - ' .. buffName)
+--                        twdebug('found - ' .. buffTexture)
+                        for index, cons in next, LCVoteFrame.consumables do
+                            if buffName == cons.name then
+                                score = score + cons.score
+                                if cons.itemLink ~= '' then
+                                    local _, _, itemLink = string.find(cons.itemLink, "(item:%d+:%d+:%d+:%d+)");
+                                    itemName = GetItemInfo(itemLink)
+                                else
+                                    itemName = buffName
+                                end
+                                buffNr = buffNr + 1
+                            end
+                        end
+                        table.insert(consumables, {
+                            buffName = buffName,
+                            buffTexture = buffTexture,
+                            itemName = itemName
+                        })
+                    end
+                end
+
+                table.insert(LCVoteFrame.RaidBuffs, {
+                    name = n,
+                    score = score,
+                    buffs = consumables
+                })
+            end
+        end
+    end
+    twdebug('Scanned ' .. tableSize(LCVoteFrame.RaidBuffs) .. ' players with ' .. buffNr .. ' buffs.')
+end
+
+function getConsumablesScore(name, colored)
+    local color = ''
+    local maxScore = 0
+    if colored then
+        for index, consumes in next, LCVoteFrame.RaidBuffs do
+            if consumes.score > maxScore then maxScore = consumes.score end
+        end
+    end
+    if name then
+        for index, consumes in next, LCVoteFrame.RaidBuffs do
+            if consumes.name == name then
+                if colored then
+                    color = '|cff0be700'
+                    local perc = math.floor(consumes.score * 100 / maxScore)
+                    if perc < 70 and perc >= 40 then color = '|cffffb400' end
+                    if perc < 40 then color = '|cffc80500' end
+                end
+                return color .. consumes.score
+            end
+        end
+    end
+    return 0
+end
+
+LCVoteFrame.consumables = {
+    { name = 'Flask of the Titans', score = 3, itemLink = '\124cffffffff\124Hitem:13510:0:0:0:0:0:0:0:0\124h[Flask of the Titans]\124h\124r' },
+    { name = 'Distilled Wisdom', score = 3, itemLink = '\124cffffffff\124Hitem:13511:0:0:0:0:0:0:0:0\124h[Flask of Distilled Wisdom]\124h\124r' },
+    { name = 'Supreme Power', score = 3, itemLink = '\124cffffffff\124Hitem:13512:0:0:0:0:0:0:0:0\124h[Flask of Supreme Power]\124h\124r' },
+    { name = 'Chromatic Resistance', score = 3, itemLink = '\124cffffffff\124Hitem:13513:0:0:0:0:0:0:0:0\124h[Flask of Chromatic Resistance]\124h\124r' },
+
+    { name = 'Spirit of Zanza', score = 1.5, itemLink = '\124cff1eff00\124Hitem:20079:0:0:0:0:0:0:0:0\124h[Spirit of Zanza]\124h\124r' },
+    { name = 'Swiftness of Zanza', score = 1.5, itemLink = '\124cff1eff00\124Hitem:20081:0:0:0:0:0:0:0:0\124h[Swiftness of Zanza]\124h\124r' },
+
+    { name = 'Strike of the Scorpok', score = 1.5, itemLink = "\124cffffffff\124Hitem:8412:0:0:0:0:0:0:0:0\124h[Ground Scorpok Assay]\124h\124r" },
+    { name = 'Infallible Mind', score = 1.5, itemLink = "\124cffffffff\124Hitem:8423:0:0:0:0:0:0:0:0\124h[Cerebral Cortex Compound]\124h\124r" },
+    { name = 'Spiritual Domination', score = 1.5, itemLink = "\124cffffffff\124Hitem:8424:0:0:0:0:0:0:0:0\124h[Gizzard Gum]\124h\124r" },
+    { name = 'Spirit of Boar', score = 1.5, itemLink = "\124cffffffff\124Hitem:8411:0:0:0:0:0:0:0:0\124h[Lung Juice Cocktail]\124h\124r" },
+
+    { name = 'Elixir of the Mongoose', score = 1.5, itemLink = "\124cffffffff\124Hitem:13452:0:0:0:0:0:0:0:0\124h[Elixir of the Mongoose]\124h\124r" },
+    { name = 'Greater Agility', score = 1, itemLink = "\124cffffffff\124Hitem:9187:0:0:0:0:0:0:0:0\124h[Elixir of Greater Agility]\124h\124r" },
+
+    { name = 'Mana Regeneration', score = 1.5, itemLink = "\124cffffffff\124Hitem:20007:0:0:0:0:0:0:0:0\124h[Mageblood Potion]\124h\124r" },
+    { name = 'Health II', score = 0.5, itemLink = "\124cffffffff\124Hitem:3825:0:0:0:0:0:0:0:0\124h[Elixir of Fortitude]\124h\124r" }, --elixir of fort
+
+    { name = 'Armor', score = 0.5, itemLink = "\124cffffffff\124Hitem:8951:0:0:0:0:0:0:0:0\124h[Elixir of Greater Defense]\124h\124r" }, --Elixir of Greater Defense
+    { name = 'Greater Armor', score = 0.5, itemLink = "\124cffffffff\124Hitem:13445:0:0:0:0:0:0:0:0\124h[Elixir of Superior Defense]\124h\124r" }, --Elixir of Superior Defense
+
+    { name = 'Regeneration', score = 0.5, itemLink = "\124cffffffff\124Hitem:20004:0:0:0:0:0:0:0:0\124h[Major Troll's Blood Potion]\124h\124r" },
+    { name = 'Gift of Arthas', score = 0.5, itemLink = "\124cffffffff\124Hitem:9088:0:0:0:0:0:0:0:0\124h[Gift of Arthas]\124h\124r" },
+
+    { name = 'Juju Power', score = 1.5, itemLink = "\124cffffffff\124Hitem:12451:0:0:0:0:0:0:0:0\124h[Juju Power]\124h\124r" },
+    { name = 'Elixir of Giants', score = 1, itemLink = "\124cffffffff\124Hitem:9206:0:0:0:0:0:0:0:0\124h[Elixir of Giants]\124h\124r" },
+
+    { name = 'Juju Might', score = 1.5, itemLink = "\124cffffffff\124Hitem:12460:0:0:0:0:0:0:0:0\124h[Juju Might]\124h\124r" },
+    { name = 'Winterfall Firewater', score = 1, itemLink = "\124cffffffff\124Hitem:12820:0:0:0:0:0:0:0:0\124h[Winterfall Firewater]\124h\124r" },
+
+    { name = 'Greater Arcane Elixir', score = 1, itemLink = "\124cffffffff\124Hitem:13454:0:0:0:0:0:0:0:0\124h[Greater Arcane Elixir]\124h\124r" },
+    { name = 'Shadow Power', score = 1.5, itemLink = "\124cffffffff\124Hitem:9264:0:0:0:0:0:0:0:0\124h[Elixir of Shadow Power]\124h\124r" }, --Elixir of Shadow Power
+    { name = 'Greater Firepower', score = 1.5, itemLink = "\124cffffffff\124Hitem:21546:0:0:0:0:0:0:0:0\124h[Elixir of Greater Firepower]\124h\124r" },
+    { name = 'Frost Power', score = 1.5, itemLink = "\124cffffffff\124Hitem:17708:0:0:0:0:0:0:0:0\124h[Elixir of Frost Power]\124h\124r" },
+
+    { name = 'Juju Ember', score = 0.5, itemLink = "\124cffffffff\124Hitem:12455:0:0:0:0:0:0:0:0\124h[Juju Ember]\124h\124r" },
+    { name = 'Juju Chill', score = 0.5, itemLink = "\124cffffffff\124Hitem:12457:0:0:0:0:0:0:0:0\124h[Juju Chill]\124h\124r" },
+
+    { name = 'Crystal Ward', score = 0.5, itemLink = "\124cffffffff\124Hitem:11564:0:0:0:0:0:0:0:0\124h[Crystal Ward]\124h\124r" },
+    { name = 'Crystal Spire', score = 0.5, itemLink = "\124cffffffff\124Hitem:11567:0:0:0:0:0:0:0:0\124h[Crystal Spire]\124h\124r" },
+
+    { name = 'Arcane Protection', score = 1.5, itemLink = "\124cffffffff\124Hitem:13461:0:0:0:0:0:0:0:0\124h[Greater Arcane Protection Potion]\124h\124r" }, --Greater
+    { name = 'Fire Protection', score = 1.5, itemLink = "\124cffffffff\124Hitem:13457:0:0:0:0:0:0:0:0\124h[Greater Fire Protection Potion]\124h\124r" }, --Greater
+    { name = 'Frost Protection', score = 1.5, itemLink = "\124cffffffff\124Hitem:13456:0:0:0:0:0:0:0:0\124h[Greater Frost Protection Potion]\124h\124r" }, --Greater
+    { name = 'Nature Protection', score = 1.5, itemLink = "\124cffffffff\124Hitem:13458:0:0:0:0:0:0:0:0\124h[Greater Nature Protection Potion]\124h\124r" }, --Greater
+    { name = 'Shadow Protection', score = 1.5, itemLink = "\124cffffffff\124Hitem:13459:0:0:0:0:0:0:0:0\124h[Greater Shadow Protection Potion]\124h\124r" }, --Greater
+
+    { name = 'Increased Agility', score = 1, itemLink = "\124cffffffff\124Hitem:13928:0:0:0:0:0:0:0:0\124h[Grilled Squid]\124h\124r" }, --Grilled Squid
+    { name = 'Well Fed', score = 1, itemLink = "\124cffffffff\124Hitem:20452:0:0:0:0:0:0:0:0\124h[Smoked Desert Dumplings]\124h\124r" }, -- ???
+    { name = 'Mana Regeneration', score = 1, itemLink = "\124cffffffff\124Hitem:13931:0:0:0:0:0:0:0:0\124h[Nightfin Soup]\124h\124r" }, -- conflict with mageblood
+    { name = 'Increased Intellect', score = 1, itemLink = "\124cffffffff\124Hitem:18254:0:0:0:0:0:0:0:0\124h[Runn Tum Tuber Surprise]\124h\124r" },
+    { name = 'Increased Stamina', score = 1, itemLink = "\124cffffffff\124Hitem:21023:0:0:0:0:0:0:0:0\124h[Dirge's Kickin' Chimaerok Chops]\124h\124r" },
+    { name = 'Blessed Sunfruit Juice', score = 1, itemLink = "\124cffffffff\124Hitem:13813:0:0:0:0:0:0:0:0\124h[Blessed Sunfruit Juice]\124h\124r" },
+
+    { name = 'Rumsey Rum Black Label', score = 0.5, itemLink = "\124cffffffff\124Hitem:21151:0:0:0:0:0:0:0:0\124h[Rumsey Rum Black Label]\124h\124r" },
+    { name = 'Gordok Green Grog', score = 0.5, itemLink = "\124cff1eff00\124Hitem:18269:0:0:0:0:0:0:0:0\124h[Gordok Green Grog]\124h\124r" },
+
+    { name = 'Sayge\'s Dark Fortune of Damage', score = 1.5, itemLink = '' },
+    { name = 'Sayge\'s Dark Fortune of Agility', score = 1.5, itemLink = '' },
+    { name = 'Sayge\'s Dark Fortune of Intelligence', score = 1.5, itemLink = '' },
+    { name = 'Sayge\'s Dark Fortune of Spirit', score = 1.5, itemLink = '' },
+    { name = 'Sayge\'s Dark Fortune of Stamina', score = 1.5, itemLink = '' },
+
+    { name = 'Mol\'dar\'s Moxie', score = 1.5, itemLink = '' },
+    { name = 'Slip\'kik\'s Savvy', score = 1.5, itemLink = '' },
+    { name = 'Fengus\' Ferocity', score = 1.5, itemLink = '' },
+
+
+    { name = 'Songflower Serenade', score = 1.5, itemLink = '' },
+    { name = 'Traces of Silithyst', score = 1.5, itemLink = '' },
+    { name = 'Blessing of Blackfathom', score = 0.5, itemLink = '' },
+    --Toasted Smorc
+}
