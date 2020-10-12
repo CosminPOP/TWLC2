@@ -1,11 +1,18 @@
-# TWLC2 v1.1.0.5
+# TWLC2 v1.1.0.6
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
-Addon to help with Turtle Wow BWL Loot Council<BR><BR>
+Addon to help with Turtle WoW Loot Council Raids<BR><BR>
 
 <hr>
 If you like my work consider buying me a coffee !<br> 
 https://ko-fi.com/xerron <br>
 https://paypal.me/xerroner <br>
+<hr>
+
+**v1.1.0.6**<br>
+<br>
+Consumables how show in player details.<br>
+Consumables score now shows up as `Buffs` in voting panel.<br>
+Raid leader can now set need options (bis/ms/os/xmog).<br>
 <hr>
 
 **v1.1.0.5**<br>
