@@ -2101,7 +2101,7 @@ function ConsumablesList_Update()
                 getglobal("Consumable" .. index .. 'ItemName'):SetText(has .. name)
             else
                 local has = '|cff696969'
-                local tex = 'Interface\\Icons\\inv_misc_questionmark'
+                local tex = 'Interface\\Icons\\INV_Misc_QuestionMark'
                 for plIndex, buffs in next, LCVoteFrame.RaidBuffs do
                     if buffs.name == consumabePlayerName then
                         for j, buff in next, buffs.buffs do
@@ -2474,7 +2474,7 @@ function VoteFrameListScroll_Update()
                 local n1, link, quality, reqlvl, t1, t2, a7, equip_slot, tex = GetItemInfo(itemLink)
 
                 if not tex then
-                    tex = 'Interface\\Icons\\inv_misc_questionmark'
+                    tex = 'Interface\\Icons\\INV_Misc_QuestionMark'
                 end
 
                 getglobal("ContestantFrame" .. i .. "ReplacesItem1"):SetNormalTexture(tex)
@@ -2489,7 +2489,7 @@ function VoteFrameListScroll_Update()
                 local n1, link, quality, reqlvl, t1, t2, a7, equip_slot, tex = GetItemInfo(itemLink)
 
                 if not tex then
-                    tex = 'Interface\\Icons\\inv_misc_questionmark'
+                    tex = 'Interface\\Icons\\INV_Misc_QuestionMark'
                 end
 
                 getglobal("ContestantFrame" .. i .. "ReplacesItem2"):SetNormalTexture(tex)
@@ -2504,7 +2504,7 @@ function VoteFrameListScroll_Update()
                 local n1, link, quality, reqlvl, t1, t2, a7, equip_slot, tex = GetItemInfo(itemLink)
 
                 if not tex then
-                    tex = 'Interface\\Icons\\inv_misc_questionmark'
+                    tex = 'Interface\\Icons\\INV_Misc_QuestionMark'
                 end
 
                 getglobal("ContestantFrame" .. i .. "ReplacesItem3"):SetNormalTexture(tex)
@@ -4036,6 +4036,8 @@ function awardPlayer(playerName, sendToSattelite, cvi, disenchant)
             SendAddonMessage(TWLC2_CHANNEL, "playerWon#" .. GetMasterLootCandidate(unitIndex) .. "#" .. link .. "#" .. cvi .. "#" .. need, "RAID")
 
             GiveMasterLoot(itemIndex, unitIndex);
+
+            --Screenshot()
 
             if disenchant then
                 SendChatMessage(GetMasterLootCandidate(unitIndex) .. ' was awarded with ' .. link .. ' for Dissenchant!', "RAID")
