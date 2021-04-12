@@ -1,4 +1,4 @@
-# TWLC2 v1.1.0.6
+# TWLC2 v1.1.0.7
 _!!! Remove `-master` when extracting into your `interface/addons` folder !!!_<BR><BR>
 Addon to help with Turtle WoW Loot Council Raids<BR><BR>
 
@@ -8,23 +8,24 @@ https://ko-fi.com/xerron <br>
 https://paypal.me/xerroner <br>
 <hr>
 
-**v1.1.0.6**<br>
-<br>
+##v1.1.0.7
+Naxxramas tokens added.
+
+
+##v1.1.0.6
 Consumables how show in player details.<br>
 Consumables score now shows up as `Buffs` in voting panel.<br>
 Raid leader can now set need options (bis/ms/os/xmog).<br>
 <hr>
 
-**v1.1.0.5**<br>
-<br>
+##v1.1.0.5
 New color theme, blue.<br>
 Added token rewards for AQ items.<br>
 Fix for can't vote issue.<br>
 Window will stay closed if closed from X button if others are voting.<br>
 <hr>
 
-**v1.1.0.4**<br>
-<br>
+##v1.1.0.4
 Voting window, for officers, will pop up only after everyone in the raid has picked (or the pick time ended).<Br>
 The disenchant button has a new icon, and tooltip.<Br>
 CL tooltips have class colors.<Br>
@@ -33,8 +34,7 @@ Removed all time factors, time to pick is now fixed based on nr of itmes, 25, 30
 Time to vote is also fixed based on the number of items, 45/60/80/100/120.
 <hr>
 
-**v1.1.0.3**<br>
-<br>
+##v1.1.0.3
 Added option to auto ML Hourglass Sand to a raid member.<br>
 Use `/twlc set sandcollector [name]` to set a collector and <Br>
 `/twlc set sand on/off` to toggle auto ML.<br> 
@@ -44,13 +44,12 @@ Use `/twlc set disenchanter/enchanter [name]`.<Br>
 `/twlc search nefarian` will output people who got items with text 'nefarian' in item name (ex: Head of Nefarian)
 <hr>
 
-**v1.1.0.2**<br>
+##v1.1.0.2
 <br>
 Fixes not being able to vote if not everyone in raid had the TWLC2c addon 
 
-<hr>
 
-**v1.1.0.1 - Horde Sattelite**<br>
+##v1.1.0.1 - Horde Sattelite
 <br>
 Added option to set a horde sattelite player that can ML and broadcast horde loot<br>
 Use `/twlc set sattelite [name]` to set it<br>
@@ -58,18 +57,17 @@ Added icons with name tooltips for which CL voted<br>
 Added attendance data, disable for now. 
 <hr>
 
-**v1.1.0.0 - First Major Update**<br>
-<br>
+##v1.1.0.0 - First Major Update
 Changed comm channel to `TWLC2`<br>
 Items for LC get sent via `preloadInVoteFrame=` in Prepare Broadcast (first step of Broadcast Loot)
 <hr>
 
-**v1.0.2.3**<br>
+##v1.0.2.3
 `/twlc autoassist` - Toggle autoassit for CL/Officers on or off<Br>
 Infinite loop fix for autoassist
 <hr>
 
-**v1.0.2.2**<br>
+##v1.0.2.2
 `/twlc scale [0.5-2]` - Sets main frame scale from 0.5x to 2x<Br>
 `/twlc alpha [0.2-1]` - Sets main frame opacity from 0.5 to 1<br>
 * **Done Voting** button for when you're done voting current item, or just don't wanna vote for current item<Br>
@@ -108,7 +106,7 @@ Rolls are recorded and shown to officers. ML can distribute the item based on th
 
 ![rollwinner](https://imgur.com/886zw8y.png)
 
-Slashcommands[RL]:<br>
+##Slashcommands[RL]:<br>
 `/twlc add [name]` - Adds `name` to the loot council member list<br>
 `/twlc rem [name]` - Removes `name` from the loot council member list<br>
 `/twlc list` - Lists the loot council member list <Br>
