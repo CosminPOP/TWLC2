@@ -780,6 +780,7 @@ LCVoteFrame:SetScript("OnEvent", function()
         if event == "RAID_ROSTER_UPDATE" then
             if twlc2isRL(me) then
                 twdebug('RAID_ROSTER_UPDATE');
+                getglobal('RSWindow'):Show()
                 if TWLC_AUTO_ASSIST then
                     for i = 0, GetNumRaidMembers() do
                         if (GetRaidRosterInfo(i)) then
