@@ -1,7 +1,9 @@
-local addonVer = "1.1.0.6" --don't use letters or numbers > 10
+local addonVer = "1.1.0.7" --don't use letters or numbers > 10
 local me = UnitName('player')
 local TWLC2_CHANNEL = 'TWLC2'
 local TWLC2c_CHANNEL = 'TWLCNF'
+
+--todo : tie consumable check / attendace to bigwigs boss pull
 
 function twprint(a)
     if a == nil then
@@ -96,14 +98,6 @@ local classColors = {
     ["priest"] = { r = 1, g = 1, b = 1, c = "|cffffffff" },
     ["warlock"] = { r = 0.58, g = 0.51, b = 0.79, c = "|cff9482c9" },
     ["paladin"] = { r = 0.96, g = 0.55, b = 0.73, c = "|cfff58cba" },
-    ["krieger"] = { r = 0.78, g = 0.61, b = 0.43, c = "|cffc79c6e" },
-    ["magier"] = { r = 0.41, g = 0.8, b = 0.94, c = "|cff69ccf0" },
-    ["schurke"] = { r = 1, g = 0.96, b = 0.41, c = "|cfffff569" },
-    ["druide"] = { r = 1, g = 0.49, b = 0.04, c = "|cffff7d0a" },
-    ["jäger"] = { r = 0.67, g = 0.83, b = 0.45, c = "|cffabd473" },
-    ["schamane"] = { r = 0.14, g = 0.35, b = 1.0, c = "|cff0070de" },
-    ["priester"] = { r = 1, g = 1, b = 1, c = "|cffffffff" },
-    ["hexenmeister"] = { r = 0.58, g = 0.51, b = 0.79, c = "|cff9482c9" },
 }
 
 local needs = {
@@ -179,14 +173,6 @@ local attendanceTargets = {
         ["Lord Victor Nefarius"] = "Lord Victor Nefarius",
         ["Nefarian"] = "Nefarian",
     },
-    ["Ruins of Ahn'Qiraj"] = {
-        ["Kurinnaxx"] = "Kurinnaxx",
-        ["General Rajaxx"] = "General Rajaxx",
-        ["Moam"] = "Moam",
-        ["Buru the Gorger"] = "Buru the Gorger",
-        ["Ayamiss the Hunter"] = "Ayamiss the Hunter",
-        ["Ossirian the Unscarred"] = "Ossirian the Unscarred",
-    },
     ["Ahn'Qiraj"] = {
         ["The Prophet Skeram"] = "The Prophet Skeram",
         ["Vem"] = "Bug Trio",
@@ -200,6 +186,26 @@ local attendanceTargets = {
         ["Emperor Vek'nilash"] = "Twin Emperors",
         ["Ouro"] = "Ouro",
         ["Kurinnaxx"] = "Kurinnaxx",
+    },
+    ["Naxxramas"] = {
+        ['Anub\'Rekhan'] = 'Anub\'Rekhan',
+        ['Grand Widow Faerlina'] = 'Grand Widow Faerlina',
+        ['Maexxna'] = 'Maexxna',
+        ['Noth the Plaguebringer'] = 'Noth the Plaguebringer',
+        ['Heigan the Unclean'] = 'Heigan the Unclean',
+        ['Loatheb'] = 'Loatheb',
+        ['Instructor Razuvious'] = 'Instructor Razuvious',
+        ['Gothik the Harvester'] = 'Gothik the Harvester',
+        ['Highlord Mograine'] = 'The Four Horsemen',
+        ['Thane Korth\'azz'] = 'The Four Horsemen',
+        ['Lady Blaumeux'] = 'The Four Horsemen',
+        ['Sir Zeliek'] = 'The Four Horsemen',
+        ['Patchwerk'] = 'Patchwerk',
+        ['Grobbulus'] = 'Grobbulus',
+        ['Gluth'] = 'Gluth',
+        ['Thaddius'] = 'Thaddius',
+        ['Sapphiron'] = 'Sapphiron',
+        ['Kel\'Thuzad'] = 'Kel\'Thuzad',
     }
 }
 
@@ -589,7 +595,7 @@ SlashCmdList["TWLC"] = function(cmd)
             if cmdEx[2] then
 
                 local numItems = 0
-                for lootTime, item in pairsByKeysReverse(TWLC_LOOT_HISTORY) do
+                for _, item in pairsByKeysReverse(TWLC_LOOT_HISTORY) do
                     if string.lower(cmdEx[2]) == string.lower(item['player']) then
                         numItems = numItems + 1
                     end
@@ -661,8 +667,6 @@ function RefreshWho_OnClick()
     getglobal('VoteFrameWhoText'):SetText('Loading...')
     SendAddonMessage(TWLC2c_CHANNEL, "voteframe=whoVF=" .. addonVer, "RAID")
 end
-
-local minibtn = getglobal('TWLC2_Minimap')
 
 function syncLootHistory_OnClick()
     local totalItems = 0
@@ -1010,7 +1014,7 @@ LCVoteFrame:SetScript("OnEvent", function()
 
                     for id = 0, GetNumLootItems() do
                         if GetLootSlotInfo(id) and GetLootSlotLink(id) then
-                            local lootIcon, lootName, _, _, q = GetLootSlotInfo(id)
+                            local _, lootName = GetLootSlotInfo(id)
 
                             local _, _, itemLink = string.find(GetLootSlotLink(id), "(item:%d+:%d+:%d+:%d+)");
                             local _, _, quality = GetItemInfo(itemLink)
@@ -1032,7 +1036,14 @@ LCVoteFrame:SetScript("OnEvent", function()
                                         lootName ~= 'Idol of Strife' and
                                         lootName ~= 'Idol of War' and
                                         lootName ~= 'Idol of the Sun' and
-                                        lootName ~= 'Idol of the Sage' then
+                                        lootName ~= 'Idol of the Sage' and
+                                        -- naxx wartorn pieces
+                                        lootName ~= 'Wartorn Cloth Scrap' and
+                                        lootName ~= 'Wartorn Leather Scrap' and
+                                        lootName ~= 'Wartorn Chain Scrap' and
+                                        lootName ~= 'Wartorn Plate Scrap' and
+                                        -- words
+                                        lootName ~= 'Word of Thawing' then
 
                                     blueOrEpic = true
 
@@ -1086,7 +1097,14 @@ LCVoteFrame:SetScript("OnEvent", function()
                                         lootName == 'Idol of Strife' or
                                         lootName == 'Idol of War' or
                                         lootName == 'Idol of the Sun' or
-                                        lootName == 'Idol of the Sage' then
+                                        lootName == 'Idol of the Sage' or
+                                        -- naxx wartorn pieces
+                                        lootName == 'Wartorn Cloth Scrap' or
+                                        lootName == 'Wartorn Leather Scrap' or
+                                        lootName == 'Wartorn Chain Scrap' or
+                                        lootName == 'Wartorn Plate Scrap' or
+                                        -- words
+                                        lootName == 'Word of Thawing' then
 
                                     local collectorIndex = -1
                                     for j = 1, 40 do
@@ -1110,7 +1128,8 @@ LCVoteFrame:SetScript("OnEvent", function()
                     getglobal('BroadcastLoot'):Enable()
                     getglobal('BroadcastLoot'):SetText('Prepare Broadcast')
                     LCVoteFrame.sentReset = false
-                    if me ~= 'Er' and me ~= 'Holystrike' then
+                    if me ~= 'Er' then
+                        -- dont show for me, ill show it from erui addon
                         getglobal('LootLCVoteFrameWindow'):Show()
                     end
 
@@ -1209,9 +1228,8 @@ function checkAssists()
 
     local assistsAndCL = {}
     --get assists
-    local i
     for i = 0, GetNumRaidMembers() do
-        if (GetRaidRosterInfo(i)) then
+        if GetRaidRosterInfo(i) then
             local n, r = GetRaidRosterInfo(i);
             if (r == 2 or r == 1) then
                 assistsAndCL[n] = false
@@ -1219,7 +1237,7 @@ function checkAssists()
         end
     end
     --getcls
-    if (TWLC_ROSTER) then
+    if TWLC_ROSTER then
         for clName in next, TWLC_ROSTER do
             assistsAndCL[clName] = false
         end
@@ -1346,7 +1364,11 @@ function BroadcastLoot_OnClick()
         return false
     end
 
-    SendAddonMessage(TWLC2_CHANNEL, 'boss&' .. UnitName('target'), "RAID")
+    local target = UnitName('target')
+    if UnitIsPlayer('target') or not UnitExists('target') then
+        target = 'Chest'
+    end
+    SendAddonMessage(TWLC2_CHANNEL, 'boss&' .. target, "RAID")
 
     if GetNumLootItems() == 0 then
         twprint('There are no items in the loot frame.')
@@ -1539,7 +1561,7 @@ function setCurrentVotedItem(id)
             votedItemType = votedItemType .. t2 .. ' '
         end
     end
-    if (equip_slot) then
+    if equip_slot then
         votedItemType = votedItemType .. getEquipSlot(equip_slot)
     end
 
@@ -1573,6 +1595,16 @@ function setCurrentVotedItem(id)
     local reward10 = ''
 
     local showDe = true
+
+    if votedItemType == 'Junk ' and string.find(name, 'Desecrated', 1, true) then
+        votedItemType = 'Quest rewards: '
+    end
+
+    if votedItemType == 'Junk ' and string.find(name, 'Splinter', 1, true) then
+        votedItemType = 'Orange'
+        showDe = false
+    end
+
 
     if name == 'Head of Onyxia' then
         reward1 = "\124cffa335ee\124Hitem:18406:0:0:0:0:0:0:0:0\124h[Onyxia Blood Talisman]\124h\124r"
@@ -1762,6 +1794,175 @@ function setCurrentVotedItem(id)
         reward3 = "\124cffa335ee\124Hitem:21709:0:0:0:0:0:0:0:0\124h[Ring of the Fallen God]\124h\124r"
         showDe = false
     end
+
+    --naxx tier tokens
+
+    if name == "Desecrated Bindings" then
+        reward1 = "\124cffa335ee\124Hitem:22519:0:0:0:0:0:0:0:0\124h[Bindings of Faith]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22503:0:0:0:0:0:0:0:0\124h[Frostfire Bindings]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22511:0:0:0:0:0:0:0:0\124h[Plagueheart Bindings]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Wristguards" then
+        reward1 = "\124cffa335ee\124Hitem:22424:0:0:0:0:0:0:0:0\124h[Redemption Wristguards]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22443:0:0:0:0:0:0:0:0\124h[Cryptstalker Wristguards]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22471:0:0:0:0:0:0:0:0\124h[Earthshatter Wristguards]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:22495:0:0:0:0:0:0:0:0\124h[Dreamwalker Wristguards]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Bracers" then
+        reward1 = "\124cffa335ee\124Hitem:22423:0:0:0:0:0:0:0:0\124h[Dreadnaught Bracers]\124h\124r";
+        reward2 = "\124cffa335ee\124Hitem:22483:0:0:0:0:0:0:0:0\124h[Bonescythe Bracers]\124h\124r";
+        showDe = false
+    end
+
+    --belt
+    if name == "Desecrated Belt" then
+        reward1 = "\124cffa335ee\124Hitem:22518:0:0:0:0:0:0:0:0\124h[Belt of Faith]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22502:0:0:0:0:0:0:0:0\124h[Frostfire Belt]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22510:0:0:0:0:0:0:0:0\124h[Plagueheart Belt]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Girdle" then
+        reward1 = "\124cffa335ee\124Hitem:22431:0:0:0:0:0:0:0:0\124h[Redemption Girdle]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22442:0:0:0:0:0:0:0:0\124h[Cryptstalker Girdle]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22470:0:0:0:0:0:0:0:0\124h[Earthshatter Girdle]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:22494:0:0:0:0:0:0:0:0\124h[Dreamwalker Girdle]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Waistguard" then
+        reward1 = "\124cffa335ee\124Hitem:22422:0:0:0:0:0:0:0:0\124h[Dreadnaught Waistguard]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22482:0:0:0:0:0:0:0:0\124h[Bonescythe Waistguard]\124h\124r"
+        showDe = false
+    end
+
+    --boots
+    if name == "Desecrated Sandals" then
+        reward1 = "\124cffa335ee\124Hitem:22516:0:0:0:0:0:0:0:0\124h[Sandals of Faith]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22500:0:0:0:0:0:0:0:0\124h[Frostfire Sandals]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22508:0:0:0:0:0:0:0:0\124h[Plagueheart Sandals]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Boots" then
+        reward1 = "\124cffa335ee\124Hitem:22430:0:0:0:0:0:0:0:0\124h[Redemption Boots]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22440:0:0:0:0:0:0:0:0\124h[Cryptstalker Boots]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22468:0:0:0:0:0:0:0:0\124h[Earthshatter Boots]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:22492:0:0:0:0:0:0:0:0\124h[Dreamwalker Boots]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Sabatons" then
+        reward1 = "\124cffa335ee\124Hitem:22420:0:0:0:0:0:0:0:0\124h[Dreadnaught Sabatons]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22480:0:0:0:0:0:0:0:0\124h[Bonescythe Sabatons]\124h\124r"
+        showDe = false
+    end
+
+    --gloves
+    if name == "Desecrated Gloves" then
+        reward1 = "\124cffa335ee\124Hitem:22517:0:0:0:0:0:0:0:0\124h[Gloves of Faith]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22501:0:0:0:0:0:0:0:0\124h[Frostfire Gloves]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22509:0:0:0:0:0:0:0:0\124h[Plagueheart Gloves]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Handguards" then
+        reward1 = "\124cffa335ee\124Hitem:22426:0:0:0:0:0:0:0:0\124h[Redemption Handguards]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22441:0:0:0:0:0:0:0:0\124h[Cryptstalker Handguards]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22469:0:0:0:0:0:0:0:0\124h[Earthshatter Handguards]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:22493:0:0:0:0:0:0:0:0\124h[Dreamwalker Handguards]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Gauntlets" then
+        reward1 = "\124cffa335ee\124Hitem:22421:0:0:0:0:0:0:0:0\124h[Dreadnaught Gauntlets]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22481:0:0:0:0:0:0:0:0\124h[Bonescythe Gauntlets]\124h\124r"
+        showDe = false
+    end
+
+    --pants
+    if name == "Desecrated Leggings" then
+        reward1 = "\124cffa335ee\124Hitem:22513:0:0:0:0:0:0:0:0\124h[Leggings of Faith]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22497:0:0:0:0:0:0:0:0\124h[Frostfire Leggings]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22505:0:0:0:0:0:0:0:0\124h[Plagueheart Leggings]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Legguards" then
+        reward1 = "\124cffa335ee\124Hitem:22427:0:0:0:0:0:0:0:0\124h[Redemption Legguards]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22437:0:0:0:0:0:0:0:0\124h[Cryptstalker Legguards]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22465:0:0:0:0:0:0:0:0\124h[Earthshatter Legguards]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:22489:0:0:0:0:0:0:0:0\124h[Dreamwalker Legguards]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Legplates" then
+        reward1 = "\124cffa335ee\124Hitem:22417:0:0:0:0:0:0:0:0\124h[Dreadnaught Legplates]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22477:0:0:0:0:0:0:0:0\124h[Bonescythe Legplates]\124h\124r"
+        showDe = false
+    end
+
+    --head
+    if name == "Desecrated Circlet" then
+        reward1 = "\124cffa335ee\124Hitem:22514:0:0:0:0:0:0:0:0\124h[Circlet of Faith]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22498:0:0:0:0:0:0:0:0\124h[Frostfire Circlet]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22506:0:0:0:0:0:0:0:0\124h[Plagueheart Circlet]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Headpiece" then
+        reward1 = "\124cffa335ee\124Hitem:22428:0:0:0:0:0:0:0:0\124h[Redemption Headpiece]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22438:0:0:0:0:0:0:0:0\124h[Cryptstalker Headpiece]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22466:0:0:0:0:0:0:0:0\124h[Earthshatter Headpiece]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:22490:0:0:0:0:0:0:0:0\124h[Dreamwalker Headpiece]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Helmet" then
+        reward1 = "\124cffa335ee\124Hitem:22418:0:0:0:0:0:0:0:0\124h[Dreadnaught Helmet]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22478:0:0:0:0:0:0:0:0\124h[Bonescythe Helmet]\124h\124r"
+        showDe = false
+    end
+
+    --shoulder
+    if name == "Desecrated Shoulderpads" then
+        reward1 = "\124cffa335ee\124Hitem:22515:0:0:0:0:0:0:0:0\124h[Shoulderpads of Faith]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22499:0:0:0:0:0:0:0:0\124h[Frostfire Shoulderpads]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22507:0:0:0:0:0:0:0:0\124h[Plagueheart Shoulderpads]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Spaulders" then
+        reward1 = "\124cffa335ee\124Hitem:22429:0:0:0:0:0:0:0:0\124h[Redemption Spaulders]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22439:0:0:0:0:0:0:0:0\124h[Cryptstalker Spaulders]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22467:0:0:0:0:0:0:0:0\124h[Earthshatter Spaulders]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:22491:0:0:0:0:0:0:0:0\124h[Dreamwalker Spaulders]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Pauldrons" then
+        reward1 = "\124cffa335ee\124Hitem:22419:0:0:0:0:0:0:0:0\124h[Dreadnaught Pauldrons]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22479:0:0:0:0:0:0:0:0\124h[Bonescythe Pauldrons]\124h\124r"
+        showDe = false
+    end
+
+    --chest
+    if name == "Desecrated Robe" then
+        reward1 = "\124cffa335ee\124Hitem:22512:0:0:0:0:0:0:0:0\124h[Robe of Faith]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22496:0:0:0:0:0:0:0:0\124h[Frostfire Robe]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22504:0:0:0:0:0:0:0:0\124h[Plagueheart Robe]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Tunic" then
+        reward1 = "\124cffa335ee\124Hitem:22425:0:0:0:0:0:0:0:0\124h[Redemption Tunic]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22436:0:0:0:0:0:0:0:0\124h[Cryptstalker Tunic]\124h\124r"
+        reward3 = "\124cffa335ee\124Hitem:22464:0:0:0:0:0:0:0:0\124h[Earthshatter Tunic]\124h\124r"
+        reward4 = "\124cffa335ee\124Hitem:22488:0:0:0:0:0:0:0:0\124h[Dreamwalker Tunic]\124h\124r"
+        showDe = false
+    end
+    if name == "Desecrated Breastplate" then
+        reward1 = "\124cffa335ee\124Hitem:22476:0:0:0:0:0:0:0:0\124h[Bonescythe Breastplate]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:22416:0:0:0:0:0:0:0:0\124h[Dreadnaught Breastplate]\124h\124r"
+        showDe = false
+    end
+    --end naxx tier tokens
+
+    --kt item
+    if name == "The Phylactery of Kel'Thuzad" then
+        reward1 = "\124cffa335ee\124Hitem:23206:0:0:0:0:0:0:0:0\124h[Mark of the Champion]\124h\124r"
+        reward2 = "\124cffa335ee\124Hitem:23207:0:0:0:0:0:0:0:0\124h[Mark of the Champion]\124h\124r"
+    end
+    --end kt item
 
     if reward1 ~= '' then
         SetTokenRewardLink(reward1, 1)
@@ -4037,7 +4238,7 @@ function awardPlayer(playerName, sendToSattelite, cvi, disenchant)
 
             GiveMasterLoot(itemIndex, unitIndex);
 
-            --Screenshot()
+            Screenshot()
 
             if disenchant then
                 SendChatMessage(GetMasterLootCandidate(unitIndex) .. ' was awarded with ' .. link .. ' for Dissenchant!', "RAID")
