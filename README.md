@@ -8,33 +8,29 @@ https://ko-fi.com/xerron <br>
 https://paypal.me/xerroner <br>
 <hr>
 
-##v1.1.0.7
+## v1.1.0.7
 Naxxramas tokens added.
 
-
-##v1.1.0.6
+## v1.1.0.6
 Consumables how show in player details.<br>
 Consumables score now shows up as `Buffs` in voting panel.<br>
 Raid leader can now set need options (bis/ms/os/xmog).<br>
-<hr>
 
-##v1.1.0.5
+## v1.1.0.5
 New color theme, blue.<br>
 Added token rewards for AQ items.<br>
 Fix for can't vote issue.<br>
 Window will stay closed if closed from X button if others are voting.<br>
-<hr>
 
-##v1.1.0.4
+## v1.1.0.4
 Voting window, for officers, will pop up only after everyone in the raid has picked (or the pick time ended).<Br>
 The disenchant button has a new icon, and tooltip.<Br>
 CL tooltips have class colors.<Br>
 New display of which officers voted instead of number.<Br>
 Removed all time factors, time to pick is now fixed based on nr of itmes, 25, 30, 35, 45, 60.<Br>
 Time to vote is also fixed based on the number of items, 45/60/80/100/120.
-<hr>
 
-##v1.1.0.3
+## v1.1.0.3
 Added option to auto ML Hourglass Sand to a raid member.<br>
 Use `/twlc set sandcollector [name]` to set a collector and <Br>
 `/twlc set sand on/off` to toggle auto ML.<br> 
@@ -42,37 +38,30 @@ Added option to ML an item to a disenchanter.<br>
 Use `/twlc set disenchanter/enchanter [name]`.<Br>
 `/twlc search [query]` now works for items too. Example: <br>
 `/twlc search nefarian` will output people who got items with text 'nefarian' in item name (ex: Head of Nefarian)
-<hr>
 
-##v1.1.0.2
-<br>
+## v1.1.0.2
 Fixes not being able to vote if not everyone in raid had the TWLC2c addon 
 
-
-##v1.1.0.1 - Horde Sattelite
-<br>
+## v1.1.0.1 - Horde Sattelite
 Added option to set a horde sattelite player that can ML and broadcast horde loot<br>
 Use `/twlc set sattelite [name]` to set it<br>
 Added icons with name tooltips for which CL voted<br>
 Added attendance data, disable for now. 
-<hr>
 
-##v1.1.0.0 - First Major Update
+## v1.1.0.0 - First Major Update
 Changed comm channel to `TWLC2`<br>
 Items for LC get sent via `preloadInVoteFrame=` in Prepare Broadcast (first step of Broadcast Loot)
 <hr>
 
-##v1.0.2.3
+## v1.0.2.3
 `/twlc autoassist` - Toggle autoassit for CL/Officers on or off<Br>
 Infinite loop fix for autoassist
-<hr>
 
-##v1.0.2.2
+## v1.0.2.2
 `/twlc scale [0.5-2]` - Sets main frame scale from 0.5x to 2x<Br>
 `/twlc alpha [0.2-1]` - Sets main frame opacity from 0.5 to 1<br>
 * **Done Voting** button for when you're done voting current item, or just don't wanna vote for current item<Br>
 * Ability to resize the main window from 5 to 15 visible players<br> 
-<hr>
 
 
 When enabled (from the minimap button, disabled by default), and the **Raid Leader** opens boss loot frame, the addon frame will pop up
